@@ -15,10 +15,9 @@ jobs:
     steps: # 自动化步骤
       - uses: actions/checkout@v1 # 第一步，下载代码仓库
 
-      - name: Install Node.js
-        - uses: actions/setup-node@v1
-          with:
-            node-version: v14.17.6
+      - uses: actions/setup-node@v1
+        with:
+          node-version: v14.17.6
 
       - name: INSTALL
         run: npm run install
