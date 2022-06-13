@@ -45,6 +45,7 @@ jobs:
           first_ssh: |-
             ls -la
             echo $WELCOME
+            cd $TARGET_DEV_DIR
             git checkout .
             git fetch -all
             git checkout dev
