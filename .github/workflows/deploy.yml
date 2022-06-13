@@ -40,6 +40,7 @@ jobs:
         with:
           host: ${{ secrets.SSH_HOST }}
           user: ${{ secrets.SSH_USERNAME }}
+          pass: ${{ secrets.SSH_PWD }}
           connect_timeout: 10s
           first_ssh: |-
             ls -la
