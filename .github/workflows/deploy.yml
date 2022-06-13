@@ -47,7 +47,7 @@ jobs:
             export NVM_DIR=~/.nvm
             source ~/.nvm/nvm.sh
             yarn install
-            yarn build:dev
+            yarn build
             yarn server:dev
             pm2 restart all
             echo $LASTSSH
