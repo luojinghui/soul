@@ -22,15 +22,6 @@ jobs:
         with:
           node-version: v14.17.6
 
-      - name: INSTALL
-        run: yarn install
-
-      - name: BUILD
-        run: yarn build
-
-      - name: INFO
-        run: pwd && ls
-
       - name: DEPLOY DEV
         uses: cross-the-world/ssh-scp-ssh-pipelines@latest
         env:
@@ -50,13 +41,13 @@ jobs:
             git fetch --all
             git checkout dev
             git pull --force origin dev
-          scp: |-
-            './build/*' => $TARGET_DEV_DIR/build/
           last_ssh: |-
             cd $TARGET_DEV_DIR
-            ls
             whoami
-            npm install
-            npm run server:dev
+            export NVM_DIR=~/.nvm
+            source ~/.nvm/nvm.sh
+            yarn install
+            yarn build:dev
+            yarn server:dev
             pm2 restart all
             echo $LASTSSH
