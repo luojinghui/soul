@@ -3,10 +3,13 @@ name: Deploy Build Files
 on:
   push:
     branches:
-      - main # 只在main上push触发部署
+      - dev # 只在dev上push触发部署
     paths-ignore: # 下列文件的变更不触发部署，可以自行添加
       - README.md
       - LICENSE
+env:
+  TARGET_DEV_DIR: /home/soul/developer/soul
+  TARGET_PRD_DIR: /home/soul/production/soul
 
 jobs:
   deploy:
@@ -29,13 +32,39 @@ jobs:
         run: pwd && ls
         # run: rm -rf node_modules && pwd && ls
 
-      - name: DEPOLY
-        uses: easingthemes/ssh-deploy@v2.1.5
+      - name: DEPLOY DEV
+        uses: cross-the-world/ssh-scp-ssh-pipelines@latest
         env:
-          SSH_PRIVATE_KEY: ${{ secrets.DEPLOY_KEY }} # 引用配置，SSH私钥
-          ARGS: -avz --delete --exclude='*.pyc' # rsync参数，排除.pyc文件
-          SOURCE: './' # 将要复制到云服务器的静态文件夹
-          REMOTE_HOST: ${{ secrets.SSH_HOST }} # 引用配置，服务器的host名（IP或者域名domain.com）
-          REMOTE_USER: ${{ secrets.SSH_USERNAME }} # 引用配置，服务器登录名
-          TARGET: '/home/soul_dev/source/' # 打包后的文件夹将放在目录
-          EXCLUDE: './node_modules/,/.git/,.git/**,/node_modules/,/node_modules/**'
+          WELCOME: 'Start Deploy'
+          LASTSSH: 'Done Deploy'
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          user: ${{ secrets.SSH_USERNAME }}
+          connect_timeout: 10s
+          first_ssh: |-
+            ls -la
+            echo $WELCOME
+            git checkout .
+            git fetch -all
+            git checkout dev
+            git pull --force origin dev:dev
+          scp: |-
+            './build/*' => $TARGET_DEV_DIR/build/
+          last_ssh: |-
+            pwd
+            ls
+            yarn install
+            yarn server:dev
+            pm2 restart all
+            echo $LASTSSH
+
+      # - name: DEPOLY
+      #   uses: easingthemes/ssh-deploy@v2.1.5
+      #   env:
+      #     SSH_PRIVATE_KEY: ${{ secrets.DEPLOY_KEY }} # 引用配置，SSH私钥
+      #     ARGS: -avz --delete --exclude='*.pyc' # rsync参数，排除.pyc文件
+      #     SOURCE: './' # 将要复制到云服务器的静态文件夹
+      #     REMOTE_HOST: ${{ secrets.SSH_HOST }} # 引用配置，服务器的host名
+      #     REMOTE_USER: ${{ secrets.SSH_USERNAME }} # 引用配置，服务器登录名
+      #     TARGET: '/home/soul_dev/source/' # 打包后的文件夹将放在目录
+      #     EXCLUDE: './node_modules/,/.git/,.git/**,/node_modules/,/node_modules/**'
