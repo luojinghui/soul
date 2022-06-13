@@ -33,4 +33,5 @@ jobs:
           SOURCE: '../ ' # 将要复制到云服务器的静态文件夹
           REMOTE_HOST: ${{ secrets.SSH_HOST }} # 引用配置，服务器的host名（IP或者域名domain.com）
           REMOTE_USER: ${{ secrets.SSH_USERNAME }} # 引用配置，服务器登录名
-          TARGET: '/home/soul/' # 打包后的文件夹将放在目录
+          TARGET: '/home/soul_dev/' # 打包后的文件夹将放在目录
+          EXCLUDE: /node_modules/
