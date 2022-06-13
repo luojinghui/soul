@@ -24,9 +24,9 @@ jobs:
 
       - name: BUILD
         run: yarn build
-        run: rm -rf node_modules
-        run: pwd
-        run: ls
+
+      - name: CLEAR
+        run: rm -rf node_modules && pwd && ls
 
       - name: DEPOLY
         uses: easingthemes/ssh-deploy@v2.1.5
