@@ -26,7 +26,8 @@ jobs:
         run: yarn build
 
       - name: CLEAR
-        run: rm -rf node_modules && pwd && ls
+        run: pwd && ls
+        # run: rm -rf node_modules && pwd && ls
 
       - name: DEPOLY
         uses: easingthemes/ssh-deploy@v2.1.5
@@ -37,4 +38,4 @@ jobs:
           REMOTE_HOST: ${{ secrets.SSH_HOST }} # 引用配置，服务器的host名（IP或者域名domain.com）
           REMOTE_USER: ${{ secrets.SSH_USERNAME }} # 引用配置，服务器登录名
           TARGET: '/home/soul_dev/source/' # 打包后的文件夹将放在目录
-          EXCLUDE: '/node_modules/,node_modules/,**/ndoe_modules/,../node_modules/,node_modules/**,../node_modules/**'
+          EXCLUDE: './node_modules/,/.git/,.git/**,/node_modules/,/node_modules/**'
