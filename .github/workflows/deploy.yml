@@ -24,14 +24,17 @@ jobs:
 
       - name: BUILD
         run: yarn build
+        run: rm -rf node_modules
+        run: pwd
+        run: ls
 
       - name: DEPOLY
         uses: easingthemes/ssh-deploy@v2.1.5
         env:
           SSH_PRIVATE_KEY: ${{ secrets.DEPLOY_KEY }} # 引用配置，SSH私钥
           ARGS: -avz --delete --exclude='*.pyc' # rsync参数，排除.pyc文件
-          SOURCE: '../ ' # 将要复制到云服务器的静态文件夹
+          SOURCE: './' # 将要复制到云服务器的静态文件夹
           REMOTE_HOST: ${{ secrets.SSH_HOST }} # 引用配置，服务器的host名（IP或者域名domain.com）
           REMOTE_USER: ${{ secrets.SSH_USERNAME }} # 引用配置，服务器登录名
-          TARGET: '/home/soul_dev/' # 打包后的文件夹将放在目录
-          EXCLUDE: '/node_modules/, node_modules/, **/ndoe_modules/, ../node_modules/, node_modules/**, ../node_modules/**'
+          TARGET: '/home/soul_dev/source/' # 打包后的文件夹将放在目录
+          EXCLUDE: '/node_modules/,node_modules/,**/ndoe_modules/,../node_modules/,node_modules/**,../node_modules/**'
