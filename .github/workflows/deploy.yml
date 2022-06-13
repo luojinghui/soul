@@ -28,9 +28,8 @@ jobs:
       - name: BUILD
         run: yarn build
 
-      - name: CLEAR
+      - name: INFO
         run: pwd && ls
-        # run: rm -rf node_modules && pwd && ls
 
       - name: DEPLOY DEV
         uses: cross-the-world/ssh-scp-ssh-pipelines@latest
@@ -43,11 +42,12 @@ jobs:
           pass: ${{ secrets.SSH_PWD }}
           connect_timeout: 10s
           first_ssh: |-
+            pwd
             ls -la
             echo $WELCOME
             cd $TARGET_DEV_DIR
             git checkout .
-            git fetch -all
+            git fetch --all
             git checkout dev
             git pull --force origin dev:dev
           scp: |-
