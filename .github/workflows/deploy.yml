@@ -34,20 +34,20 @@ jobs:
           connect_timeout: 10s
           first_ssh: |-
             pwd
-            ls -la
-            echo $WELCOME
-            cd $TARGET_DEV_DIR
-            git checkout .
-            git fetch --all
-            git checkout dev
-            git pull --force origin dev
-          last_ssh: |-
-            cd $TARGET_DEV_DIR
-            whoami
-            export NVM_DIR=~/.nvm
-            source ~/.nvm/nvm.sh
-            yarn install
-            yarn build
-            yarn server:dev
-            pm2 restart all
-            echo $LASTSSH
+          #   ls -la
+          #   echo $WELCOME
+          #   cd $TARGET_DEV_DIR
+          #   git checkout .
+          #   git fetch --all
+          #   git checkout dev
+          #   git pull --force origin dev
+          # last_ssh: |-
+          #   cd $TARGET_DEV_DIR
+          #   whoami
+          #   export NVM_DIR=~/.nvm
+          #   source ~/.nvm/nvm.sh
+          #   yarn install
+          #   yarn build
+          #   yarn server:dev
+          #   pm2 restart all
+          #   echo $LASTSSH
