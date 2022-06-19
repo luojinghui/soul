@@ -5,12 +5,12 @@
  * @author jinghui-Luo
  *
  * Created at     : 2021-04-09 14:07:55
- * Last modified  : 2022-06-13 00:57:31
+ * Last modified  : 2022-06-14 13:12:05
  */
 
 // 开发环境：8888
 // 线上环境：8001
-let port = 3000;
+let port = 3001;
 
 // if (process.env.NODE_ENV === "development") {
 //   port = 8888;

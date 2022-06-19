@@ -6,7 +6,7 @@
  * @author jinghui-Luo
  *
  * Created at     : 2021-04-09 14:22:59
- * Last modified  : 2022-06-13 01:09:08
+ * Last modified  : 2022-06-18 01:38:18
  */
 
 const express = require('express');
@@ -14,8 +14,18 @@ const path = require('path');
 const compression = require('compression');
 const routing = require('./server/routes/router.js');
 const { port } = require('./server/config/index');
+const { Server } = require('socket.io');
+const { createServer } = require('http');
+const onIMSocket = require('./server/controller/imSocket');
 
 const app = express();
+
+const server = createServer(app);
+const io = new Server(server, { cors: true, path: '/im' });
+
+io.on('connection', (socket) => {
+  onIMSocket(socket, io);
+});
 
 const allowCrossDomain = (req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
@@ -42,7 +52,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', routing);
 
-app.listen(port, () => {
+server.listen(port, () => {
   console.log('current env: ', process.env.NODE_ENV);
   console.log('listening on: ', port);
 });

@@ -5,12 +5,13 @@
  * @author jinghui-Luo
  *
  * Created at     : 2021-04-09 14:17:34
- * Last modified  : 2022-06-13 01:25:59
+ * Last modified  : 2022-06-14 14:22:12
  */
 
 const express = require('express');
 const axios = require('axios');
 const https = require('https');
+const path = require('path');
 
 const router = express.Router();
 
@@ -27,16 +28,24 @@ router.get('/api/happy/wrappaper', async (req, res) => {
   const url = `https://service.picasso.adesk.com/v1/vertical/vertical?limit=${pageSize}&skip=${
     skip || 0
   }&adult=false&first=1&order=hot`;
-  const instance = axios.create({
-    httpsAgent: new https.Agent({
-      rejectUnauthorized: false,
-    }),
-  });
+  console.log('url: ', url);
+
+  // const instance = axios.create({
+  //   httpsAgent: new https.Agent({
+  //     rejectUnauthorized: false,
+  //   }),
+  // });
+
+  // const agent = new https.Agent({
+  //   rejectUnauthorized: false,
+  // });
+
   try {
     console.log('success');
 
-    const result = await instance.get(url, {
+    const result = await axios.get(url, {
       headers: { ...req.headers },
+      // httpsAgent: agent,
     });
 
     res.json({
@@ -53,8 +62,6 @@ router.get('/api/happy/wrappaper', async (req, res) => {
       code: 400,
     });
   }
-
-  console.log('333');
 });
 
 // 获取转发图片内容
@@ -95,7 +102,7 @@ router.get('/*', (req, res) => {
   const file = path.join(__dirname, 'build', 'index.html');
 
   res.sendFile(file, () => {
-    res.send('稍等片刻，文档正在更新中');
+    console.log('error send file');
   });
 });
 
