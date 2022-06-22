@@ -5,21 +5,64 @@
  * @author jinghui-Luo
  *
  * Created at     : 2021-04-09 14:17:34
- * Last modified  : 2022-06-14 14:22:12
+ * Last modified  : 2022-06-23 00:33:54
  */
 
 const express = require('express');
 const axios = require('axios');
 const https = require('https');
 const path = require('path');
+const { connectDB, disconnectDB } = require('../db/index');
+const { userModel } = require('../db/userModel');
 
 const router = express.Router();
 
-router.get('/api/test', async (req, res) => {
+router.get('/api/rest/test', async (req, res) => {
   res.json({
     data: 'hello world',
     msg: 'success',
     code: 200,
+  });
+});
+
+router.get('/api/rest/registerUser', async (req, res) => {
+  const result = await connectDB();
+
+  if (result) {
+    const initData = {
+      name: `星球用户_${Math.ceil(Math.random() * 10000)}`,
+      avatar: `${Math.ceil(Math.random() * 11)}`,
+      age: 18,
+      address: '',
+      avatarType: 'Local',
+      sex: '',
+    };
+    const user = new userModel(initData);
+    user.save(async (err) => {
+      if (err) {
+        console.log('save error:' + err);
+      }
+
+      console.log('save sucess');
+      await disconnectDB();
+    });
+
+    res.json({
+      data: {
+        name: user.name,
+        id: user.id,
+        avatar: user.avatar,
+        avatarType: user.avatarType,
+      },
+      msg: 'success',
+      code: 200,
+    });
+  }
+
+  res.status(500).json({
+    data: '',
+    code: 500,
+    msg: 'db error',
   });
 });
 

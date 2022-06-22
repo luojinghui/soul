@@ -1,6 +1,9 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { Input, Button } from 'antd';
+import { LeftOutlined, SettingOutlined } from '@ant-design/icons';
+import { imServer } from '../../enum';
+import { useNavigate, useLocation } from 'react-router-dom';
 import './index.less';
 
 function IM() {
@@ -10,8 +13,14 @@ function IM() {
   const msgRef = useRef('');
 
   const [meetingId, setMeetingId] = useState('');
-  const [state, setState] = useState('login');
+  // disconnect, connect, room
+  const [state, setState] = useState('disconnect');
   const [list, setList] = useState([]);
+
+  const navigate = useNavigate();
+  let location = useLocation();
+
+  console.log('location: ', location);
 
   useEffect(() => {
     return () => {
@@ -23,10 +32,16 @@ function IM() {
     listRef.current = list;
   }, [list]);
 
-  const onJoin = useCallback(() => {
+  useEffect(() => {
+    onConnectWss();
+  }, []);
+
+  const onConnectWss = useCallback(() => {
     console.log(`${meetingId} is connected`);
     // 连接信令服务器
-    socketRef.current = io('ws://localhost:3001', {
+    console.log('imServer: ', imServer);
+
+    socketRef.current = io(imServer, {
       path: '/im',
     });
 
@@ -49,19 +64,34 @@ function IM() {
           setList(newList);
 
           break;
+        case 'rooms':
+          console.log('rooms: ', data);
+
+          break;
       }
     });
 
     socketRef.current.on('connect', () => {
       console.log('im connected: ', meetingId);
-      setState('joined');
+      setState('connect');
 
       sendMessage({
-        type: 'join',
+        type: 'connected',
         data: {},
       });
     });
   }, [meetingId]);
+
+  const onJoin = () => {
+    sendMessage({
+      type: 'join',
+      data: {},
+    });
+
+    setState('room');
+
+    navigate(`./?roomId=${meetingId}`);
+  };
 
   const sendMessage = useCallback(
     (data: Object) => {
@@ -106,8 +136,13 @@ function IM() {
     sendMessage(data);
   };
 
+  const onBack = () => {
+    // navigate('../', { replace: true });
+    navigate(-1);
+  };
+
   const renderContent = () => {
-    if (state === 'joined') {
+    if (state === 'room') {
       return (
         <div>
           <div>
@@ -129,12 +164,16 @@ function IM() {
       );
     }
 
-    if (state === 'login') {
+    if (state === 'connect' || state === 'disconnect') {
       return (
         <div className="form">
           <div className="box">
-            <Input placeholder="房间号" onChange={onInput}></Input>
-            <Input placeholder="用户名" onChange={onInputName}></Input>
+            <div className="input">
+              <Input placeholder="房间号" onChange={onInput}></Input>
+            </div>
+            <div className="input">
+              <Input placeholder="用户名" onChange={onInputName}></Input>
+            </div>
             <Button type="primary" className="join" onClick={onJoin}>
               加入聊天室
             </Button>
@@ -145,8 +184,16 @@ function IM() {
   };
 
   return (
-    <div className="App">
-      <header className="App-header"></header>
+    <div className="app">
+      <header className="header">
+        <div>
+          <LeftOutlined className="operate back" onClick={onBack} />
+        </div>
+        <div>房间</div>
+        <div>
+          <SettingOutlined className="operate setting" />
+        </div>
+      </header>
       <div className="content">{renderContent()}</div>
     </div>
   );

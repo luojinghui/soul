@@ -3,14 +3,41 @@ import { getTimeText } from './utils';
 import { NavLink } from 'react-router-dom';
 import './index.less';
 import { message } from 'antd';
-import { SmileTwoTone, SettingOutlined } from '@ant-design/icons';
+import { SettingOutlined } from '@ant-design/icons';
+import action from '@/action';
+import { AvatarMap } from '@/components';
+
+import { UserInfo } from '@/enum';
 
 function App() {
   const [time, setTime] = useState('');
+  const [user, setUser] = useState<any>({});
 
   useEffect(() => {
     setTime(getTimeText());
   });
+
+  useEffect(() => {
+    (async () => {
+      const userInfo = localStorage.getItem(UserInfo);
+      console.log('userInfo: ', userInfo);
+
+      if (!userInfo) {
+        const res = await action.registerUser();
+
+        console.log('res: ', res);
+
+        if (res?.code === 200) {
+          localStorage.setItem(UserInfo, JSON.stringify(res.data));
+          setUser(res.data);
+        } else {
+          setUser({});
+        }
+      } else {
+        setUser(JSON.parse(userInfo));
+      }
+    })();
+  }, []);
 
   const onPush = () => {
     message.info('装修中，敬请期待');
@@ -30,12 +57,20 @@ function App() {
               alt="avatar"
               className="img"
             /> */}
-            <SmileTwoTone className="img icon" />
+            <img
+              src={
+                user.avatarType === 'Local'
+                  ? AvatarMap[user.avatar]
+                  : user.avatar
+              }
+              alt="girl"
+              className="img"
+            />
           </div>
 
           <div className="name">
-            <span className="time">{time}</span>
-            {/* <span className="time">匿名用户</span> */}
+            <span className="time">{time}，</span>
+            <span className="time">{user.name || '...'}</span>
           </div>
         </div>
 
@@ -57,7 +92,7 @@ function App() {
 
         <div className="footer">
           <div className="setting">
-            <SettingOutlined className='setting-icon'/>
+            <SettingOutlined className="setting-icon" />
           </div>
         </div>
       </div>

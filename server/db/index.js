@@ -5,35 +5,19 @@
  * @author jinghui-Luo
  *
  * Created at     : 2021-04-07 16:48:07
- * Last modified  : 2022-06-13 01:01:26
+ * Last modified  : 2022-06-23 00:52:58
  */
 
 const mongoose = require('mongoose');
-const { Schema, model } = mongoose;
 
-const isDev = process.env.NODE_ENV === 'development';
-
-const DBHOST = 'mongodb://root:xxx@127.0.0.1:27017/sdk_doc?authSource=admin';
-
-const FeedbackModelSchema = new Schema({
-  url: String,
-  comment: String,
-  contact: String,
-  mark: Number,
-  createTime: { type: Date, default: Date.now },
-  note: String,
-});
-
-const FeedbackModel = model(
-  'FeedbackModel',
-  FeedbackModelSchema,
-  isDev ? 'feedback_dev' : 'feedback_prd'
-);
+const DBHOST =
+  'mongodb://admin:xxxoooyyy123!@127.0.0.1:27017/soul_test?authSource=admin';
 
 const connectDB = () => {
   return new Promise((resolve, reject) => {
     mongoose.connect(DBHOST, {
       useNewUrlParser: true,
+      authSource: 'admin',
       useUnifiedTopology: true,
     });
 
@@ -63,7 +47,6 @@ const disconnectDB = async () => {
 };
 
 module.exports = {
-  FeedbackModel,
   connectDB,
   disconnectDB,
 };

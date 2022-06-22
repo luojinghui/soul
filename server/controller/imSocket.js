@@ -28,6 +28,23 @@ const onIMSocket = (socket, io) => {
     const { type, data, meetingId, name } = JSON.parse(msg);
 
     switch (type) {
+      case 'connected':
+        console.log('meetingMap: ', meetingMap);
+
+        const meetingRooms = [];
+
+        for (let key in meetingMap) {
+          meetingRooms.push(key);
+        }
+
+        const rooms = {
+          type: 'rooms',
+          data: meetingRooms,
+          msg: 'All rooms',
+        };
+
+        sendMessage(rooms, '', socket);
+        break;
       case 'join':
         console.log('join user: ', name);
 

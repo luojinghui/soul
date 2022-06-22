@@ -1,9 +1,53 @@
+
 .box {
   max-width: 300px;
   margin: 66px auto 30px;
   text-align: center;
 }
 
+.app {
+  height: 100vh;
+  width: 100vw;
+  overflow-y: auto;
+
+  .header {
+    height: 42px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 4px 3px 10px 0px #e6e6e7;
+
+    .operate {
+      font-size: 20px;
+      padding: 10px 10px;
+      cursor: pointer;
+      color: #666;
+      transition: color ease 0.5s;
+
+      &:hover {
+        color: #333;
+      }
+
+      &:active {
+        color: #000;
+      }
+    }
+
+    .back {
+    }
+
+    .setting {
+      font-size: 18px;
+      padding: 11px 10px;
+    }
+  }
+}
+
 .join {
-  margin-top: 50px;
+  margin-top: 30px;
+}
+
+.input {
+  margin-bottom: 15px;
 }

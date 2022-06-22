@@ -3,11 +3,12 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "start": "craco start",
+    "start": "cross-env REACT_APP_ENV=dev && craco start",
     "server": "node server.js",
     "server:dev": "cross-env NODE_ENV=developer && pm2 start server.js --name soul-dev-server -o ./logs/out.log -e ./logs/error.log",
     "server:prd": "cross-env NODE_ENV=production && pm2 start server.js --name soul-prd-server -o ./logs/out.log -e ./logs/error.log",
-    "build": "craco build",
+    "build:dev": "cross-env REACT_APP_ENV=developer && craco build",
+    "build:prd": "cross-env REACT_APP_ENV=production && craco build",
     "test": "craco test",
     "eject": "react-scripts eject"
   },
@@ -55,7 +56,7 @@
     "craco-less": "^2.0.0",
     "cross-env": "^7.0.3",
     "express": "^4.18.1",
-    "mongoose": "^6.3.6",
+    "mongoose": "^6.4.0",
     "socket.io": "^4.5.1"
   }
 }
