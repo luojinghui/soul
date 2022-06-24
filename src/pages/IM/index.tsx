@@ -61,6 +61,10 @@ function IM() {
       } else {
         setUser(userInfo);
       }
+
+      setTimeout(() => {
+        onConnectWss();
+      }, 0);
     })();
   }, []);
 
@@ -72,10 +76,6 @@ function IM() {
   useEffect(() => {
     listRef.current = list;
   }, [list]);
-
-  useEffect(() => {
-    onConnectWss();
-  }, []);
 
   const onConnectWss = useCallback(() => {
     // 连接信令服务器
