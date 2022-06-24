@@ -27,6 +27,9 @@ function IM() {
   const nameRef = useRef('');
   const listRef = useRef([]);
   const msgRef = useRef('');
+  const chatRef = useRef(null);
+  const contentRef = useRef(null);
+  const formRef = useRef(null);
   const userRef = useRef<any>({});
 
   const [meetingId, setMeetingId] = useState('');
@@ -89,6 +92,9 @@ function IM() {
           console.log('history-data: ', data);
           setList(data);
 
+          setTimeout(() => {
+            scrollDown();
+          }, 1);
           break;
         case 'remote-chat':
           console.log('history-data: ', data);
@@ -96,6 +102,10 @@ function IM() {
           newList.push(data);
 
           setList(newList);
+
+          setTimeout(() => {
+            scrollDown();
+          }, 1);
           break;
         case 'rooms':
           console.log('rooms: ', data);
@@ -128,23 +138,11 @@ function IM() {
       console.log('success send msg: ', nextData);
 
       socketRef.current?.send(nextData);
+      // @ts-ignore
+      formRef.current.resetFields();
     },
     [meetingId]
   );
-
-  const onInput = (val: any) => {
-    if (val.target.value) {
-      setMeetingId(val.target.value);
-    }
-  };
-
-  const onInputName = (val: any) => {
-    nameRef.current = val.target.value;
-  };
-
-  const onInputMsg = (val: any) => {
-    msgRef.current = val.target.value;
-  };
 
   const onSend = () => {
     const data = {
@@ -175,10 +173,19 @@ function IM() {
     onSend();
   };
 
+  const scrollDown = () => {
+    console.log('chatRef.current: ', chatRef.current);
+    // @ts-ignore
+    console.log('chatRef.current: ', chatRef.current?.scrollHeight);
+
+    // @ts-ignore
+    contentRef.current.scrollTop = chatRef.current?.scrollHeight;
+  };
+
   const renderContent = () => {
     return (
       <>
-        <div className="chats">
+        <div className="chats" ref={chatRef}>
           {list.map((item: any) => {
             return (
               <div
@@ -189,7 +196,8 @@ function IM() {
               >
                 <div className="avatar">
                   <img
-                    src="https://api.dujin.org/bing/1920.php"
+                    // src="https://api.dujin.org/bing/1920.php"
+                    src={userAvatar}
                     alt="avatar"
                     className="img"
                   />
@@ -245,10 +253,13 @@ function IM() {
           </div>
         </div>
       </header>
-      <div className="content">{renderContent()}</div>
+      <div className="content" ref={contentRef}>
+        {renderContent()}
+      </div>
 
       <div className="im-footer">
         <Form
+          ref={formRef}
           className="msg"
           name="msg"
           onFinish={onIinputMsg}
