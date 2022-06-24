@@ -6,6 +6,12 @@ import {
   LeftOutlined,
   SettingOutlined,
   PlusOutlined,
+  SmileOutlined,
+  PictureOutlined,
+  FolderOpenOutlined,
+  PictureFilled,
+  FolderOpenFilled,
+  SmileFilled,
 } from '@ant-design/icons';
 import { imServer } from '../../enum';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -210,7 +216,11 @@ function IM() {
             return (
               <div key={item.id} className="chat">
                 <div className="avatar">
-                  <img src="https://api.dujin.org/bing/1920.php" alt="avatar" />
+                  <img
+                    src="https://api.dujin.org/bing/1920.php"
+                    alt="avatar"
+                    className="img"
+                  />
                 </div>
                 <div className="chat-content">
                   <div className="name">{item.sender}</div>
@@ -222,36 +232,6 @@ function IM() {
               </div>
             );
           })}
-        </div>
-
-        {/* <div className="fixed">
-          <Input placeholder="输入内容" onChange={onInputMsg}></Input>
-          <Button type="primary" className="join" onClick={onSend}>
-            发送
-          </Button>
-        </div> */}
-
-        <div className="im-footer">
-          <div className="operate">
-            <span>操作条</span>
-          </div>
-          <div className="editer">
-            <Form
-              className="msg"
-              name="msg"
-              onFinish={onIinputMsg}
-              autoComplete="off"
-            >
-              <Form.Item name="msg" className="input">
-                <TextArea autoSize={{ minRows: 1, maxRows: 4 }} />
-              </Form.Item>
-              <Form.Item className="send">
-                <Button type="primary" htmlType="submit">
-                  发送
-                </Button>
-              </Form.Item>
-            </Form>
-          </div>
         </div>
       </>
     );
@@ -302,6 +282,38 @@ function IM() {
         </div>
       </header>
       <div className="content">{renderContent()}</div>
+
+      <div className="im-footer">
+        <Form
+          className="msg"
+          name="msg"
+          onFinish={onIinputMsg}
+          autoComplete="off"
+        >
+          <Form.Item name="msg" className="input">
+            <TextArea
+              className="msg-input"
+              autoSize={{ minRows: 1, maxRows: 4 }}
+            />
+          </Form.Item>
+          <Form.Item className="send">
+            <Button className="send-btn" type="primary" htmlType="submit">
+              发送
+            </Button>
+          </Form.Item>
+        </Form>
+        <div className="funcs">
+          <div className="func">
+            <SmileFilled className="icon" />
+          </div>
+          <div className="func">
+            <PictureFilled className="icon" />
+          </div>
+          <div className="func">
+            <FolderOpenFilled className="icon" />
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
