@@ -25,7 +25,7 @@ const onIMSocket = (socket, io) => {
   socket.on('message', (msg) => {
     console.log('msg: ', msg);
     console.log('msg: ', typeof msg);
-    const { type, data, meetingId, name } = JSON.parse(msg);
+    const { type, data, meetingId, userId } = msg;
 
     switch (type) {
       case 'connected':
@@ -46,11 +46,11 @@ const onIMSocket = (socket, io) => {
         sendMessage(rooms, '', socket);
         break;
       case 'join':
-        console.log('join user: ', name);
+        console.log('join user: ', userId);
 
-        userMap[name] = socket;
+        userMap[userId] = socket;
         socket.info = {
-          name,
+          userId,
           meetingId,
         };
         socket.join(meetingId);
@@ -105,11 +105,10 @@ const onIMSocket = (socket, io) => {
  * 发送消息，分为向当前用户发送、向房间内所有用户发送
  */
 const sendMessage = (data, meetingId, socket) => {
-  const parseData = JSON.stringify(data);
   const socketInstance = meetingId ? ioInstance.to(meetingId) : socket;
 
-  console.log('send msg: ', parseData);
-  socketInstance.emit('message', parseData);
+  console.log('send msg: ', data);
+  socketInstance.emit('message', data);
 };
 
 module.exports = onIMSocket;

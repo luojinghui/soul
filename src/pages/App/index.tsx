@@ -70,7 +70,7 @@ function App() {
               alt="avatar"
               className="img"
             /> */}
-            <img src={userAvatar} alt="userAvatar" className="img" />
+            <img src={userAvatar} alt="avatar" className="img" />
           </div>
 
           <div className="name">
@@ -88,7 +88,7 @@ function App() {
             <span className="link">博客</span>
           </div>
 
-          <NavLink to="/im" className="circle center swim">
+          <NavLink to="/im/888" className="circle center swim">
             <span className="link">聊天室</span>
           </NavLink>
         </div>

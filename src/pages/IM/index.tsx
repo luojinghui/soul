@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState, useMemo } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { Input, Button, Form } from 'antd';
 import {
@@ -6,17 +6,16 @@ import {
   LeftOutlined,
   SettingOutlined,
   PlusOutlined,
-  SmileOutlined,
-  PictureOutlined,
-  FolderOpenOutlined,
   PictureFilled,
   FolderOpenFilled,
   SmileFilled,
 } from '@ant-design/icons';
 import { imServer } from '../../enum';
-import { useNavigate, useLocation } from 'react-router-dom';
-
+import { useNavigate, useParams } from 'react-router-dom';
 import { parseMD } from '@/utils/markdown';
+import { AvatarMap } from '@/components';
+import { UserInfo, storage } from '@/utils/storage';
+import action from '@/action';
 
 import './index.less';
 import 'highlight.js/styles/github.css';
@@ -28,22 +27,44 @@ function IM() {
   const nameRef = useRef('');
   const listRef = useRef([]);
   const msgRef = useRef('');
+  const userRef = useRef<any>({});
 
   const [meetingId, setMeetingId] = useState('');
-  // disconnect, connect, room
-  const [state, setState] = useState('disconnect');
   const [list, setList] = useState([]);
+  const [user, setUser] = useState<any>({});
 
   const navigate = useNavigate();
-  let location = useLocation();
-
-  console.log('location: ', location);
+  const params = useParams();
 
   useEffect(() => {
     return () => {
       socketRef.current?.close();
     };
-  }, [meetingId]);
+  }, []);
+
+  useEffect(() => {
+    (async () => {
+      const userInfo = storage.get(UserInfo);
+
+      if (!userInfo) {
+        const res = await action.registerUser();
+
+        if (res?.code === 200) {
+          storage.set(UserInfo, res.data);
+          setUser(res.data);
+        } else {
+          setUser({});
+        }
+      } else {
+        setUser(userInfo);
+      }
+    })();
+  }, []);
+
+  useEffect(() => {
+    userRef.current = user;
+    console.log('userRef.current: ', userRef.current);
+  }, [user]);
 
   useEffect(() => {
     listRef.current = list;
@@ -54,18 +75,14 @@ function IM() {
   }, []);
 
   const onConnectWss = useCallback(() => {
-    console.log(`${meetingId} is connected`);
     // 连接信令服务器
-    console.log('imServer: ', imServer);
-
     socketRef.current = io(imServer, {
       path: '/im',
     });
 
     socketRef.current.on('message', (msg: any) => {
       console.log('msg: ', msg);
-      const parseMsg = JSON.parse(msg);
-      const { type, data } = parseMsg;
+      const { type, data } = msg;
 
       switch (type) {
         case 'history-msg':
@@ -79,7 +96,6 @@ function IM() {
           newList.push(data);
 
           setList(newList);
-
           break;
         case 'rooms':
           console.log('rooms: ', data);
@@ -89,35 +105,29 @@ function IM() {
     });
 
     socketRef.current.on('connect', () => {
-      console.log('im connected: ', meetingId);
+      console.log('wss connected: ', params.meetingId);
 
-      sendMessage({
-        type: 'connected',
-        data: {},
-      });
+      onJoinMeeting();
     });
   }, [meetingId]);
 
-  const onJoin = () => {
+  const onJoinMeeting = () => {
     sendMessage({
       type: 'join',
-      data: {},
+      data: null,
     });
-
-    navigate(`./?roomId=${meetingId}`);
   };
 
   const sendMessage = useCallback(
     (data: Object) => {
       const nextData = {
         ...data,
-        meetingId,
-        name: nameRef.current,
+        meetingId: params.meetingId,
+        userId: userRef.current.id,
       };
-      const stringData = JSON.stringify(nextData);
+      console.log('success send msg: ', nextData);
 
-      console.log('success send msg: ', stringData);
-      socketRef.current?.send(stringData);
+      socketRef.current?.send(nextData);
     },
     [meetingId]
   );
@@ -143,7 +153,7 @@ function IM() {
         text: msgRef.current,
         msgType: 'text',
         id: new Date().valueOf(),
-        sender: nameRef.current,
+        sender: userRef.current.id,
       },
     };
 
@@ -151,61 +161,18 @@ function IM() {
   };
 
   const onBack = () => {
-    // navigate('../', { replace: true });
-    navigate(-1);
+    navigate('../', { replace: true });
   };
 
   const onIinputMsg = (e: any) => {
-    console.log('handleEditorChange：', e);
+    console.log('input msg: ', e.msg);
 
     const result = parseMD.render(e.msg);
-
     console.log('result: ', result);
 
-    const list: any = [
-      {
-        id: 1,
-        sender: 'test',
-        text: result,
-      },
-      {
-        id: 2,
-        sender: 'test',
-        text: result,
-      },
-      {
-        id: 3,
-        sender: 'test',
-        text: result,
-      },
-      {
-        id: 4,
-        sender: 'test',
-        text: result,
-      },
-      {
-        id: 5,
-        sender: 'test',
-        text: result,
-      },
-      {
-        id: 6,
-        sender: 'test',
-        text: result,
-      },
-      {
-        id: 7,
-        sender: 'test',
-        text: result,
-      },
-      {
-        id: 8,
-        sender: 'test',
-        text: result,
-      },
-    ];
+    msgRef.current = result;
 
-    setList(list);
+    onSend();
   };
 
   const renderContent = () => {
@@ -214,7 +181,12 @@ function IM() {
         <div className="chats">
           {list.map((item: any) => {
             return (
-              <div key={item.id} className="chat">
+              <div
+                key={item.id}
+                className={`chat ${
+                  item.sender === userRef.current.id ? 'flex-right' : ''
+                }`}
+              >
                 <div className="avatar">
                   <img
                     src="https://api.dujin.org/bing/1920.php"
@@ -235,25 +207,21 @@ function IM() {
         </div>
       </>
     );
-
-    // if (state === 'connect' || state === 'disconnect') {
-    //   return (
-    //     <div className="form">
-    //       <div className="box">
-    //         <div className="input">
-    //           <Input placeholder="房间号" onChange={onInput}></Input>
-    //         </div>
-    //         <div className="input">
-    //           <Input placeholder="用户名" onChange={onInputName}></Input>
-    //         </div>
-    //         <Button type="primary" className="join" onClick={onJoin}>
-    //           加入聊天室
-    //         </Button>
-    //       </div>
-    //     </div>
-    //   );
-    // }
   };
+
+  const userAvatar = useMemo(() => {
+    const { avatar, avatarType } = user;
+
+    if (!avatar) {
+      return AvatarMap['1'];
+    }
+
+    if (avatarType === 'Local') {
+      return AvatarMap[avatar];
+    } else {
+      return avatar;
+    }
+  }, [user]);
 
   return (
     <div className="app">
@@ -273,11 +241,7 @@ function IM() {
             <SettingOutlined className="operate setting" />
           </div>
           <div className="avatar">
-            <img
-              src="https://joeschmoe.io/api/v1/random"
-              alt="avatar"
-              className="img"
-            />
+            <img src={userAvatar} alt="avatar" className="img" />
           </div>
         </div>
       </header>
