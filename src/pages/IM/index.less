@@ -1,4 +1,3 @@
-
 .box {
   max-width: 300px;
   margin: 66px auto 30px;
@@ -9,21 +8,62 @@
   height: 100vh;
   width: 100vw;
   overflow-y: auto;
+  background-color: rgb(232, 233, 232);
+
+  .content {
+    height: calc(100% - 200px - 42px);
+    overflow: auto;
+  }
 
   .header {
     height: 42px;
     width: 100%;
     display: flex;
+    font-size: 14px;
     align-items: center;
-    justify-content: space-between;
-    box-shadow: 4px 3px 10px 0px #e6e6e7;
+    padding-left: 0px;
+    justify-content: center;
+    box-shadow: 4px 3px 10px 0px #dadada;
+    position: relative;
+    background-color: rgb(232, 233, 232);
+
+    .left {
+      position: absolute;
+      left: 0;
+      height: 100%;
+    }
+
+    .right {
+      position: absolute;
+      right: 0;
+      height: 100%;
+      display: flex;
+
+      .avatar {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 42px;
+        cursor: pointer;
+
+        .img {
+          width: 30px;
+          height: 30px;
+          border-radius: 30px;
+          border: 1px solid #e5e5e5;
+        }
+      }
+    }
 
     .operate {
       font-size: 20px;
-      padding: 10px 10px;
+      padding: 0px 11px;
+      height: 100%;
       cursor: pointer;
       color: #666;
       transition: color ease 0.5s;
+      display: flex;
+      align-items: center;
 
       &:hover {
         color: #333;
@@ -34,12 +74,94 @@
       }
     }
 
-    .back {
-    }
-
     .setting {
       font-size: 18px;
       padding: 11px 10px;
+    }
+  }
+}
+
+.im-footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 200px;
+  background-color: rgb(244 244 244);
+
+  .editer {
+  }
+
+  .msg {
+    display: flex;
+
+    .input {
+      flex: 1;
+    }
+
+    .send {
+      width: 80px;
+    }
+  }
+}
+
+.chats {
+  .chat {
+    display: flex;
+    padding: 12px;
+  }
+
+  .avatar {
+    width: 44px;
+    height: 44px;
+    overflow: hidden;
+    border-radius: 4px;
+  }
+
+  .chat-content {
+    margin: 0 14px;
+  }
+
+  .name {
+    line-height: 1.2;
+    margin-bottom: 6px;
+  }
+
+  .html {
+    user-select: text;
+    padding: 12px;
+    background-color: #fff;
+    border-radius: 4px;
+    font-size: 14px;
+    position: relative;
+    min-width: 46px;
+    min-height: 42px;
+
+    &::after {
+      content: '';
+      width: 0;
+      height: 0;
+      border-top: 5px solid transparent;
+      border-right: 8px solid #fff;
+      border-bottom: 5px solid transparent;
+      position: absolute;
+      left: -8px;
+      top: 7px;
+    }
+
+    .hljs {
+      padding: 12px;
+      background-color: #ececec;
+      border-radius: 4px;
+      margin-top: 1em;
+    }
+
+    p {
+      margin: 0;
+    }
+
+    a {
+      color: #126dda;
     }
   }
 }
@@ -50,4 +172,13 @@
 
 .input {
   margin-bottom: 15px;
+}
+
+@media screen and (max-width: 666px) {
+  .app {
+    .header {
+      padding-left: 40px;
+      justify-content: flex-start;
+    }
+  }
 }

@@ -1,10 +1,21 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
-import { Input, Button } from 'antd';
-import { LeftOutlined, SettingOutlined } from '@ant-design/icons';
+import { Input, Button, Form } from 'antd';
+import {
+  SwapOutlined,
+  LeftOutlined,
+  SettingOutlined,
+  PlusOutlined,
+} from '@ant-design/icons';
 import { imServer } from '../../enum';
 import { useNavigate, useLocation } from 'react-router-dom';
+
+import { parseMD } from '@/utils/markdown';
+
 import './index.less';
+import 'highlight.js/styles/github.css';
+
+const { TextArea } = Input;
 
 function IM() {
   const socketRef = useRef<Socket | null>();
@@ -73,7 +84,6 @@ function IM() {
 
     socketRef.current.on('connect', () => {
       console.log('im connected: ', meetingId);
-      setState('connect');
 
       sendMessage({
         type: 'connected',
@@ -87,8 +97,6 @@ function IM() {
       type: 'join',
       data: {},
     });
-
-    setState('room');
 
     navigate(`./?roomId=${meetingId}`);
   };
@@ -141,57 +149,156 @@ function IM() {
     navigate(-1);
   };
 
-  const renderContent = () => {
-    if (state === 'room') {
-      return (
-        <div>
-          <div>
-            {list.map((item: any) => {
-              return (
-                <div key={item.id}>
-                  {item.sender}: {item.text}
-                </div>
-              );
-            })}
-          </div>
-          <div className="fixed">
-            <Input placeholder="输入内容" onChange={onInputMsg}></Input>
-            <Button type="primary" className="join" onClick={onSend}>
-              发送
-            </Button>
-          </div>
-        </div>
-      );
-    }
+  const onIinputMsg = (e: any) => {
+    console.log('handleEditorChange：', e);
 
-    if (state === 'connect' || state === 'disconnect') {
-      return (
-        <div className="form">
-          <div className="box">
-            <div className="input">
-              <Input placeholder="房间号" onChange={onInput}></Input>
-            </div>
-            <div className="input">
-              <Input placeholder="用户名" onChange={onInputName}></Input>
-            </div>
-            <Button type="primary" className="join" onClick={onJoin}>
-              加入聊天室
-            </Button>
+    const result = parseMD.render(e.msg);
+
+    console.log('result: ', result);
+
+    const list: any = [
+      {
+        id: 1,
+        sender: 'test',
+        text: result,
+      },
+      {
+        id: 2,
+        sender: 'test',
+        text: result,
+      },
+      {
+        id: 3,
+        sender: 'test',
+        text: result,
+      },
+      {
+        id: 4,
+        sender: 'test',
+        text: result,
+      },
+      {
+        id: 5,
+        sender: 'test',
+        text: result,
+      },
+      {
+        id: 6,
+        sender: 'test',
+        text: result,
+      },
+      {
+        id: 7,
+        sender: 'test',
+        text: result,
+      },
+      {
+        id: 8,
+        sender: 'test',
+        text: result,
+      },
+    ];
+
+    setList(list);
+  };
+
+  const renderContent = () => {
+    return (
+      <>
+        <div className="chats">
+          {list.map((item: any) => {
+            return (
+              <div key={item.id} className="chat">
+                <div className="avatar">
+                  <img src="https://api.dujin.org/bing/1920.php" alt="avatar" />
+                </div>
+                <div className="chat-content">
+                  <div className="name">{item.sender}</div>
+                  <div
+                    className="html"
+                    dangerouslySetInnerHTML={{ __html: item.text }}
+                  />
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* <div className="fixed">
+          <Input placeholder="输入内容" onChange={onInputMsg}></Input>
+          <Button type="primary" className="join" onClick={onSend}>
+            发送
+          </Button>
+        </div> */}
+
+        <div className="im-footer">
+          <div className="operate">
+            <span>操作条</span>
+          </div>
+          <div className="editer">
+            <Form
+              className="msg"
+              name="msg"
+              onFinish={onIinputMsg}
+              autoComplete="off"
+            >
+              <Form.Item name="msg" className="input">
+                <TextArea autoSize={{ minRows: 1, maxRows: 4 }} />
+              </Form.Item>
+              <Form.Item className="send">
+                <Button type="primary" htmlType="submit">
+                  发送
+                </Button>
+              </Form.Item>
+            </Form>
           </div>
         </div>
-      );
-    }
+      </>
+    );
+
+    // if (state === 'connect' || state === 'disconnect') {
+    //   return (
+    //     <div className="form">
+    //       <div className="box">
+    //         <div className="input">
+    //           <Input placeholder="房间号" onChange={onInput}></Input>
+    //         </div>
+    //         <div className="input">
+    //           <Input placeholder="用户名" onChange={onInputName}></Input>
+    //         </div>
+    //         <Button type="primary" className="join" onClick={onJoin}>
+    //           加入聊天室
+    //         </Button>
+    //       </div>
+    //     </div>
+    //   );
+    // }
   };
 
   return (
     <div className="app">
       <header className="header">
-        <div>
+        <div className="left">
           <LeftOutlined className="operate back" onClick={onBack} />
         </div>
-        <div>房间</div>
-        <div>
-          <SettingOutlined className="operate setting" />
+        <div>流浪星球</div>
+        <div className="right">
+          <div>
+            <PlusOutlined className="operate setting" />
+          </div>
+          <div>
+            <SwapOutlined className="operate setting" />
+          </div>
+          <div>
+            <SettingOutlined className="operate setting" />
+          </div>
+          <div className="avatar">
+            <img
+              src="https://joeschmoe.io/api/v1/random"
+              alt="avatar"
+              className="img"
+            />
+          </div>
         </div>
       </header>
       <div className="content">{renderContent()}</div>

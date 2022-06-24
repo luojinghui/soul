@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { getTimeText } from './utils';
 import { NavLink } from 'react-router-dom';
 import './index.less';
@@ -6,8 +6,7 @@ import { message } from 'antd';
 import { SettingOutlined } from '@ant-design/icons';
 import action from '@/action';
 import { AvatarMap } from '@/components';
-
-import { UserInfo } from '@/enum';
+import { UserInfo, storage } from '@/utils/storage';
 
 function App() {
   const [time, setTime] = useState('');
@@ -19,7 +18,7 @@ function App() {
 
   useEffect(() => {
     (async () => {
-      const userInfo = localStorage.getItem(UserInfo);
+      const userInfo = storage.get(UserInfo);
       console.log('userInfo: ', userInfo);
 
       if (!userInfo) {
@@ -28,13 +27,13 @@ function App() {
         console.log('res: ', res);
 
         if (res?.code === 200) {
-          localStorage.setItem(UserInfo, JSON.stringify(res.data));
+          storage.set(UserInfo, res.data);
           setUser(res.data);
         } else {
           setUser({});
         }
       } else {
-        setUser(JSON.parse(userInfo));
+        setUser(userInfo);
       }
     })();
   }, []);
@@ -47,6 +46,20 @@ function App() {
     window.open('http://luojh.me');
   };
 
+  const userAvatar = useMemo(() => {
+    const { avatar, avatarType } = user;
+
+    if (!avatar) {
+      return AvatarMap['1'];
+    }
+
+    if (avatarType === 'Local') {
+      return AvatarMap[avatar];
+    } else {
+      return avatar;
+    }
+  }, [user]);
+
   return (
     <div className="container">
       <div className={`bg12 bgAnimate`}>
@@ -57,15 +70,7 @@ function App() {
               alt="avatar"
               className="img"
             /> */}
-            <img
-              src={
-                user.avatarType === 'Local'
-                  ? AvatarMap[user.avatar]
-                  : user.avatar
-              }
-              alt="girl"
-              className="img"
-            />
+            <img src={userAvatar} alt="userAvatar" className="img" />
           </div>
 
           <div className="name">
@@ -83,11 +88,9 @@ function App() {
             <span className="link">博客</span>
           </div>
 
-          <div className="circle center swim">
-            <NavLink to="/im" className="link">
-              聊天室
-            </NavLink>
-          </div>
+          <NavLink to="/im" className="circle center swim">
+            <span className="link">聊天室</span>
+          </NavLink>
         </div>
 
         <div className="footer">
