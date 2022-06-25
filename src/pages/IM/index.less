@@ -8,6 +8,7 @@
   height: 100vh;
   width: 100vw;
   overflow-y: auto;
+  overflow-x: hidden;
   background-color: rgb(232, 233, 232);
 
   .content {
@@ -176,6 +177,8 @@
 
     .chat-content {
       margin: -2px 14px 0;
+      padding-right: 40px;
+      flex: 1;
     }
 
     .name {
@@ -192,6 +195,7 @@
       position: relative;
       min-width: 46px;
       min-height: 36px;
+      display: inline-block;
 
       &::after {
         content: '';
@@ -224,6 +228,12 @@
 
   .flex-right {
     flex-direction: row-reverse;
+    justify-content: flex-end;
+
+    .chat-content {
+      text-align: right;
+      padding-right: 0;
+    }
 
     .name {
       text-align: right;

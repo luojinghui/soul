@@ -6,51 +6,36 @@
  * @author jinghui-Luo
  *
  * Created at     : 2021-04-09 14:22:59
- * Last modified  : 2022-06-18 01:38:18
+ * Last modified  : 2022-06-26 01:29:37
  */
 
 const express = require('express');
 const path = require('path');
+const router = require('./server/router.js');
 const compression = require('compression');
-const routing = require('./server/routes/router.js');
+const chatController = require('./server/controller/chatController');
+const { createServer } = require('http');
+const { crossConfig } = require('./server/middleware/cros');
 const { port } = require('./server/config/index');
 const { Server } = require('socket.io');
-const { createServer } = require('http');
-const onIMSocket = require('./server/controller/imSocket');
 
 const app = express();
-
 const server = createServer(app);
 const io = new Server(server, { cors: true, path: '/im' });
 
+app
+  .use(crossConfig)
+  .use(compression())
+  .use(express.json())
+  .use(express.urlencoded({ extended: true }))
+  .use(express.static(path.join(__dirname, 'build')));
+
+// wss服务
 io.on('connection', (socket) => {
-  onIMSocket(socket, io);
+  chatController.onSocket(socket, io);
 });
-
-const allowCrossDomain = (req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header(
-    'Access-Control-Allow-Headers',
-    'Content-Type, Content-Length, Authorization, Accept, X-Requested-With'
-  );
-  res.header('Access-Control-Allow-Methods', 'PUT, POST, GET, DELETE, OPTIONS');
-
-  if (req.method == 'OPTIONS') {
-    res.send(200);
-  } else {
-    next();
-  }
-};
-
-app.use(allowCrossDomain);
-app.use(compression());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, 'build')));
-app.use(express.static(path.join(__dirname, 'dist')));
-app.use(express.static(path.join(__dirname, 'public')));
-
-app.use('/', routing);
+// rest服务
+app.use(router);
 
 server.listen(port, () => {
   console.log('current env: ', process.env.NODE_ENV);
