@@ -1,8 +1,20 @@
+/**
+ * 非打断空格转换为空格
+ *
+ * @param {string} text 字符串
+ * @returns
+ */
 const code160to32 = (text) => {
-  // 非打断空格转换为空格
   return text.replace(/\u00a0/g, ' ');
 };
 
+/**
+ * 获取params参数
+ *
+ * @param {string} name 参数名
+ * @param {string} url url名称
+ * @returns
+ */
 const getParameterByName = (name, url) => {
   name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
   const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
@@ -10,7 +22,9 @@ const getParameterByName = (name, url) => {
   return results === null ? '' : decodeURIComponent(results[1]);
 };
 
-// 返回一个随机的请求头 headers的UA
+/**
+ * 返回一个随机的请求头 headers的UA
+ */
 const USER_AGENT_LIST = [
   // 各种PC端
   // Safari
@@ -73,8 +87,37 @@ const getUserAgent = () => {
   return USER_AGENT_LIST[index];
 };
 
+/**
+ * 获取指定size的随机字符串
+ *
+ * @param {number} size 字符串大小
+ * @returns
+ */
+const getRandomString = (size = 32) => {
+  const randomChar = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678';
+  const randomCharLen = randomChar.length;
+  let randomStr = '';
+
+  for (i = 0; i < size; i++)
+    randomStr += randomChar.charAt(Math.floor(Math.random() * randomCharLen));
+  return randomStr;
+};
+
+/**
+ * 获取区间范围内的随机整数
+ *
+ * @param {number} min 最小值
+ * @param {number} max 最大值
+ * @returns number
+ */
+const getRandomNum = (min, max) => {
+  return Math.round(Math.random() * (max - min)) + min;
+};
+
 module.exports = {
   code160to32,
   getParameterByName,
   getUserAgent,
+  getRandomString,
+  getRandomNum,
 };

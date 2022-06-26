@@ -5,42 +5,38 @@
  * @author jinghui-Luo
  *
  * Created at     : 2021-04-07 16:48:07
- * Last modified  : 2022-06-26 01:23:50
+ * Last modified  : 2022-06-26 20:30:11
  */
 
 const mongoose = require('mongoose');
 
-const DBHOST = (tableName) =>
-  `mongodb://admin:xxxoooyyy123!@127.0.0.1:27017/${tableName}?authSource=admin`;
+const DBHOST = `mongodb://admin:xxxoooyyy123!@127.0.0.1:27017/soul_db?authSource=admin`;
 
 /**
  * 连接数据库
- *
- * @param {string} tableName 表名
- * @returns
  */
-const connectDB = (tableName) => {
+const connectDB = () => {
   return new Promise((resolve, reject) => {
-    mongoose.connect(DBHOST(tableName), {
+    mongoose.connect(DBHOST, {
       useNewUrlParser: true,
       authSource: 'admin',
       useUnifiedTopology: true,
     });
 
     // user是数据库名称
-    mongoose.connection.once('connected', function () {
+    mongoose.connection.on('connected', function () {
       console.log('MongoDB connected.');
 
       resolve(true);
     });
 
-    mongoose.connection.once('error', function () {
+    mongoose.connection.on('error', function () {
       console.log('MongoDB failed.');
 
       reject(false);
     });
 
-    mongoose.connection.once('disconnected', function (e) {
+    mongoose.connection.on('disconnected', function (e) {
       console.log('MongoDB connected disconnected.', e);
 
       reject(false);
@@ -49,6 +45,8 @@ const connectDB = (tableName) => {
 };
 
 const disconnectDB = async () => {
+  mongoose.connection.removeAllListeners();
+
   await mongoose.disconnect();
 };
 

@@ -19,9 +19,29 @@ class Action {
   }
 
   async registerUser() {
-    const sendUrl = `/api/rest/registerUser`;
+    const sendUrl = `/api/rest/user/register`;
 
-    return await this.http.get(sendUrl);
+    return await this.http.post(sendUrl, {
+      agent: navigator.userAgent,
+      platform: navigator.platform,
+    });
+  }
+
+  async getRoomInfo(roomId: string, userId: string) {
+    return await this.http.get(
+      `/api/rest/room/info?roomId=${roomId}&userId=${userId}`
+    );
+  }
+
+  async createRootRoom({ roomId, userId }: any) {
+    return await this.http.post(`/api/rest/room/createRoot`, {
+      roomId,
+      userId,
+    });
+  }
+
+  async createRoom(roomId: string, userId: string) {
+    return await this.http.post(`/api/rest/room/info`, { roomId, userId });
   }
 
   // async verifyPassword() {

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState, useMemo } from 'react';
 import { io, Socket } from 'socket.io-client';
-import { Input, Button, Form } from 'antd';
+import { Input, Button, Form, message } from 'antd';
 import {
   SwapOutlined,
   LeftOutlined,
@@ -25,19 +25,20 @@ const { TextArea } = Input;
 function IM() {
   const socketRef = useRef<Socket | null>();
   const nameRef = useRef('');
-  const listRef = useRef([]);
+  const messageListRef = useRef([]);
   const msgRef = useRef('');
   const chatRef = useRef(null);
   const contentRef = useRef(null);
   const formRef = useRef(null);
   const userRef = useRef<any>({});
+  const cacheUserMap = useRef<any>({});
 
-  const [meetingId, setMeetingId] = useState('');
-  const [list, setList] = useState([]);
+  const [messageList, setMessageList] = useState([]);
   const [user, setUser] = useState<any>({});
+  const [roomInfo, setRoomInfo] = useState<any>({});
 
   const navigate = useNavigate();
-  const params = useParams();
+  const params: any = useParams();
 
   useEffect(() => {
     return () => {
@@ -47,37 +48,54 @@ function IM() {
 
   useEffect(() => {
     (async () => {
-      const userInfo = storage.get(UserInfo);
+      let userInfo = storage.get(UserInfo);
 
       if (!userInfo) {
         const res = await action.registerUser();
 
+        console.log('register res: ', res);
+
         if (res?.code === 200) {
-          storage.set(UserInfo, res.data);
-          setUser(res.data);
-        } else {
-          setUser({});
+          userInfo = res.data;
         }
-      } else {
-        setUser(userInfo);
       }
 
-      setTimeout(() => {
-        onConnectWss();
-      }, 0);
+      storage.set(UserInfo, userInfo);
+      userRef.current = userInfo;
+      setUser(userInfo);
+
+      const { roomId } = params;
+      const { id: userId } = userInfo;
+      const result = await action.getRoomInfo(roomId, userId);
+
+      // 房间号不存在
+      if (result?.code === 204 && roomId !== '888') {
+        message.info('房间不存在，请先创建房间！');
+        return;
+      }
+
+      if (result?.code === 204 && roomId === '888') {
+        const createResult = await action.createRootRoom({ roomId, userId });
+
+        console.log('createResult: ', createResult);
+        if (createResult?.code === 200) {
+          setRoomInfo(createResult.data);
+          connectWss();
+          return;
+        } else {
+          message.info('创建房间失败，请稍后重试');
+          return;
+        }
+      }
+
+      if (result?.code === 200) {
+        setRoomInfo(result.data);
+        connectWss();
+      }
     })();
   }, []);
 
-  useEffect(() => {
-    userRef.current = user;
-    console.log('userRef.current: ', userRef.current);
-  }, [user]);
-
-  useEffect(() => {
-    listRef.current = list;
-  }, [list]);
-
-  const onConnectWss = useCallback(() => {
+  const connectWss = useCallback(() => {
     // 连接信令服务器
     socketRef.current = io(imServer, {
       path: '/im',
@@ -88,89 +106,85 @@ function IM() {
       const { type, data } = msg;
 
       switch (type) {
-        case 'history-msg':
-          console.log('history-data: ', data);
-          setList(data);
-
-          setTimeout(() => {
-            scrollDown();
-          }, 1);
+        case 'message_list':
+          console.log('message list: ', data);
+          setMessageList(data);
           break;
-        case 'remote-chat':
-          console.log('history-data: ', data);
-          const newList: any = [...listRef.current];
-          newList.push(data);
+        case 'message':
+          console.log('new message: ', data);
 
-          setList(newList);
+          const newList: any = [...messageListRef.current];
+          const nextData = {
+            ...data,
+            ...cacheUserMap.current[data.userId],
+          };
+          newList.push(nextData);
 
-          setTimeout(() => {
-            scrollDown();
-          }, 1);
+          messageListRef.current = newList;
+          setMessageList(newList);
+
+          console.log('newList:', newList);
           break;
-        case 'rooms':
-          console.log('rooms: ', data);
 
+        case 'users':
+          console.log('user list: ', data);
+
+          cacheUserMap.current = data;
           break;
       }
     });
 
     socketRef.current.on('connect', () => {
-      console.log('wss connected: ', params.meetingId);
+      console.log('wss connected: ', params.roomId);
 
-      onJoinMeeting();
+      sendMessage({ type: 'join', data: null });
     });
-  }, [meetingId]);
+  }, [params]);
 
-  const onJoinMeeting = () => {
-    sendMessage({
-      type: 'join',
-      data: null,
-    });
-  };
-
+  /**
+   * 发送wss消息
+   */
   const sendMessage = useCallback(
     (data: Object) => {
-      const nextData = {
+      const mergedData = {
         ...data,
-        meetingId: params.meetingId,
+        roomId: params.roomId,
         userId: userRef.current.id,
       };
-      console.log('success send msg: ', nextData);
 
-      socketRef.current?.send(nextData);
+      console.log('success send msg: ', mergedData);
+      socketRef.current?.send(mergedData);
+      // 重置输入框
       // @ts-ignore
       formRef.current.resetFields();
     },
-    [meetingId]
+    [params]
   );
-
-  const onSend = () => {
-    const data = {
-      type: 'chat',
-      data: {
-        text: msgRef.current,
-        msgType: 'text',
-        id: new Date().valueOf(),
-        sender: userRef.current.id,
-      },
-    };
-
-    sendMessage(data);
-  };
 
   const onBack = () => {
     navigate('../', { replace: true });
   };
 
-  const onIinputMsg = (e: any) => {
+  const onInputMsg = (e: any) => {
+    msgRef.current = parseMD.render(e.msg);
+
+    const data = {
+      type: 'chat',
+      data: {
+        content: msgRef.current,
+        msgType: 'text',
+        imageUrl: '',
+        fileUrl: '',
+        fileJson: '',
+        roomId: params.roomId,
+        userId: userRef.current.id,
+      },
+    };
+
     console.log('input msg: ', e.msg);
+    console.log('result: ', msgRef.current);
 
-    const result = parseMD.render(e.msg);
-    console.log('result: ', result);
-
-    msgRef.current = result;
-
-    onSend();
+    sendMessage(data);
   };
 
   const scrollDown = () => {
@@ -186,29 +200,31 @@ function IM() {
     return (
       <>
         <div className="chats" ref={chatRef}>
-          {list.map((item: any) => {
+          {messageList.map((item: any) => {
+            const { avatarType, userId, name, _id, content, avatar } = item;
+
             return (
               <div
-                key={item.id}
+                key={_id}
                 className={`chat ${
-                  item.sender === userRef.current.id ? 'flex-right' : ''
+                  userId === userRef.current.id ? 'flex-right' : ''
                 }`}
               >
                 <div className="avatar">
                   <img
                     // src="https://api.dujin.org/bing/1920.php"
-                    src={userAvatar}
+                    src={avatarType === 'Local' ? AvatarMap[avatar] : avatar}
                     alt="avatar"
                     className="img"
                   />
                 </div>
                 <div className="chat-content">
-                  {item.sender !== userRef.current.id && (
-                    <div className="name">{item.sender}</div>
+                  {userId !== userRef.current.id && (
+                    <div className="name">{name}</div>
                   )}
                   <div
                     className="html"
-                    dangerouslySetInnerHTML={{ __html: item.text }}
+                    dangerouslySetInnerHTML={{ __html: content }}
                   />
                 </div>
               </div>
@@ -239,7 +255,7 @@ function IM() {
         <div className="left">
           <LeftOutlined className="operate back" onClick={onBack} />
         </div>
-        <div>流浪星球</div>
+        <div>{roomInfo.roomName || ''}</div>
         <div className="right">
           <div>
             <PlusOutlined className="operate setting" />
@@ -264,7 +280,7 @@ function IM() {
           ref={formRef}
           className="msg"
           name="msg"
-          onFinish={onIinputMsg}
+          onFinish={onInputMsg}
           autoComplete="off"
         >
           <Form.Item name="msg" className="input">

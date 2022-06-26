@@ -5,12 +5,13 @@
  * @author jinghui-Luo
  *
  * Created at     : 2022-06-26 00:40:02
- * Last modified  : 2022-06-26 01:27:40
+ * Last modified  : 2022-06-26 23:09:02
  */
 
 const axios = require('axios');
-const { connectDB, disconnectDB } = require('../model/index');
 const { userModel } = require('../model/userModel');
+const { roomModel } = require('../model/roomModel');
+const { getRandomString, getRandomNum } = require('../utils/index');
 
 module.exports = {
   test: async (req, res) => {
@@ -22,17 +23,23 @@ module.exports = {
   },
 
   registerUser: async (req, res) => {
+    const { agent, platform } = req.body;
+
     try {
       const initData = {
-        name: `星球用户_${Math.ceil(Math.random() * 10000)}`,
-        avatar: `${Math.ceil(Math.random() * 11)}`,
-        age: 18,
+        name: `星球用户_${getRandomString(4)}`,
+        avatar: getRandomNum(0, 11),
+        age: '',
         address: '',
         avatarType: 'Local',
-        sex: '',
+        sex: 'boy',
+        phone: '',
+        pwd: getRandomString(8),
+        tag: [],
+        agent,
+        platform,
       };
 
-      await connectDB('soul_users');
       const user = await userModel.create(initData);
 
       res.json({
@@ -52,6 +59,77 @@ module.exports = {
         data: err,
         code: 500,
         msg: 'register error',
+      });
+    }
+  },
+
+  createRoom: async (req, res) => {
+    console.log('req: ', req);
+  },
+
+  createRoomRoot: async (req, res) => {
+    const { roomId, userId } = req.body;
+
+    try {
+      const query = await roomModel.create({
+        roomId,
+        roomName: '流浪星球',
+        roomTag: ['畅言', '篮球', '🍎'],
+        roomType: 'group',
+        roomDesc: '在流浪星球畅所欲言吧...',
+        pwd: '',
+        tableName: 'messages_1',
+        private: false,
+        allowSetting: true,
+        ownerId: userId,
+        userIds: [],
+        receiveId: '',
+        lastMsgId: '',
+        lastUserId: '',
+      });
+
+      res.json({
+        data: query,
+        code: 200,
+        msg: 'success',
+      });
+    } catch (err) {
+      console.log('err: ', err);
+
+      res.status(500).json({
+        data: err,
+        code: 500,
+        msg: 'create room error',
+      });
+    }
+  },
+
+  getRoomInfo: async (req, res) => {
+    const { roomId, userId } = req.query;
+
+    try {
+      const query = await roomModel.findOne({ roomId }).exec();
+
+      if (!query) {
+        res.json({
+          code: 204,
+          data: {},
+          msg: 'Not found room',
+        });
+      }
+
+      res.json({
+        code: 200,
+        data: query,
+        msg: 'success',
+      });
+    } catch (err) {
+      console.log('get room info err: ', err);
+
+      res.status(500).json({
+        data: err,
+        code: 500,
+        msg: 'getRoomInfo error',
       });
     }
   },

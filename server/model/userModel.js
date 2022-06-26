@@ -1,5 +1,8 @@
 const mongoose = require('mongoose');
 const { Schema, model } = mongoose;
+const { connectDB } = require('./index');
+
+connectDB();
 
 const UserModelSchema = new Schema({
   name: String,
@@ -20,12 +23,17 @@ const UserModelSchema = new Schema({
       message: '{VALUE} is not supported',
     },
   },
-  age: Number,
+  age: String,
   address: String,
+  phone: String,
+  pwd: String,
+  tag: Array,
+  agent: String,
+  platform: String,
   createTime: { type: Date, default: Date.now },
 });
 
-const userModel = model('soul_users', UserModelSchema);
+const userModel = model('users', UserModelSchema);
 
 module.exports = {
   userModel,

@@ -5,7 +5,7 @@
  * @author jinghui-Luo
  *
  * Created at     : 2022-06-26 00:15:45
- * Last modified  : 2022-06-26 00:15:45
+ * Last modified  : 2022-06-26 23:07:52
  */
 
 const crossConfig = (req, res, next) => {
@@ -17,7 +17,7 @@ const crossConfig = (req, res, next) => {
   res.header('Access-Control-Allow-Methods', 'PUT, POST, GET, DELETE, OPTIONS');
 
   if (req.method == 'OPTIONS') {
-    res.send(200);
+    res.sendStatus(200);
   } else {
     next();
   }

@@ -1,5 +1,8 @@
 const mongoose = require('mongoose');
 const { Schema, model } = mongoose;
+const { connectDB } = require('./index');
+
+connectDB();
 
 const FeedbackModelSchema = new Schema({
   url: String,
@@ -10,7 +13,7 @@ const FeedbackModelSchema = new Schema({
   note: String,
 });
 
-const FeedbackModel = model('FeedbackModel', FeedbackModelSchema);
+const FeedbackModel = model('feed_backs', FeedbackModelSchema);
 
 module.exports = {
   FeedbackModel,

@@ -8,8 +8,8 @@ export default function Router() {
   return (
     <Routes>
       <Route path="/" element={<App />} />
-      <Route path="/chat" element={<Navigate to="/im/888" />}></Route>
-      <Route path="/chat/:meetingId" element={<IM />} />
+      <Route path="/chat" element={<Navigate to="/chat/888" />}></Route>
+      <Route path="/chat/:roomId" element={<IM />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
