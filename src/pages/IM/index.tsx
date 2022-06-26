@@ -203,7 +203,9 @@ function IM() {
                   />
                 </div>
                 <div className="chat-content">
-                  <div className="name">{item.sender}</div>
+                  {item.sender !== userRef.current.id && (
+                    <div className="name">{item.sender}</div>
+                  )}
                   <div
                     className="html"
                     dangerouslySetInnerHTML={{ __html: item.text }}
