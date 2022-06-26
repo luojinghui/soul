@@ -13,7 +13,8 @@
 
   .content {
     height: calc(100% - var(--im-footer-height) - var(--im-header-height));
-    overflow: auto;
+    overflow-y: auto;
+    scroll-behavior: smooth;
   }
 
   .header {
@@ -96,6 +97,7 @@
     position: absolute;
     bottom: 0px;
     box-shadow: none !important;
+    padding-right: 70px;
   }
 
   .ant-input:focus,
@@ -178,7 +180,7 @@
 
     .chat-content {
       margin: -2px 14px 0;
-      padding-right: 40px;
+      padding-right: 30px;
       flex: 1;
     }
 
@@ -197,6 +199,7 @@
       min-width: 46px;
       min-height: 36px;
       display: inline-block;
+      cursor: default;
 
       &::after {
         content: '';
@@ -215,6 +218,8 @@
         background-color: #ececec;
         border-radius: 4px;
         margin-top: 1em;
+        word-break: break-all;
+        white-space: break-spaces;
       }
 
       p {
@@ -234,7 +239,7 @@
     .chat-content {
       text-align: right;
       padding-right: 0;
-      padding-left: 40px;
+      padding-left: 30px;
       margin: 0px 14px;
     }
 

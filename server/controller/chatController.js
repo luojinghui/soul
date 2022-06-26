@@ -1,3 +1,7 @@
+/**
+ * Chat Room Controller
+ */
+
 const { userModel } = require('../model/userModel');
 const { roomModel } = require('../model/roomModel');
 const { message2Model, messageModel } = require('../model/messageModel');
@@ -10,6 +14,12 @@ const messageModelMap = {
 const MessageTableByRoomId = {};
 let ioInstance = null;
 
+/**
+ * 处理Socket连接
+ *
+ * @param {Socket} socket socket实例
+ * @param {IO} io io实例
+ */
 const onSocket = (socket, io) => {
   ioInstance = io;
   console.log('im socket connected');
@@ -58,6 +68,11 @@ const leaveRoom = async ({ userId, roomId }) => {
   }
 };
 
+/**
+ * 处理接收到的聊天消息
+ *
+ * @param {Object} msg 消息内容
+ */
 const onReceiveChatMessage = async (msg) => {
   try {
     const { data, roomId, userId } = msg;
@@ -76,6 +91,12 @@ const onReceiveChatMessage = async (msg) => {
   }
 };
 
+/**
+ * 新用户加入聊天室
+ *
+ * @param {Socket} socket socket实例
+ * @param {Object} msg 消息内容
+ */
 const onJoinroom = async (socket, msg) => {
   const { roomId, userId } = msg;
 
@@ -132,13 +153,19 @@ const onJoinroom = async (socket, msg) => {
     };
     sendMessage(sendData, roomId, '');
 
-    // const msgModel = messageModelMap[tableName];
+    const msgModel = await getMessageModel(roomId);
+    const msgCount = await msgModel.countDocuments({ roomId }).exec();
+    const totalPage = Math.ceil(msgCount / 100);
+    console.log('totalPage: ', totalPage);
+    const pageMessageQuery = await msgModel
+      .find({ roomId })
+      .skip(0)
+      .limit(100)
+      .exec();
 
-    // TODO: 此处需要从数据库中获取前200条数据，用于历史数据的展示
-    const msgList = [];
     const historyData = {
       type: 'message_list',
-      data: msgList,
+      data: { totalPage, currentPage: 1, list: pageMessageQuery },
       msg: 'All msg list',
     };
 
@@ -157,7 +184,7 @@ const getMessageModel = async (roomId) => {
   let tableName = MessageTableByRoomId[roomId];
 
   if (!tableName) {
-    const query = await roomModel.findById(roomId).exec();
+    const query = await roomModel.findOne({ roomId }).exec();
 
     tableName = query.tableName;
   }

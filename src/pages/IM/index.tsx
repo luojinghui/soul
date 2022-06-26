@@ -1,4 +1,11 @@
-import { useCallback, useEffect, useRef, useState, useMemo } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  useMemo,
+  useLayoutEffect,
+} from 'react';
 import { io, Socket } from 'socket.io-client';
 import { Input, Button, Form, message } from 'antd';
 import {
@@ -15,6 +22,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { parseMD } from '@/utils/markdown';
 import { AvatarMap } from '@/components';
 import { UserInfo, storage } from '@/utils/storage';
+import { utcToTime } from '@/utils';
 import action from '@/action';
 
 import './index.less';
@@ -24,7 +32,6 @@ const { TextArea } = Input;
 
 function IM() {
   const socketRef = useRef<Socket | null>();
-  const nameRef = useRef('');
   const messageListRef = useRef([]);
   const msgRef = useRef('');
   const chatRef = useRef(null);
@@ -36,6 +43,10 @@ function IM() {
   const [messageList, setMessageList] = useState([]);
   const [user, setUser] = useState<any>({});
   const [roomInfo, setRoomInfo] = useState<any>({});
+  const [pageInfo, setPageInfo] = useState({
+    currentPage: 0,
+    totalPage: 0,
+  });
 
   const navigate = useNavigate();
   const params: any = useParams();
@@ -107,23 +118,35 @@ function IM() {
 
       switch (type) {
         case 'message_list':
-          console.log('message list: ', data);
-          setMessageList(data);
+          const { currentPage, list, totalPage } = data;
+
+          setPageInfo({
+            totalPage,
+            currentPage,
+          });
+
+          const nextList = list.map((item: any) => {
+            return {
+              ...item,
+              ...cacheUserMap.current[item.userId],
+              time: utcToTime(item.createTime),
+            };
+          });
+
+          messageListRef.current = nextList;
+          setMessageList(nextList);
           break;
         case 'message':
-          console.log('new message: ', data);
-
           const newList: any = [...messageListRef.current];
           const nextData = {
             ...data,
             ...cacheUserMap.current[data.userId],
+            time: utcToTime(data.createTime),
           };
           newList.push(nextData);
 
           messageListRef.current = newList;
           setMessageList(newList);
-
-          console.log('newList:', newList);
           break;
 
         case 'users':
@@ -186,6 +209,10 @@ function IM() {
 
     sendMessage(data);
   };
+
+  useLayoutEffect(() => {
+    scrollDown();
+  }, [messageList]);
 
   const scrollDown = () => {
     console.log('chatRef.current: ', chatRef.current);
