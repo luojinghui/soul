@@ -177,9 +177,6 @@ function IM() {
 
       console.log('success send msg: ', mergedData);
       socketRef.current?.send(mergedData);
-      // 重置输入框
-      // @ts-ignore
-      formRef.current.resetFields();
     },
     [params]
   );
@@ -208,6 +205,11 @@ function IM() {
     console.log('result: ', msgRef.current);
 
     sendMessage(data);
+
+    setTimeout(() => {
+      const inputRef: any = document.getElementById('msg-input');
+      inputRef.value = '';
+    }, 100);
   };
 
   useLayoutEffect(() => {
@@ -227,34 +229,37 @@ function IM() {
     return (
       <>
         <div className="chats" ref={chatRef}>
-          {messageList.map((item: any) => {
+          {messageList.map((item: any, index: number) => {
             const { avatarType, userId, name, _id, content, avatar } = item;
 
             return (
-              <div
-                key={_id}
-                className={`chat ${
-                  userId === userRef.current.id ? 'flex-right' : ''
-                }`}
-              >
-                <div className="avatar">
-                  <img
-                    // src="https://api.dujin.org/bing/1920.php"
-                    src={avatarType === 'Local' ? AvatarMap[avatar] : avatar}
-                    alt="avatar"
-                    className="img"
-                  />
+              <>
+                {index % 20 === 0 && <div className="time">{item.time}</div>}
+                <div
+                  key={_id}
+                  className={`chat ${
+                    userId === userRef.current.id ? 'flex-right' : ''
+                  }`}
+                >
+                  <div className="avatar">
+                    <img
+                      // src="https://api.dujin.org/bing/1920.php"
+                      src={avatarType === 'Local' ? AvatarMap[avatar] : avatar}
+                      alt="avatar"
+                      className="img"
+                    />
+                  </div>
+                  <div className="chat-content">
+                    {userId !== userRef.current.id && (
+                      <div className="name">{name}</div>
+                    )}
+                    <div
+                      className="html"
+                      dangerouslySetInnerHTML={{ __html: content }}
+                    />
+                  </div>
                 </div>
-                <div className="chat-content">
-                  {userId !== userRef.current.id && (
-                    <div className="name">{name}</div>
-                  )}
-                  <div
-                    className="html"
-                    dangerouslySetInnerHTML={{ __html: content }}
-                  />
-                </div>
-              </div>
+              </>
             );
           })}
         </div>
@@ -313,6 +318,7 @@ function IM() {
           <Form.Item name="msg" className="input">
             <TextArea
               className="msg-input"
+              id="msg-input"
               autoSize={{ minRows: 1, maxRows: 4 }}
             />
           </Form.Item>

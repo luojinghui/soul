@@ -15,10 +15,38 @@ export const utcToTime = (utc_datetime: string) => {
   // 增加8个小时，北京时间比utc时间多八个时区
   timestamp = timestamp + 8 * 60 * 60;
 
+  console.log(
+    'new Date(parseInt(timestamp) * 1000): ',
+    new Date(parseInt(timestamp) * 1000).valueOf()
+  );
+
   // 时间戳转为时间
-  const beijing_datetime = new Date(parseInt(timestamp) * 1000)
-    .toLocaleString()
-    .replace(/年|月/g, '-')
-    .replace(/日/g, ' ');
+  const beijing_datetime = getTime(
+    new Date(parseInt(timestamp) * 1000).valueOf(),
+    'M'
+  );
   return beijing_datetime;
+};
+
+const getTime = (data: any, type: any) => {
+  //data时间戳，type返回的类型默认Y,可传参Y和H
+  let time = new Date(data);
+  let Y = time.getFullYear();
+  let Mon = time.getMonth() + 1;
+  let Day = time.getDate();
+  let H = time.getHours();
+  let Min = time.getMinutes();
+  let S = time.getSeconds();
+
+  //自定义选择想要返回的类型
+  if (type === 'M') {
+    //返回年月日2020-10-10
+    return `${Mon}-${Day} ${H}:${Min}`;
+  } else if (type === 'H') {
+    //返回时分秒20：10：10
+    return `${H}:${Min}:${S}`;
+  } else {
+    //返回年月日时分秒2020-10-10 10:26:38
+    return `${Y}-${Mon}-${Day} ${H}:${Min}:${S}`;
+  }
 };
