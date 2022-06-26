@@ -15,11 +15,6 @@ export const utcToTime = (utc_datetime: string) => {
   // 增加8个小时，北京时间比utc时间多八个时区
   timestamp = timestamp + 8 * 60 * 60;
 
-  console.log(
-    'new Date(parseInt(timestamp) * 1000): ',
-    new Date(parseInt(timestamp) * 1000).valueOf()
-  );
-
   // 时间戳转为时间
   const beijing_datetime = getTime(
     new Date(parseInt(timestamp) * 1000).valueOf(),

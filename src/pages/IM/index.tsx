@@ -217,10 +217,6 @@ function IM() {
   }, [messageList]);
 
   const scrollDown = () => {
-    console.log('chatRef.current: ', chatRef.current);
-    // @ts-ignore
-    console.log('chatRef.current: ', chatRef.current?.scrollHeight);
-
     // @ts-ignore
     contentRef.current.scrollTop = chatRef.current?.scrollHeight;
   };
@@ -233,10 +229,9 @@ function IM() {
             const { avatarType, userId, name, _id, content, avatar } = item;
 
             return (
-              <>
-                {index % 20 === 0 && <div className="time">{item.time}</div>}
+              <div key={_id}>
+                {index % 25 === 5 && <div className="time">{item.time}</div>}
                 <div
-                  key={_id}
                   className={`chat ${
                     userId === userRef.current.id ? 'flex-right' : ''
                   }`}
@@ -259,7 +254,7 @@ function IM() {
                     />
                   </div>
                 </div>
-              </>
+              </div>
             );
           })}
         </div>
