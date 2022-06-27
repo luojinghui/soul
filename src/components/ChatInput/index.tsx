@@ -11,19 +11,20 @@ function ChatInput(props: IProps) {
   const inputRef = useRef(null);
 
   const getKeyWords = (str: string, type: string = 'src') => {
-    let reg = /src="(.*?)\"/;
+    let reg = /src="(.*?)\"/g;
 
     if (type === 'href') {
-      reg = /href="(.*?)\"/;
+      reg = /href="(.*?)\"/g;
     }
 
-    const len = str.match(reg)?.length || 0;
+    const matchList = str.match(reg) || [];
+    const len = matchList.length || 0;
     const list = [];
-    let copyStr = str;
 
     for (let i = 0; i < len; i++) {
-      const data = copyStr.match(reg) || [];
-      copyStr = copyStr.replace(data[0], '');
+      let val = matchList[i];
+      const data = val.match(reg) || [];
+      val = val.replace(data[0], '');
 
       list.push(RegExp.$1);
     }
@@ -35,9 +36,15 @@ function ChatInput(props: IProps) {
     const srcList = getKeyWords(content, 'src');
     const hrefList = getKeyWords(content, 'href');
     const excludeList = srcList.concat(hrefList);
+
+    console.log('content: ', content);
+    console.log('excludeList: ', excludeList);
+
     const urlReg = urlRegex({ strict: true, exact: false });
 
     content = content.replace(urlReg, (url: string) => {
+      console.log('url: ', url);
+
       if (excludeList.includes(url)) {
         return url;
       }
