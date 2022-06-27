@@ -98,6 +98,23 @@
     bottom: 0px;
     box-shadow: none !important;
     padding-right: 70px;
+    width: 100%;
+    border: 1px solid #eee;
+    background-color: #fff;
+    border-radius: 2px;
+    outline: none;
+    padding: 4px 10px;
+    overflow: auto;
+    max-height: 260px;
+    -webkit-user-select: auto;
+
+    p {
+      margin: 0;
+    }
+
+    img {
+      max-width: 300px;
+    }
   }
 
   .ant-input:focus,
@@ -188,6 +205,10 @@
       margin: -2px 14px 0;
       padding-right: 30px;
       flex: 1;
+
+      img {
+        max-width: 300px;
+      }
     }
 
     .name {
@@ -206,6 +227,9 @@
       min-height: 36px;
       display: inline-block;
       cursor: default;
+
+      word-break: break-all;
+      white-space: break-spaces;
 
       &::after {
         content: '';
@@ -273,6 +297,24 @@
     .header {
       padding-left: 40px;
       justify-content: flex-start;
+    }
+  }
+
+  .im-footer {
+    .msg-input {
+      img {
+        max-width: 200px;
+      }
+    }
+  }
+
+  .chats {
+    .chat {
+      .chat-content {
+        img {
+          max-width: 200px;
+        }
+      }
     }
   }
 }

@@ -24,6 +24,8 @@ import { AvatarMap } from '@/components';
 import { UserInfo, storage } from '@/utils/storage';
 import { MessageTime } from '@/utils/messageTime';
 import action from '@/action';
+import urlRegex from 'url-regex';
+import { ChatInput } from '@/components';
 
 import './index.less';
 import 'highlight.js/styles/github.css';
@@ -40,6 +42,7 @@ function IM() {
   const userRef = useRef<any>({});
   const cacheUserMap = useRef<any>({});
   const MessageTimeRef = useRef<any>(MessageTime);
+  const inputRef = useRef(null);
 
   const [messageList, setMessageList] = useState([]);
   const [user, setUser] = useState<any>({});
@@ -192,13 +195,23 @@ function IM() {
     navigate('../', { replace: true });
   };
 
-  const onInputMsg = (e: any) => {
-    msgRef.current = parseMD.render(e.msg);
+  const dealInnerHtml = (content: string) => {
+    const urlReg = urlRegex({ strict: false, exact: true });
+    const styleReg = /style="(.+?)\"/g;
+    const classReg = /class="(.+?)\"/g;
 
+    content = content
+      .replace(urlReg, (url) => `<a href="${url}" target="_blank">${url}</a>`)
+      .replace(styleReg, () => '')
+      .replace(classReg, () => '');
+    return content;
+  };
+
+  const onSendMessage = (value: string) => {
     const data = {
       type: 'chat',
       data: {
-        content: msgRef.current,
+        content: value,
         msgType: 'text',
         imageUrl: '',
         fileUrl: '',
@@ -207,18 +220,8 @@ function IM() {
         userId: userRef.current.id,
       },
     };
-
-    console.log('input msg: ', e.msg);
-    console.log('result: ', msgRef.current);
-
+    
     sendMessage(data);
-
-    setTimeout(() => {
-      const inputRef: any = document.getElementById('msg-input');
-      inputRef.value = '';
-      // @ts-ignore
-      formRef.current.resetFields();
-    }, 100);
   };
 
   useLayoutEffect(() => {
@@ -271,6 +274,23 @@ function IM() {
     );
   };
 
+  const onInputContent = () => {
+    removeDomClass(inputRef.current);
+  };
+
+  const removeDomClass = (domNoe: any) => {
+    const domLen = domNoe.children.length;
+
+    for (let i = 0; i < domLen; i++) {
+      // 遍历第一级子元素
+      const childNode = domNoe.children[i];
+
+      childNode.removeAttribute('class');
+      childNode.removeAttribute('style');
+      removeDomClass(childNode);
+    }
+  };
+
   const userAvatar = useMemo(() => {
     const { avatar, avatarType } = user;
 
@@ -312,26 +332,7 @@ function IM() {
       </div>
 
       <div className="im-footer">
-        <Form
-          ref={formRef}
-          className="msg"
-          name="msg"
-          onFinish={onInputMsg}
-          autoComplete="off"
-        >
-          <Form.Item name="msg" className="input">
-            <TextArea
-              className="msg-input"
-              id="msg-input"
-              autoSize={{ minRows: 1, maxRows: 4 }}
-            />
-          </Form.Item>
-          <Form.Item className="send">
-            <Button className="send-btn" type="primary" htmlType="submit">
-              发送
-            </Button>
-          </Form.Item>
-        </Form>
+        <ChatInput onSendMessage={onSendMessage}></ChatInput>
         <div className="funcs">
           <div className="func">
             <SmileFilled className="icon" />

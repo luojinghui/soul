@@ -1,6 +1,10 @@
 import hljs from 'highlight.js';
 import md from 'markdown-it';
 
+/**
+ * 处理MD语法
+ * 使用 parseMD.render(e.msg);
+ */
 export const parseMD: any = new md('default', {
   breaks: true,
   linkify: true,
