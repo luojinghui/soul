@@ -1,47 +1,78 @@
-export const utcToTime = (utc_datetime: string) => {
-  // 转为正常的时间格式 年-月-日 时:分:秒
-  const T_pos = utc_datetime.indexOf('T');
-  const Z_pos = utc_datetime.indexOf('Z');
-  const year_month_day = utc_datetime.substr(0, T_pos);
-  const hour_minute_second = utc_datetime.substr(T_pos + 1, Z_pos - T_pos - 1);
-  const new_datetime = year_month_day + ' ' + hour_minute_second; // 2017-03-31 08:02:06
-  let timestamp: any;
-
-  // 处理成为时间戳
-  timestamp = new Date(Date.parse(new_datetime));
-  timestamp = timestamp.getTime();
-  timestamp = timestamp / 1000;
-
-  // 增加8个小时，北京时间比utc时间多八个时区
-  timestamp = timestamp + 8 * 60 * 60;
-
-  // 时间戳转为时间
-  const beijing_datetime = getTime(
-    new Date(parseInt(timestamp) * 1000).valueOf(),
-    'M'
-  );
-  return beijing_datetime;
-};
-
-const getTime = (data: any, type: any) => {
-  //data时间戳，type返回的类型默认Y,可传参Y和H
+/**
+ * 根据时间戳获取具体的时间
+ *
+ * @param { Number } data 时间戳数字，毫秒
+ * @param { 'M' | 'H' | 'Y' } type 转换格式
+ * @returns
+ */
+export const getTime = (data: any, type: any) => {
   let time = new Date(data);
   let Y = time.getFullYear();
   let Mon = time.getMonth() + 1;
   let Day = time.getDate();
-  let H = time.getHours();
-  let Min = time.getMinutes();
-  let S = time.getSeconds();
+  let H: string | number = time.getHours();
+  let Min: string | number = time.getMinutes();
+
+  if (H < 10) {
+    H = `0${H}`;
+  }
+
+  if (Min < 10) {
+    Min = `0${Min}`;
+  }
 
   //自定义选择想要返回的类型
   if (type === 'M') {
-    //返回年月日2020-10-10
+    //返回月日10-10 20:10
     return `${Mon}-${Day} ${H}:${Min}`;
   } else if (type === 'H') {
-    //返回时分秒20：10：10
-    return `${H}:${Min}:${S}`;
-  } else {
-    //返回年月日时分秒2020-10-10 10:26:38
-    return `${Y}-${Mon}-${Day} ${H}:${Min}:${S}`;
+    //返回时分20:10
+    return `${H}:${Min}`;
+  } else if (type === 'Y') {
+    //返回年月日时分2020-10-10 10:26
+    return `${Y}-${Mon}-${Day} ${H}:${Min}`;
   }
+};
+
+export const getDateTimeBefore = (dataTime: any) => {
+  const currentTime = new Date().valueOf();
+  const nextTime = new Date(dataTime).valueOf();
+  const diffTime = currentTime - nextTime;
+  // 少于一分钟
+  const time = diffTime / 1000;
+
+  // 秒转小时
+  const hours = time / 3600;
+  if (hours < 24) {
+    return getTime(dataTime, 'H');
+  }
+
+  //秒转月
+  const months = time / 3600 / 24 / 30;
+  if (months < 12) {
+    return getTime(dataTime, 'M');
+  }
+
+  //秒转年
+  return getTime(dataTime, 'Y');
+};
+
+/**
+ * 计算两个时间的分钟差值
+ *
+ * @param currentTime
+ * @param preTime
+ * @returns
+ */
+export const compareTime = (
+  currentTime: any,
+  preTime: any,
+  difference: number
+) => {
+  const cTime = new Date(currentTime).valueOf();
+  const pTime = new Date(preTime).valueOf();
+  // 转化为分钟做差值计算
+  const diff = (cTime - pTime) / 1000 / 60;
+
+  return diff >= difference;
 };

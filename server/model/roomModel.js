@@ -7,7 +7,7 @@ connectDB();
 const roomSchema = new Schema({
   roomId: String,
   roomName: String,
-  roomTag: Array,
+  roomTag: [String],
   roomType: {
     type: String,
     enum: {
@@ -28,14 +28,32 @@ const roomSchema = new Schema({
   allowSetting: Boolean,
   updateTime: { type: Date, default: Date.now },
   ownerId: String,
-  userIds: Array,
+  limitLen: Number,
+  userIds: [
+    {
+      userId: String,
+      state: {
+        type: String,
+        enum: {
+          values: ['onLine', 'offLine'],
+          message: 'userid state {VALUE} is not supported',
+        },
+      },
+    },
+  ],
   receiveId: String,
   lastMsgId: String,
   lastUserId: String,
 });
 
+const UserState = {
+  onLine: 'onLine',
+  offLine: 'offLine',
+};
+
 const roomModel = model('rooms', roomSchema);
 
 module.exports = {
   roomModel,
+  UserState
 };

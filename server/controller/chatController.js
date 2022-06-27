@@ -3,7 +3,7 @@
  */
 
 const { userModel } = require('../model/userModel');
-const { roomModel } = require('../model/roomModel');
+const { roomModel, UserState } = require('../model/roomModel');
 const { message2Model, messageModel } = require('../model/messageModel');
 
 const cacheUserMap = {};
@@ -52,13 +52,14 @@ const onSocket = (socket, io) => {
  */
 const leaveRoom = async ({ userId, roomId }) => {
   try {
-    const query = await roomModel.findOne({ roomId }).exec();
+    const roomQuery = await roomModel.findOne({ roomId }).exec();
 
-    const { userIds = [] } = query;
-    const index = userIds.indexOf(userId);
+    const { userIds = [] } = roomQuery;
+    const userIdIndex = userIds.findIndex((item => item.userId === userId));
 
-    if (index > -1) {
-      userIds.splice(index, 1);
+    if (userIdIndex > -1) {
+      userIds[userIdIndex].state = UserState.offLine;
+
       await roomModel.updateOne({ roomId }, { userIds });
 
       console.log('delete user: ', userId);
@@ -113,10 +114,13 @@ const onJoinroom = async (socket, msg) => {
   try {
     const query = await roomModel.findOne({ roomId }).exec();
     const { userIds = [], tableName = 'messages_1' } = query;
-    const isExist = userIds.includes(userId);
+    const userIdIndex = userIds.findIndex((item => item.userId === userId));
 
-    if (!isExist) {
-      userIds.push(userId);
+    if (userIdIndex < 0) {
+      userIds.push({
+        userId,
+        state: UserState.onLine,
+      });
       const update = await roomModel.updateOne({ roomId }, { userIds });
 
       console.log('update: ', update);
@@ -129,11 +133,11 @@ const onJoinroom = async (socket, msg) => {
     const userIdLen = userIds.length;
 
     for (let i = 0; i < userIdLen; i++) {
-      const id = userIds[i];
-      const user = await userModel.findById(id).exec();
+      const { userId } = userIds[i];
+      const userQuery = await userModel.findById(userId).exec();
 
-      if (user) {
-        const { id, name, avatar, avatarType, sex, age, tag } = user;
+      if (userQuery) {
+        const { id, name, avatar, avatarType, sex, age, tag } = userQuery;
         userMap[id] = {
           id,
           name,

@@ -22,7 +22,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { parseMD } from '@/utils/markdown';
 import { AvatarMap } from '@/components';
 import { UserInfo, storage } from '@/utils/storage';
-import { utcToTime } from '@/utils';
+import { MessageTime } from '@/utils/messageTime';
 import action from '@/action';
 
 import './index.less';
@@ -39,6 +39,7 @@ function IM() {
   const formRef = useRef(null);
   const userRef = useRef<any>({});
   const cacheUserMap = useRef<any>({});
+  const MessageTimeRef = useRef<any>(MessageTime);
 
   const [messageList, setMessageList] = useState([]);
   const [user, setUser] = useState<any>({});
@@ -129,7 +130,7 @@ function IM() {
             return {
               ...item,
               ...cacheUserMap.current[item.userId],
-              time: utcToTime(item.createTime),
+              time: MessageTimeRef.current.get(item.createTime),
             };
           });
 
@@ -141,7 +142,7 @@ function IM() {
           const nextData = {
             ...data,
             ...cacheUserMap.current[data.userId],
-            time: utcToTime(data.createTime),
+            time: MessageTimeRef.current.get(data.createTime),
           };
           newList.push(nextData);
 
@@ -209,6 +210,8 @@ function IM() {
     setTimeout(() => {
       const inputRef: any = document.getElementById('msg-input');
       inputRef.value = '';
+      // @ts-ignore
+      formRef.current.resetFields();
     }, 100);
   };
 
@@ -230,7 +233,7 @@ function IM() {
 
             return (
               <div key={_id}>
-                {index % 25 === 5 && <div className="time">{item.time}</div>}
+                {item.time && <div className="time">{item.time}</div>}
                 <div
                   className={`chat ${
                     userId === userRef.current.id ? 'flex-right' : ''

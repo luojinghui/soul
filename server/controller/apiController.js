@@ -5,7 +5,7 @@
  * @author jinghui-Luo
  *
  * Created at     : 2022-06-26 00:40:02
- * Last modified  : 2022-06-27 00:19:19
+ * Last modified  : 2022-06-27 10:06:00
  */
 
 const axios = require('axios');
@@ -83,6 +83,7 @@ module.exports = {
         allowSetting: true,
         ownerId: userId,
         userIds: [],
+        limitLen: 100,
         receiveId: '',
         lastMsgId: '',
         lastUserId: '',
