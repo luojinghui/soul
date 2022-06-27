@@ -89,15 +89,15 @@ function App() {
           </div>
 
           <NavLink to="/chat/888" className="circle center swim">
-            <span className="link">聊天室</span>
+            <span className="link">聊天</span>
           </NavLink>
         </div>
 
-        <div className="footer">
+        {/* <div className="footer">
           <div className="setting">
             <SettingOutlined className="setting-icon" />
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );
