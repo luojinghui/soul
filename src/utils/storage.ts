@@ -5,10 +5,10 @@
  * @author jinghui-Luo
  *
  * Created at     : 2022-06-23 20:28:09
- * Last modified  : 2022-06-23 20:34:17
+ * Last modified  : 2022-06-27 12:36:34
  */
 
-export const UserInfo = 'USER_INFO';
+export const UserInfo = 'SOUL_USER_INFO_v1';
 
 export const storage = {
   set: (key: string, data: any) => {

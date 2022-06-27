@@ -59,6 +59,12 @@ function IM() {
   }, []);
 
   useEffect(() => {
+    const { roomName = '流浪星球' } = roomInfo;
+
+    document.title = roomName;
+  }, [roomInfo]);
+
+  useEffect(() => {
     (async () => {
       let userInfo = storage.get(UserInfo);
 

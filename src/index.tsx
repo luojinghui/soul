@@ -3,14 +3,13 @@ import ReactDOM from 'react-dom/client';
 import Router from './route';
 import { BrowserRouter } from 'react-router-dom';
 import reportWebVitals from './reportWebVitals';
-import VConsole from 'vconsole';
+// import VConsole from 'vconsole';
 import './index.less';
 
+// const vConsole = new VConsole();
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
-
-const vConsole = new VConsole();
 
 root.render(
   // <React.StrictMode>

@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { getTimeText } from './utils';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import './index.less';
 import { message } from 'antd';
 import { SettingOutlined } from '@ant-design/icons';
@@ -15,6 +15,14 @@ function App() {
   useEffect(() => {
     setTime(getTimeText());
   });
+
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.pathname === '/') {
+      document.title = '流浪星球-JingHui';
+    }
+  }, [location]);
 
   useEffect(() => {
     (async () => {
