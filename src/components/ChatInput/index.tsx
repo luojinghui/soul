@@ -36,15 +36,9 @@ function ChatInput(props: IProps) {
     const srcList = getKeyWords(content, 'src');
     const hrefList = getKeyWords(content, 'href');
     const excludeList = srcList.concat(hrefList);
-
-    console.log('content: ', content);
-    console.log('excludeList: ', excludeList);
-
     const urlReg = urlRegex({ strict: true, exact: false });
 
     content = content.replace(urlReg, (url: string) => {
-      console.log('url: ', url);
-
       if (excludeList.includes(url)) {
         return url;
       }
