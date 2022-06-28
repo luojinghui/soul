@@ -7,38 +7,29 @@ import {
   useLayoutEffect,
 } from 'react';
 import { io, Socket } from 'socket.io-client';
-import { Input, Button, Form, message } from 'antd';
+import { message } from 'antd';
 import {
   SwapOutlined,
   LeftOutlined,
   SettingOutlined,
   PlusOutlined,
-  PictureFilled,
-  FolderOpenFilled,
-  SmileFilled,
 } from '@ant-design/icons';
 import { imServer } from '../../enum';
 import { useNavigate, useParams } from 'react-router-dom';
-import { parseMD } from '@/utils/markdown';
 import { AvatarMap } from '@/components';
 import { UserInfo, storage } from '@/utils/storage';
 import { MessageTime } from '@/utils/messageTime';
 import action from '@/action';
-import urlRegex from 'url-regex';
 import { ChatInput } from '@/components';
 
 import './index.less';
 import 'highlight.js/styles/github.css';
 
-const { TextArea } = Input;
-
 function IM() {
   const socketRef = useRef<Socket | null>();
   const messageListRef = useRef([]);
-  const msgRef = useRef('');
   const chatRef = useRef(null);
   const contentRef = useRef(null);
-  const formRef = useRef(null);
   const userRef = useRef<any>({});
   const cacheUserMap = useRef<any>({});
   const MessageTimeRef = useRef<any>(MessageTime);
@@ -195,18 +186,6 @@ function IM() {
     navigate('../', { replace: true });
   };
 
-  const dealInnerHtml = (content: string) => {
-    const urlReg = urlRegex({ strict: false, exact: true });
-    const styleReg = /style="(.+?)\"/g;
-    const classReg = /class="(.+?)\"/g;
-
-    content = content
-      .replace(urlReg, (url) => `<a href="${url}" target="_blank">${url}</a>`)
-      .replace(styleReg, () => '')
-      .replace(classReg, () => '');
-    return content;
-  };
-
   const onSendMessage = (value: string) => {
     const data = {
       type: 'chat',
@@ -220,7 +199,7 @@ function IM() {
         userId: userRef.current.id,
       },
     };
-    
+
     sendMessage(data);
   };
 
@@ -237,7 +216,7 @@ function IM() {
     return (
       <>
         <div className="chats" ref={chatRef}>
-          {messageList.map((item: any, index: number) => {
+          {messageList.map((item: any) => {
             const { avatarType, userId, name, _id, content, avatar } = item;
 
             return (
@@ -272,23 +251,6 @@ function IM() {
         </div>
       </>
     );
-  };
-
-  const onInputContent = () => {
-    removeDomClass(inputRef.current);
-  };
-
-  const removeDomClass = (domNoe: any) => {
-    const domLen = domNoe.children.length;
-
-    for (let i = 0; i < domLen; i++) {
-      // 遍历第一级子元素
-      const childNode = domNoe.children[i];
-
-      childNode.removeAttribute('class');
-      childNode.removeAttribute('style');
-      removeDomClass(childNode);
-    }
   };
 
   const userAvatar = useMemo(() => {
@@ -332,18 +294,8 @@ function IM() {
       </div>
 
       <div className="im-footer">
+        {/* 聊天框组件 */}
         <ChatInput onSendMessage={onSendMessage}></ChatInput>
-        <div className="funcs">
-          <div className="func">
-            <SmileFilled className="icon" />
-          </div>
-          <div className="func">
-            <PictureFilled className="icon" />
-          </div>
-          <div className="func">
-            <FolderOpenFilled className="icon" />
-          </div>
-        </div>
       </div>
     </div>
   );

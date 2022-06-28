@@ -89,9 +89,23 @@
   bottom: 0;
   left: 0;
   width: 100%;
-  height: var(--im-footer-height);
-  padding: 12px;
+  // height: var(--im-footer-height);
+  padding: 12px 12px 20px 12px;
   background-color: rgb(244 244 244);
+
+  .emoji {
+    display: flex;
+    padding: 15px 0;
+
+    .emoji-item {
+      width: 26px;
+      height: 26px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 10px;
+    }
+  }
 
   .msg-input {
     position: absolute;
@@ -105,7 +119,7 @@
     outline: none;
     overflow: auto;
     max-height: 260px;
-    -webkit-user-select: auto;
+    user-select: auto;
 
     p {
       margin: 0;
@@ -173,6 +187,10 @@
           color: #333;
         }
       }
+
+      .activeIcon {
+        color: #009966 !important ;
+      }
     }
   }
 }
@@ -217,7 +235,7 @@
 
     .html {
       user-select: text;
-      padding: 8px;
+      padding: 10px;
       background-color: #fff;
       border-radius: 4px;
       font-size: 14px;
@@ -288,7 +306,7 @@
       &::after {
         content: '';
         left: unset;
-        top: 4px;
+        top: 8px;
         right: -8px;
         border-right: unset;
         border-left: 8px solid #fff;
