@@ -55,7 +55,7 @@ const leaveRoom = async ({ userId, roomId }) => {
     const roomQuery = await roomModel.findOne({ roomId }).exec();
 
     const { userIds = [] } = roomQuery;
-    const userIdIndex = userIds.findIndex((item => item.userId === userId));
+    const userIdIndex = userIds.findIndex((item) => item.userId === userId);
 
     if (userIdIndex > -1) {
       userIds[userIdIndex].state = UserState.offLine;
@@ -114,7 +114,7 @@ const onJoinroom = async (socket, msg) => {
   try {
     const query = await roomModel.findOne({ roomId }).exec();
     const { userIds = [], tableName = 'messages_1' } = query;
-    const userIdIndex = userIds.findIndex((item => item.userId === userId));
+    const userIdIndex = userIds.findIndex((item) => item.userId === userId);
 
     if (userIdIndex < 0) {
       userIds.push({

@@ -34,6 +34,7 @@ function IM() {
   const cacheUserMap = useRef<any>({});
   const MessageTimeRef = useRef<any>(MessageTime);
   const inputRef = useRef(null);
+  const chatInputRef = useRef(null);
 
   const [messageList, setMessageList] = useState([]);
   const [user, setUser] = useState<any>({});
@@ -186,17 +187,16 @@ function IM() {
     navigate('../', { replace: true });
   };
 
-  const onSendMessage = (value: string) => {
+  const onSendMessage = (value: any) => {
     const data = {
       type: 'chat',
       data: {
-        content: value,
-        msgType: 'text',
         imageUrl: '',
         fileUrl: '',
         fileJson: '',
         roomId: params.roomId,
         userId: userRef.current.id,
+        ...value,
       },
     };
 
@@ -212,12 +212,20 @@ function IM() {
     contentRef.current.scrollTop = chatRef.current?.scrollHeight;
   };
 
+  const onClickChatContent = () => {
+    if (chatInputRef.current) {
+      // @ts-ignore
+      chatInputRef.current.clickChatContent();
+    }
+  };
+
   const renderContent = () => {
     return (
       <>
         <div className="chats" ref={chatRef}>
           {messageList.map((item: any) => {
-            const { avatarType, userId, name, _id, content, avatar } = item;
+            const { avatarType, userId, name, _id, content, avatar, msgType } =
+              item;
 
             return (
               <div key={_id}>
@@ -240,7 +248,7 @@ function IM() {
                       <div className="name">{name}</div>
                     )}
                     <div
-                      className="html"
+                      className={`html ${msgType === 'super_emoji' ? 'html_transparent' : ''}`}
                       dangerouslySetInnerHTML={{ __html: content }}
                     />
                   </div>
@@ -289,13 +297,16 @@ function IM() {
           </div>
         </div>
       </header>
-      <div className="content" ref={contentRef}>
+      <div className="content" ref={contentRef} onClick={onClickChatContent}>
         {renderContent()}
       </div>
 
       <div className="im-footer">
         {/* 聊天框组件 */}
-        <ChatInput onSendMessage={onSendMessage}></ChatInput>
+        <ChatInput
+          chatRef={chatInputRef}
+          onSendMessage={onSendMessage}
+        ></ChatInput>
       </div>
     </div>
   );

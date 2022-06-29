@@ -1,4 +1,10 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  useImperativeHandle,
+} from 'react';
 import { Button, Form, message } from 'antd';
 import urlRegex from 'url-regex';
 import {
@@ -6,49 +12,12 @@ import {
   FolderOpenFilled,
   SmileFilled,
 } from '@ant-design/icons';
+import { emojiList, emojiMaxList } from './emoji';
 
-import e1 from '@/assets/emoji/1.gif';
-import e2 from '@/assets/emoji/2.gif';
-import e3 from '@/assets/emoji/3.gif';
-import e4 from '@/assets/emoji/4.gif';
-import e5 from '@/assets/emoji/5.gif';
-import e6 from '@/assets/emoji/6.gif';
-import e7 from '@/assets/emoji/7.gif';
-
-const emojiList = [
-  {
-    src: e1,
-    alt: '😀',
-  },
-  {
-    src: e2,
-    alt: '🤡',
-  },
-  {
-    src: e3,
-    alt: '🐷',
-  },
-  {
-    src: e4,
-    alt: '🙈',
-  },
-  {
-    src: e5,
-    alt: '🍎',
-  },
-  {
-    src: e6,
-    alt: '😂',
-  },
-  {
-    src: e7,
-    alt: '🚌',
-  },
-];
 let rangeOfInputBox: any;
-
 interface IProps {
-  onSendMessage: (value: string) => void;
+  onSendMessage: (value: any) => void;
+  chatRef: any;
 }
 
 function ChatInput(props: IProps) {
@@ -56,6 +25,14 @@ function ChatInput(props: IProps) {
   const inputRef = useRef(null);
 
   const [emojiVisible, setEmojiVisible] = useState(false);
+
+  useImperativeHandle(props.chatRef, () => ({
+    clickChatContent: () => {
+      if (emojiVisible) {
+        setEmojiVisible(false);
+      }
+    },
+  }));
 
   const getKeyWords = (str: string, type: string = 'src') => {
     let reg = /src="(.*?)\"/g;
@@ -121,8 +98,14 @@ function ChatInput(props: IProps) {
     const value = inputRef.current.innerHTML;
     const nextValue = dealInnerHtml(value);
 
-    console.log('nextValue: ', nextValue);
-    props.onSendMessage(nextValue);
+    if (emojiVisible) {
+      setEmojiVisible(false);
+    }
+
+    props.onSendMessage({
+      content: nextValue,
+      msgType: 'text',
+    });
     // @ts-ignore
     inputRef.current.innerText = '';
   };
@@ -149,9 +132,17 @@ function ChatInput(props: IProps) {
     }
   };
 
-  const insertEmoji = (src: string) => {
+  const insertMaxEmoji = (e: any) => {
+    props.onSendMessage({
+      content: e.innerHTML,
+      msgType: 'super_emoji',
+    });
+  };
+
+  const insertEmoji = (src: string, key: string) => {
     let emojiEl = document.createElement('img');
     emojiEl.src = src;
+    emojiEl.setAttribute(`data-${key}`, key);
 
     if (!rangeOfInputBox) {
       rangeOfInputBox = new Range();
@@ -213,7 +204,7 @@ function ChatInput(props: IProps) {
 
   useEffect(() => {
     const root: any = document.querySelector(':root');
-    const openHeight = 112 + 54;
+    const openHeight = 120;
 
     if (emojiVisible) {
       root.setAttribute('style', `--im-footer-height: ${openHeight}px`);
@@ -252,33 +243,54 @@ function ChatInput(props: IProps) {
         </Form.Item>
       </Form>
 
-      <div className="funcs">
-        <div className="func" onClick={onToggleEmoji}>
-          <SmileFilled className={`icon ${emojiVisible && 'activeIcon'}`} />
+      {!emojiVisible && (
+        <div className="funcs">
+          <div className="func" onClick={onToggleEmoji}>
+            <SmileFilled className={`icon ${emojiVisible && 'activeIcon'}`} />
+          </div>
+          <div className="func">
+            <PictureFilled className="icon" />
+          </div>
+          <div className="func">
+            <FolderOpenFilled className="icon" />
+          </div>
         </div>
-        <div className="func">
-          <PictureFilled className="icon" />
-        </div>
-        <div className="func">
-          <FolderOpenFilled className="icon" />
-        </div>
-      </div>
+      )}
 
       {emojiVisible && (
         <div className="emoji">
-          {emojiList.map(({ src, alt }, index: number) => {
-            return (
-              <span
-                className="emoji-item"
-                key={`emoji-${index}`}
-                onClick={() => {
-                  insertEmoji(src);
-                }}
-              >
-                <img src={src} alt={alt} />
-              </span>
-            );
-          })}
+          <div className="emoji_type">普通表情</div>
+          <div className="miniEmoji">
+            {emojiList.map(({ src, alt, type }, index: number) => {
+              return (
+                <span
+                  className="emoji-item"
+                  key={`emoji-${index}`}
+                  onClick={() => {
+                    insertEmoji(src, `emoji-${type}`);
+                  }}
+                >
+                  <img src={src} alt={alt} />
+                </span>
+              );
+            })}
+          </div>
+          <div className="emoji_type">发送超级表情</div>
+          <div className="miniEmoji">
+            {emojiMaxList.map(({ src, alt, type }, index: number) => {
+              return (
+                <span
+                  className="emoji-item"
+                  key={`emoji-${index}`}
+                  onClick={(e) => {
+                    insertMaxEmoji(e.currentTarget);
+                  }}
+                >
+                  <img src={src} alt={alt} data-emoji-max="emoji-max" />
+                </span>
+              );
+            })}
+          </div>
         </div>
       )}
     </>

@@ -14,7 +14,7 @@
   .content {
     height: calc(100% - var(--im-footer-height) - var(--im-header-height));
     overflow-y: auto;
-    scroll-behavior: smooth;
+    // scroll-behavior: smooth;
   }
 
   .header {
@@ -94,16 +94,37 @@
   background-color: rgb(244 244 244);
 
   .emoji {
-    display: flex;
-    padding: 15px 0;
+    padding: 5px 0;
+    margin-top: 10px;
+    max-height: 160px;
+    overflow-y: auto;
 
-    .emoji-item {
-      width: 26px;
-      height: 26px;
+    .emoji_type {
+      margin-bottom: 6px;
+      font-size: 12px;
+    }
+
+    .miniEmoji {
       display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-right: 10px;
+      flex-wrap: wrap;
+
+      .emoji-item {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 10px;
+        margin-bottom: 10px;
+
+        img {
+          width: 26px;
+          height: 26px;
+        }
+
+        img[data-emoji-max] {
+          width: var(--emoji-max-size);
+          height: var(--emoji-max-size);
+        }
+      }
     }
   }
 
@@ -111,7 +132,7 @@
     position: absolute;
     bottom: 0px;
     box-shadow: none !important;
-    padding: 4px 70px 4px 10px;
+    padding: 5px 70px 5px 10px;
     width: 100%;
     border: 1px solid #eee;
     background-color: #fff;
@@ -127,6 +148,12 @@
 
     img {
       max-width: 300px;
+    }
+
+    img[data-emoji-mini] {
+      width: var(--emoji-mini-size);
+      height: var(--emoji-mini-size);
+      margin: 0 1px;
     }
   }
 
@@ -282,6 +309,21 @@
         word-break: break-all;
         white-space: break-spaces;
       }
+
+      img[data-emoji-mini] {
+        width: var(--emoji-mini-size);
+        height: var(--emoji-mini-size);
+        margin: 0 1px;
+      }
+
+      img[data-emoji-max] {
+        width: var(--emoji-max-show-size);
+        height: var(--emoji-max-show-size);
+      }
+    }
+
+    .html_transparent {
+      background-color: transparent;
     }
   }
 
@@ -310,6 +352,13 @@
         right: -8px;
         border-right: unset;
         border-left: 8px solid #fff;
+      }
+    }
+
+    .html_transparent {
+      &::after {
+        content: '';
+        border-left: 8px solid transparent;
       }
     }
   }
