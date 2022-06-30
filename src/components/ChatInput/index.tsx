@@ -17,6 +17,7 @@ import { emojiList, emojiMaxList } from './emoji';
 let rangeOfInputBox: any;
 interface IProps {
   onSendMessage: (value: any) => void;
+  onStateChange: () => void;
   chatRef: any;
 }
 
@@ -79,20 +80,25 @@ function ChatInput(props: IProps) {
     return content;
   };
 
-  const validate = (value: string) => {
-    const splitValue = value.split('\n');
+  const validate = (innerText: string, innerHtml: string) => {
+    const splitValue = innerText.split('\n');
+    const isValidateTrim = splitValue.some(
+      (val: string) => !!val.trim().length
+    );
+    const isValidateHtml = innerHtml.includes('<img');
 
-    return splitValue.some((val: string) => !!val.trim().length);
+    return isValidateTrim || isValidateHtml;
   };
 
   const onFinishFrom = () => {
     // @ts-ignore
-    // const isValidate = validate(inputRef.current.innerText || '');
+    const { innerText = '', innerHTML = '' } = inputRef.current;
+    const isValidate = validate(innerText, innerHTML);
 
-    // if (!isValidate) {
-    //   message.info('臣妾发送不了空白内容！');
-    //   return;
-    // }
+    if (!isValidate) {
+      message.info('臣妾发送不了空白内容！');
+      return;
+    }
 
     // @ts-ignore
     const value = inputRef.current.innerHTML;
@@ -132,9 +138,9 @@ function ChatInput(props: IProps) {
     }
   };
 
-  const insertMaxEmoji = (e: any) => {
+  const insertMaxEmoji = (key: string) => {
     props.onSendMessage({
-      content: e.innerHTML,
+      content: key,
       msgType: 'super_emoji',
     });
   };
@@ -204,18 +210,41 @@ function ChatInput(props: IProps) {
 
   useEffect(() => {
     const root: any = document.querySelector(':root');
-    const openHeight = 120;
+    const openHeight = 130;
 
     if (emojiVisible) {
       root.setAttribute('style', `--im-footer-height: ${openHeight}px`);
     } else {
       root.setAttribute('style', `--im-footer-height: 112px`);
     }
+
+    props.onStateChange();
   }, [emojiVisible]);
 
   const onToggleEmoji = useCallback(() => {
     setEmojiVisible(!emojiVisible);
   }, [emojiVisible]);
+
+  const renderEmojiMax = () => {
+    const keys = Object.keys(emojiMaxList);
+
+    return keys.map((key: string, index: number) => {
+      // @ts-ignore
+      const { src, alt } = emojiMaxList[key];
+
+      return (
+        <a
+          className="item"
+          key={`emoji-${index}`}
+          onClick={() => {
+            insertMaxEmoji(key);
+          }}
+        >
+          <img src={src} alt={alt} data-emoji-type="max" />
+        </a>
+      );
+    });
+  };
 
   return (
     <>
@@ -278,21 +307,7 @@ function ChatInput(props: IProps) {
             })}
           </div>
           <div className="emoji-title">发送超级表情</div>
-          <div className="emoji-list">
-            {emojiMaxList.map(({ src, alt, type }, index: number) => {
-              return (
-                <a
-                  className="item"
-                  key={`emoji-${index}`}
-                  onClick={(e) => {
-                    insertMaxEmoji(e.currentTarget);
-                  }}
-                >
-                  <img src={src} alt={alt} data-emoji-type="max" />
-                </a>
-              );
-            })}
-          </div>
+          <div className="emoji-list">{renderEmojiMax()}</div>
         </div>
       )}
     </>

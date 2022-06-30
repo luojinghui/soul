@@ -91,15 +91,15 @@ export const emojiList = [
   { src: e39, alt: '😀', type: 'mini' },
 ];
 
-export const emojiMaxList = [
-  { src: em1, alt: '😀', type: 'max' },
-  { src: em2, alt: '😀', type: 'max' },
-  { src: em3, alt: '😀', type: 'max' },
-  { src: em4, alt: '😀', type: 'max' },
-  { src: em5, alt: '😀', type: 'max' },
-  { src: em6, alt: '😀', type: 'max' },
-  { src: em7, alt: '😀', type: 'max' },
-  { src: em8, alt: '😀', type: 'max' },
-  { src: em9, alt: '😀', type: 'max' },
-  { src: em10, alt: '😀', type: 'max' },
-];
+export const emojiMaxList = {
+  em1: { src: em1, alt: '😀', type: 'max' },
+  em2: { src: em2, alt: '😀', type: 'max' },
+  em3: { src: em3, alt: '😀', type: 'max' },
+  em4: { src: em4, alt: '😀', type: 'max' },
+  em5: { src: em5, alt: '😀', type: 'max' },
+  em6: { src: em6, alt: '😀', type: 'max' },
+  em7: { src: em7, alt: '😀', type: 'max' },
+  em8: { src: em8, alt: '😀', type: 'max' },
+  em9: { src: em9, alt: '😀', type: 'max' },
+  em10: { src: em10, alt: '😀', type: 'max' },
+};

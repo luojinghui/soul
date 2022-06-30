@@ -21,6 +21,7 @@ import { UserInfo, storage } from '@/utils/storage';
 import { MessageTime } from '@/utils/messageTime';
 import action from '@/action';
 import { ChatInput } from '@/components';
+import { emojiMaxList } from '@/components/ChatInput/emoji';
 
 import './index.less';
 import 'highlight.js/styles/github.css';
@@ -29,11 +30,12 @@ function IM() {
   const socketRef = useRef<Socket | null>();
   const messageListRef = useRef([]);
   const chatRef = useRef(null);
-  const contentRef = useRef(null);
+  const contentRef = useRef<any>(null);
   const userRef = useRef<any>({});
   const cacheUserMap = useRef<any>({});
   const MessageTimeRef = useRef<any>(MessageTime);
   const chatInputRef = useRef(null);
+  const footerRef = useRef<any>(null);
 
   const [messageList, setMessageList] = useState([]);
   const [user, setUser] = useState<any>({});
@@ -207,8 +209,18 @@ function IM() {
   }, [messageList]);
 
   const scrollDown = () => {
+    if (footerRef.current) {
+      const footerHeight = footerRef.current.clientHeight;
+
+      contentRef.current.style.height = `calc(100% - var(--im-header-height) - ${footerHeight}px)`;
+    }
+
     // @ts-ignore
     contentRef.current.scrollTop = chatRef.current?.scrollHeight;
+  };
+
+  const onChatInputStateChange = () => {
+    scrollDown();
   };
 
   const onClickChatContent = () => {
@@ -225,6 +237,15 @@ function IM() {
           const { avatarType, userId, name, _id, content, avatar, msgType } =
             item;
           const isSelf = userId === userRef.current.id;
+          const isSuperEmoji = msgType === 'super_emoji';
+          let emojiHtml = '';
+
+          if (isSuperEmoji) {
+            // @ts-ignore
+            const { src, alt } = emojiMaxList[content];
+
+            emojiHtml = `<img src=${src} alt=${alt} data-emoji-type="max">`;
+          }
 
           return (
             <div className="item" key={_id}>
@@ -248,10 +269,10 @@ function IM() {
                     <div className="name">{name}</div>
                   )}
                   <div
-                    className={`html ${
-                      msgType === 'super_emoji' ? 'html_transparent' : ''
-                    }`}
-                    dangerouslySetInnerHTML={{ __html: content }}
+                    className={`html ${isSuperEmoji ? 'html_transparent' : ''}`}
+                    dangerouslySetInnerHTML={{
+                      __html: isSuperEmoji ? emojiHtml : content,
+                    }}
                   />
                 </div>
               </div>
@@ -308,10 +329,11 @@ function IM() {
       </div>
 
       {/* 聊天输入区 */}
-      <div className="im-footer">
+      <div className="im-footer" ref={footerRef}>
         {/* 聊天框组件 */}
         <ChatInput
           chatRef={chatInputRef}
+          onStateChange={onChatInputStateChange}
           onSendMessage={onSendMessage}
         ></ChatInput>
       </div>
