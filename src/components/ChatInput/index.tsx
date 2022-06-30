@@ -139,10 +139,10 @@ function ChatInput(props: IProps) {
     });
   };
 
-  const insertEmoji = (src: string, key: string) => {
+  const insertEmoji = (src: string) => {
     let emojiEl = document.createElement('img');
     emojiEl.src = src;
-    emojiEl.setAttribute(`data-${key}`, key);
+    emojiEl.setAttribute(`data-emoji-type`, 'min');
 
     if (!rangeOfInputBox) {
       rangeOfInputBox = new Range();
@@ -219,39 +219,41 @@ function ChatInput(props: IProps) {
 
   return (
     <>
-      <Form
-        ref={formRef}
-        className="msg"
-        name="msg"
-        onFinish={onFinishFrom}
-        autoComplete="off"
-      >
-        <Form.Item name="msg" className="input">
-          <div
-            ref={inputRef}
-            onClick={handleBoxClick}
-            onInput={onInputContent}
-            id="msg-input"
-            className="msg-input"
-            contentEditable="true"
-          ></div>
-        </Form.Item>
-        <Form.Item className="send">
-          <Button className="send-btn" type="primary" htmlType="submit">
-            发送
-          </Button>
-        </Form.Item>
-      </Form>
+      <div className="wrap">
+        <Form
+          ref={formRef}
+          className="chat-form"
+          name="chat-form"
+          onFinish={onFinishFrom}
+          autoComplete="off"
+        >
+          <Form.Item name="message" className="form-item">
+            <div
+              ref={inputRef}
+              onClick={handleBoxClick}
+              onInput={onInputContent}
+              className="from-input"
+              contentEditable="true"
+            ></div>
+          </Form.Item>
+
+          <Form.Item className="form-submit-item">
+            <Button className="submit-btn" type="primary" htmlType="submit">
+              发送
+            </Button>
+          </Form.Item>
+        </Form>
+      </div>
 
       {!emojiVisible && (
-        <div className="funcs">
-          <div className="func" onClick={onToggleEmoji}>
-            <SmileFilled className={`icon ${emojiVisible && 'activeIcon'}`} />
+        <div className="wrap toolbar">
+          <div className="tool" onClick={onToggleEmoji}>
+            <SmileFilled className="icon" />
           </div>
-          <div className="func">
+          <div className="tool">
             <PictureFilled className="icon" />
           </div>
-          <div className="func">
+          <div className="tool">
             <FolderOpenFilled className="icon" />
           </div>
         </div>
@@ -259,35 +261,35 @@ function ChatInput(props: IProps) {
 
       {emojiVisible && (
         <div className="emoji">
-          <div className="emoji_type">普通表情</div>
-          <div className="miniEmoji">
+          <div className="emoji-title">小黄人表情</div>
+          <div className="emoji-list">
             {emojiList.map(({ src, alt, type }, index: number) => {
               return (
-                <span
-                  className="emoji-item"
+                <a
+                  className="item"
                   key={`emoji-${index}`}
                   onClick={() => {
-                    insertEmoji(src, `emoji-${type}`);
+                    insertEmoji(src);
                   }}
                 >
                   <img src={src} alt={alt} />
-                </span>
+                </a>
               );
             })}
           </div>
-          <div className="emoji_type">发送超级表情</div>
-          <div className="miniEmoji">
+          <div className="emoji-title">发送超级表情</div>
+          <div className="emoji-list">
             {emojiMaxList.map(({ src, alt, type }, index: number) => {
               return (
-                <span
-                  className="emoji-item"
+                <a
+                  className="item"
                   key={`emoji-${index}`}
                   onClick={(e) => {
                     insertMaxEmoji(e.currentTarget);
                   }}
                 >
-                  <img src={src} alt={alt} data-emoji-max="emoji-max" />
-                </span>
+                  <img src={src} alt={alt} data-emoji-type="max" />
+                </a>
               );
             })}
           </div>

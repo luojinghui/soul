@@ -33,7 +33,6 @@ function IM() {
   const userRef = useRef<any>({});
   const cacheUserMap = useRef<any>({});
   const MessageTimeRef = useRef<any>(MessageTime);
-  const inputRef = useRef(null);
   const chatInputRef = useRef(null);
 
   const [messageList, setMessageList] = useState([]);
@@ -221,43 +220,45 @@ function IM() {
 
   const renderContent = () => {
     return (
-      <>
-        <div className="chats" ref={chatRef}>
-          {messageList.map((item: any) => {
-            const { avatarType, userId, name, _id, content, avatar, msgType } =
-              item;
+      <div className="chat-list" ref={chatRef}>
+        {messageList.map((item: any) => {
+          const { avatarType, userId, name, _id, content, avatar, msgType } =
+            item;
+          const isSelf = userId === userRef.current.id;
 
-            return (
-              <div key={_id}>
-                {item.time && <div className="time">{item.time}</div>}
-                <div
-                  className={`chat ${
-                    userId === userRef.current.id ? 'flex-right' : ''
-                  }`}
-                >
-                  <div className="avatar">
-                    <img
-                      // src="https://api.dujin.org/bing/1920.php"
-                      src={avatarType === 'Local' ? AvatarMap[avatar] : avatar}
-                      alt="avatar"
-                      className="img"
-                    />
-                  </div>
-                  <div className="chat-content">
-                    {userId !== userRef.current.id && (
-                      <div className="name">{name}</div>
-                    )}
-                    <div
-                      className={`html ${msgType === 'super_emoji' ? 'html_transparent' : ''}`}
-                      dangerouslySetInnerHTML={{ __html: content }}
-                    />
-                  </div>
+          return (
+            <div className="item" key={_id}>
+              {/* 时间 */}
+              {item.time && <div className="time">{item.time}</div>}
+
+              {/* 内容 */}
+              <div className={`chat ${isSelf ? 'chat-right' : ''}`}>
+                {/* 头像 */}
+                <div className="avatar">
+                  <img
+                    src={avatarType === 'Local' ? AvatarMap[avatar] : avatar}
+                    alt="avatar"
+                    className="img"
+                  />
+                </div>
+
+                {/* 聊天文本 */}
+                <div className="content">
+                  {userId !== userRef.current.id && (
+                    <div className="name">{name}</div>
+                  )}
+                  <div
+                    className={`html ${
+                      msgType === 'super_emoji' ? 'html_transparent' : ''
+                    }`}
+                    dangerouslySetInnerHTML={{ __html: content }}
+                  />
                 </div>
               </div>
-            );
-          })}
-        </div>
-      </>
+            </div>
+          );
+        })}
+      </div>
     );
   };
 
@@ -277,30 +278,36 @@ function IM() {
 
   return (
     <div className="app">
-      <header className="header">
+      {/* 头部内容 */}
+      <header className="im-header">
         <div className="left">
-          <LeftOutlined className="operate back" onClick={onBack} />
+          <LeftOutlined className="icon back" onClick={onBack} />
         </div>
-        <div>{roomInfo.roomName || ''}</div>
+
+        <div className="title">{roomInfo.roomName || ''}</div>
+
         <div className="right">
-          <div>
-            <PlusOutlined className="operate setting" />
+          <div className="btn">
+            <PlusOutlined className="icon setting" />
           </div>
-          <div>
-            <SwapOutlined className="operate setting" />
+          <div className="btn">
+            <SwapOutlined className="icon setting" />
           </div>
-          <div>
-            <SettingOutlined className="operate setting" />
+          <div className="btn">
+            <SettingOutlined className="icon setting" />
           </div>
-          <div className="avatar">
+          <div className="person-avatar">
             <img src={userAvatar} alt="avatar" className="img" />
           </div>
         </div>
       </header>
-      <div className="content" ref={contentRef} onClick={onClickChatContent}>
+
+      {/* 聊天内容 */}
+      <div className="im-content" ref={contentRef} onClick={onClickChatContent}>
         {renderContent()}
       </div>
 
+      {/* 聊天输入区 */}
       <div className="im-footer">
         {/* 聊天框组件 */}
         <ChatInput
