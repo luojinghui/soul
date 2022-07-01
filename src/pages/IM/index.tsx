@@ -243,7 +243,6 @@ function IM() {
           if (isSuperEmoji) {
             // @ts-ignore
             const { src, alt } = emojiMaxList[content];
-
             emojiHtml = `<img src=${src} alt=${alt} data-emoji-type="max">`;
           }
 

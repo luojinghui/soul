@@ -5,7 +5,7 @@
  * @author jinghui-Luo
  *
  * Created at     : 2022-06-26 00:40:02
- * Last modified  : 2022-06-27 10:06:00
+ * Last modified  : 2022-07-01 13:20:13
  */
 
 const axios = require('axios');
@@ -131,6 +131,36 @@ module.exports = {
         data: err,
         code: 500,
         msg: 'getRoomInfo error',
+      });
+    }
+  },
+
+  getRoomList: async (req, res) => {
+    const { userId } = req.query;
+
+    try {
+      const query = await roomModel.find({}).exec();
+
+      if (!query) {
+        res.json({
+          code: 204,
+          data: {},
+          msg: 'Not found room list',
+        });
+      }
+
+      res.json({
+        code: 200,
+        data: query,
+        msg: 'success',
+      });
+    } catch (err) {
+      console.log('get room list err: ', err);
+
+      res.status(500).json({
+        data: err,
+        code: 500,
+        msg: 'getRoomList error',
       });
     }
   },

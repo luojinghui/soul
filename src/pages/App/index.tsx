@@ -96,7 +96,7 @@ function App() {
             <span className="link">博客</span>
           </div>
 
-          <NavLink to="/chat/888" className="circle center swim">
+          <NavLink to="/chat" className="circle center swim">
             <span className="link">聊天</span>
           </NavLink>
         </div>

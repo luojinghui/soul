@@ -44,6 +44,10 @@ class Action {
     return await this.http.post(`/api/rest/room/info`, { roomId, userId });
   }
 
+  async getRoomList(userId: string) {
+    return await this.http.get(`/api/rest/room/list?userId=${userId}`);
+  }
+
   // async verifyPassword() {
   //   const resp = await this.http.put(
   //     `/api/rest/uss/v4/en/cloudmeeting/validation`,
