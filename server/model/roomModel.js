@@ -15,6 +15,7 @@ const roomSchema = new Schema({
       message: '{VALUE} is not supported',
     },
   },
+  roomAvatarUrl: String,
   roomDesc: String,
   pwd: String,
   tableName: {
@@ -44,6 +45,7 @@ const roomSchema = new Schema({
   receiveId: String,
   lastMsgId: String,
   lastUserId: String,
+  isFixed: Boolean,
 });
 
 const UserState = {
@@ -55,5 +57,5 @@ const roomModel = model('rooms', roomSchema);
 
 module.exports = {
   roomModel,
-  UserState
+  UserState,
 };

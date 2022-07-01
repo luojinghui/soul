@@ -9,10 +9,8 @@ import {
 import { io, Socket } from 'socket.io-client';
 import { message } from 'antd';
 import {
-  SwapOutlined,
   LeftOutlined,
   SettingOutlined,
-  PlusOutlined,
 } from '@ant-design/icons';
 import { imServer } from '../../enum';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -307,12 +305,6 @@ function IM() {
         <div className="title">{roomInfo.roomName || ''}</div>
 
         <div className="right">
-          <div className="btn">
-            <PlusOutlined className="icon setting" />
-          </div>
-          <div className="btn">
-            <SwapOutlined className="icon setting" />
-          </div>
           <div className="btn">
             <SettingOutlined className="icon setting" />
           </div>
