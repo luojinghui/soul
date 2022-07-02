@@ -7,7 +7,7 @@ import {
   useLayoutEffect,
 } from 'react';
 import { io, Socket } from 'socket.io-client';
-import { message } from 'antd';
+import { message, Image } from 'antd';
 import { LeftOutlined, SettingOutlined } from '@ant-design/icons';
 import { imServer } from '../../enum';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -263,8 +263,10 @@ function IM() {
           if (isImgFile) {
             const src = `${httpServer}/upload/${userId}/${fileUrl}`;
             // @ts-ignore
-            html = `<img src=${encodeURI(src)} alt="img"}>`;
-            htmlContent = html;
+            const imgHtml = <Image src={encodeURI(src)} />;
+
+            // html = `<img src=${encodeURI(src)} alt="img"}>`;
+            htmlContent = imgHtml;
           }
 
           if (isOtherFile) {
@@ -295,12 +297,24 @@ function IM() {
                   {userId !== userRef.current.id && (
                     <div className="name">{name}</div>
                   )}
-                  <div
-                    className={`html ${isSuperEmoji ? 'html_transparent' : ''}`}
-                    dangerouslySetInnerHTML={{
-                      __html: htmlContent,
-                    }}
-                  />
+                  {!isImgFile ? (
+                    <div
+                      className={`html ${
+                        isSuperEmoji ? 'html_transparent' : ''
+                      }`}
+                      dangerouslySetInnerHTML={{
+                        __html: htmlContent,
+                      }}
+                    />
+                  ) : (
+                    <div
+                      className={`html ${
+                        isSuperEmoji ? 'html_transparent' : ''
+                      }`}
+                    >
+                      {htmlContent}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
