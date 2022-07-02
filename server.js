@@ -6,7 +6,7 @@
  * @author jinghui-Luo
  *
  * Created at     : 2021-04-09 14:22:59
- * Last modified  : 2022-06-26 10:50:36
+ * Last modified  : 2022-07-02 00:30:49
  */
 
 const express = require('express');
@@ -28,7 +28,8 @@ app
   .use(compression())
   .use(express.json())
   .use(express.urlencoded({ extended: true }))
-  .use(express.static(path.join(__dirname, 'build')));
+  .use(express.static(path.join(__dirname, 'build')))
+  .use(express.static(path.join(__dirname, 'static')));
 
 // wss服务
 io.on('connection', (socket) => {

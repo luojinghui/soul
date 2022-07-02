@@ -114,7 +114,8 @@
         flex: 1 1;
 
         img {
-          max-width: 300px;
+          max-width: 200px;
+          max-height: 180px;
         }
       }
 
@@ -280,6 +281,23 @@
       border-radius: 4px;
       cursor: pointer;
       transition: background-color ease 0.2s;
+      position: relative;
+
+      .upload-file {
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 42px;
+        width: 42px;
+        display: flex;
+        cursor: pointer;
+        opacity: 0;
+        font-size: 24px;
+      }
+
+      .upload-input {
+        display: none;
+      }
 
       &:active {
         background-color: #e8e8e8;

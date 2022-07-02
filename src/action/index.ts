@@ -48,6 +48,16 @@ class Action {
     return await this.http.get(`/api/rest/room/list?userId=${userId}`);
   }
 
+  async uploadImg(formdata: FormData, userId: string) {
+    return await this.http.post(
+      `/api/rest/room/uploadImg?userId=${userId}`,
+      formdata,
+      {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      }
+    );
+  }
+
   // async verifyPassword() {
   //   const resp = await this.http.put(
   //     `/api/rest/uss/v4/en/cloudmeeting/validation`,

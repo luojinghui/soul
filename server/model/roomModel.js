@@ -42,9 +42,13 @@ const roomSchema = new Schema({
       },
     },
   ],
+  // 点对点房间远端用户id，群组房间不需要填写
   receiveId: String,
+  // 最后一条消息id
   lastMsgId: String,
+  // 最后一位消息用户id
   lastUserId: String,
+  // 是否固定
   isFixed: Boolean,
 });
 

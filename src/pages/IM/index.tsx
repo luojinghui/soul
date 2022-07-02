@@ -8,10 +8,7 @@ import {
 } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { message } from 'antd';
-import {
-  LeftOutlined,
-  SettingOutlined,
-} from '@ant-design/icons';
+import { LeftOutlined, SettingOutlined } from '@ant-design/icons';
 import { imServer } from '../../enum';
 import { useNavigate, useParams } from 'react-router-dom';
 import { AvatarMap } from '@/components';
@@ -20,6 +17,8 @@ import { MessageTime } from '@/utils/messageTime';
 import action from '@/action';
 import { ChatInput } from '@/components';
 import { emojiMaxList } from '@/components/ChatInput/emoji';
+import { IUserInfo } from '@/type';
+import { httpServer } from '@/enum';
 
 import './index.less';
 import 'highlight.js/styles/github.css';
@@ -36,7 +35,7 @@ function IM() {
   const footerRef = useRef<any>(null);
 
   const [messageList, setMessageList] = useState([]);
-  const [user, setUser] = useState<any>({});
+  const [user, setUser] = useState<IUserInfo | null>(null);
   const [roomInfo, setRoomInfo] = useState<any>({});
   const [pageInfo, setPageInfo] = useState({
     currentPage: 0,
@@ -190,11 +189,15 @@ function IM() {
     const data = {
       type: 'chat',
       data: {
-        imageUrl: '',
-        fileUrl: '',
-        fileJson: '',
         roomId: params.roomId,
         userId: userRef.current.id,
+        fileUrl: '',
+        filename: '',
+        mimetype: '',
+        content: '',
+        msgType: '',
+        size: 0,
+        status: '',
         ...value,
       },
     };
@@ -232,16 +235,43 @@ function IM() {
     return (
       <div className="chat-list" ref={chatRef}>
         {messageList.map((item: any) => {
-          const { avatarType, userId, name, _id, content, avatar, msgType } =
-            item;
+          const {
+            avatarType,
+            userId,
+            name,
+            _id,
+            content,
+            avatar,
+            msgType,
+            fileUrl,
+            mimetype,
+          } = item;
           const isSelf = userId === userRef.current.id;
           const isSuperEmoji = msgType === 'super_emoji';
-          let emojiHtml = '';
+          const isImgFile = msgType === 'file' && mimetype.includes('image');
+          const isOtherFile = msgType === 'file' && !mimetype.includes('image');
+          let html = '';
+          let htmlContent = content;
 
           if (isSuperEmoji) {
             // @ts-ignore
             const { src, alt } = emojiMaxList[content];
-            emojiHtml = `<img src=${src} alt=${alt} data-emoji-type="max">`;
+            html = `<img src=${src} alt=${alt} data-emoji-type="max">`;
+            htmlContent = html;
+          }
+
+          if (isImgFile) {
+            const src = `${httpServer}/upload/${userId}/${fileUrl}`;
+            // @ts-ignore
+            html = `<img src=${encodeURI(src)} alt="img"}>`;
+            htmlContent = html;
+          }
+
+          if (isOtherFile) {
+            const src = `${httpServer}/upload/${userId}/${fileUrl}`;
+            // @ts-ignore
+            html = `<a href=${encodeURI(src)} target="_blank">${fileUrl}</a>`;
+            htmlContent = html;
           }
 
           return (
@@ -268,7 +298,7 @@ function IM() {
                   <div
                     className={`html ${isSuperEmoji ? 'html_transparent' : ''}`}
                     dangerouslySetInnerHTML={{
-                      __html: isSuperEmoji ? emojiHtml : content,
+                      __html: htmlContent,
                     }}
                   />
                 </div>
@@ -281,7 +311,7 @@ function IM() {
   };
 
   const userAvatar = useMemo(() => {
-    const { avatar, avatarType } = user;
+    const { avatar, avatarType } = user || {};
 
     if (!avatar) {
       return AvatarMap['1'];
@@ -326,6 +356,7 @@ function IM() {
           chatRef={chatInputRef}
           onStateChange={onChatInputStateChange}
           onSendMessage={onSendMessage}
+          user={user}
         ></ChatInput>
       </div>
     </div>

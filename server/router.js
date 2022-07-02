@@ -5,12 +5,14 @@
  * @author jinghui-Luo
  *
  * Created at     : 2021-04-09 14:17:34
- * Last modified  : 2022-07-01 13:17:47
+ * Last modified  : 2022-07-02 20:50:56
  */
 
 const express = require('express');
 const path = require('path');
 const apiController = require('./controller/apiController');
+const multer = require('multer');
+const { upload } = require('./utils/upload');
 
 const router = express.Router();
 
@@ -20,11 +22,14 @@ router.get('/api/rest/test', apiController.test);
 router.post('/api/rest/user/register', apiController.registerUser);
 // 获取房间信息
 router.get('/api/rest/room/info', apiController.getRoomInfo);
+// 获取房间列表
 router.get('/api/rest/room/list', apiController.getRoomList);
 // 创建房间
 router.post('/api/rest/room/create', apiController.createRoom);
 // 创建大厅房间
 router.post('/api/rest/room/createRoot', apiController.createRoomRoot);
+// 上传多张图片
+router.post('/api/rest/room/uploadImg', upload, apiController.roomUploadImgs);
 // 获取热门图片壁纸
 router.get('/api/happy/wrappaper', apiController.happyWrapper);
 // 获取转发图片内容

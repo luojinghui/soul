@@ -78,7 +78,9 @@ const onReceiveChatMessage = async (msg) => {
   try {
     const { data, roomId, userId } = msg;
     const msgModel = await getMessageModel(roomId);
-    const chat = await msgModel.create(data);
+    // 设置消息状态
+    const nextData = { ...data, status: 'success' };
+    const chat = await msgModel.create(nextData);
 
     sendMessage(
       {

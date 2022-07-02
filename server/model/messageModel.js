@@ -10,15 +10,23 @@ const messageSchema = new Schema({
   msgType: {
     type: String,
     enum: {
-      values: ['text', 'image', 'file', 'super_emoji'],
+      values: ['text', 'file', 'super_emoji'],
       message: '{VALUE} is not supported',
     },
   },
   content: String,
-  imageUrl: String,
   fileUrl: String,
-  fileJson: String,
-  seq: { type: Number, default: 0 },
+  filename: String,
+  mimetype: String,
+  size: Number,
+  status: {
+    type: String,
+    enum: {
+      values: ['success', 'fail', 'pending', 'retract'],
+      message: 'msg status {VALUE} is not supported',
+      default: 'success',
+    },
+  },
   createTime: { type: Date, default: Date.now },
 });
 

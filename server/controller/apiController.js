@@ -5,13 +5,14 @@
  * @author jinghui-Luo
  *
  * Created at     : 2022-06-26 00:40:02
- * Last modified  : 2022-07-01 13:20:13
+ * Last modified  : 2022-07-02 23:50:59
  */
 
 const axios = require('axios');
 const { userModel } = require('../model/userModel');
 const { roomModel } = require('../model/roomModel');
 const { getRandomString, getRandomNum } = require('../utils/index');
+const { v4: uuidv4 } = require('uuid');
 
 module.exports = {
   test: async (req, res) => {
@@ -76,6 +77,7 @@ module.exports = {
         roomName: '流浪星球',
         roomTag: ['畅言', '篮球', '🍎'],
         roomType: 'group',
+        roomAvatarUrl: '',
         roomDesc: '在流浪星球畅所欲言吧...',
         pwd: '',
         tableName: 'messages_1',
@@ -87,6 +89,7 @@ module.exports = {
         receiveId: '',
         lastMsgId: '',
         lastUserId: '',
+        isFixed: true,
       });
 
       res.json({
@@ -161,6 +164,32 @@ module.exports = {
         data: err,
         code: 500,
         msg: 'getRoomList error',
+      });
+    }
+  },
+
+  roomUploadImgs: async (req, res) => {
+    let file = req.file || null;
+
+    if (!file) {
+      res.json({
+        code: 302,
+        data: {},
+        msg: 'Not found file',
+      });
+      return;
+    } else {
+      const fileInfo = {
+        filename: file.filename,
+        mimetype: file.mimetype,
+        size: file.size,
+        fileUrl: file.filename,
+      };
+
+      res.json({
+        code: 200,
+        data: fileInfo,
+        msg: 'success',
       });
     }
   },

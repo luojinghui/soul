@@ -13,12 +13,18 @@ import {
   SmileFilled,
 } from '@ant-design/icons';
 import { emojiList, emojiMaxList } from './emoji';
+import action from '@/action';
+import FileQueue, { Status } from './queue';
+import { IUserInfo } from '@/type';
 
 let rangeOfInputBox: any;
+const fileQueue = new FileQueue();
+
 interface IProps {
   onSendMessage: (value: any) => void;
   onStateChange: () => void;
   chatRef: any;
+  user: IUserInfo | null;
 }
 
 function ChatInput(props: IProps) {
@@ -246,6 +252,51 @@ function ChatInput(props: IProps) {
     });
   };
 
+  const onInputImgs = async (e: any) => {
+    const fileList = e.target.files;
+    console.log('on input fileList: ', fileList);
+
+    fileQueue.onCompleteAll = (list: any[]) => {
+      console.log('上传完成: ', list);
+    };
+
+    const insertIndex = fileQueue.addList(fileList.length);
+    const fileLen = fileList.length;
+
+    for (let i = 0; i < fileLen; i++) {
+      const formData = new FormData();
+      const userId = props.user?.id || '';
+
+      formData.append('file', fileList[i]);
+      formData.append('userId', userId);
+
+      action
+        .uploadImg(formData, userId)
+        .then((res) => {
+          fileQueue.updateItem(insertIndex + i, Status.Success, res);
+        })
+        .catch((err) => {
+          fileQueue.updateItem(insertIndex + i, Status.Fail, err);
+        })
+        .finally(() => {
+          fileQueue.check((result: any) => {
+            console.log('result: ', result);
+
+            const { data } = result;
+            const { fileUrl, filename, mimetype, size } = data;
+
+            props.onSendMessage({
+              msgType: 'file',
+              fileUrl,
+              filename,
+              mimetype,
+              size,
+            });
+          });
+        });
+    }
+  };
+
   return (
     <>
       <div className="wrap">
@@ -276,15 +327,37 @@ function ChatInput(props: IProps) {
 
       {!emojiVisible && (
         <div className="wrap toolbar">
-          <div className="tool" onClick={onToggleEmoji}>
+          <a className="tool" onClick={onToggleEmoji}>
             <SmileFilled className="icon" />
-          </div>
-          <div className="tool">
+          </a>
+          <a className="tool">
             <PictureFilled className="icon" />
-          </div>
-          <div className="tool">
+            <label className="upload-file" htmlFor="upload">
+              上传图片
+            </label>
+            <input
+              id="upload"
+              type="file"
+              accept="image/*,.pdf,video/*,audio/*"
+              multiple={true}
+              className="upload-input"
+              onChange={onInputImgs}
+            ></input>
+          </a>
+          <a className="tool">
             <FolderOpenFilled className="icon" />
-          </div>
+            <label className="upload-file" htmlFor="upload-file">
+              上传文件
+            </label>
+            <input
+              id="upload-file"
+              type="file"
+              accept="*"
+              multiple={true}
+              className="upload-input"
+              onChange={onInputImgs}
+            ></input>
+          </a>
         </div>
       )}
 
