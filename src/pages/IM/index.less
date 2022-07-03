@@ -142,6 +142,7 @@
 
         word-break: break-all;
         white-space: break-spaces;
+        touch-callout: none;
 
         &::after {
           content: '';
@@ -380,6 +381,11 @@
     white-space: break-spaces;
   }
 
+  img {
+    max-width: 150px;
+    max-height: 100px;
+  }
+
   img[data-emoji-type='min'] {
     width: var(--emoji-mini-size);
     height: var(--emoji-mini-size);
@@ -394,7 +400,7 @@
   }
 
   .ant-image-mask {
-    opacity: 0;
+    display: none;
   }
 }
 

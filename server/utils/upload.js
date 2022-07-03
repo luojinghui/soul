@@ -18,15 +18,37 @@ const uploadMulter = () => {
       cb(null, nextPath);
     },
     filename: (req, file, cb) => {
+      console.log('file: ', file);
+
       // 获取后缀名
       let extname = path.extname(file.originalname);
       // 获取上传的文件名
       let fileName = path.parse(file.originalname).name;
-      cb(null, `${fileName}-${getRandomString(4)}${Date.now()}${extname}`);
+      const nextName = `${fileName}-${getRandomString(
+        4
+      )}${Date.now()}${extname}`;
+
+      console.log('c nextName: ', nextName);
+
+      cb(null, nextName);
     },
   });
 
-  return multer({ storage });
+  return multer({ storage, fileFilter });
+};
+
+const fileFilter = (req, file, cb) => {
+  console.log('fileter file: ', file);
+
+  const originalname = Buffer.from(file.originalname, 'latin1').toString(
+    'utf8'
+  );
+
+  console.log('originalname: ', originalname);
+
+  file.originalname = originalname;
+
+  cb(null, true);
 };
 
 const upload = uploadMulter().single('file');

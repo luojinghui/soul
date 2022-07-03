@@ -5,7 +5,7 @@
  * @author jinghui-Luo
  *
  * Created at     : 2022-06-26 00:40:02
- * Last modified  : 2022-07-02 23:50:59
+ * Last modified  : 2022-07-03 10:39:47
  */
 
 const axios = require('axios');
@@ -171,6 +171,8 @@ module.exports = {
   roomUploadImgs: async (req, res) => {
     let file = req.file || null;
 
+    console.log('upload file: ', req.files);
+
     if (!file) {
       res.json({
         code: 302,
@@ -180,10 +182,11 @@ module.exports = {
       return;
     } else {
       const fileInfo = {
-        filename: file.filename,
-        mimetype: file.mimetype,
+        fileName: file.filename,
+        mimeType: file.mimetype,
         size: file.size,
         fileUrl: file.filename,
+        originalName: file.originalname,
       };
 
       res.json({

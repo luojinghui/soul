@@ -263,9 +263,16 @@ function ChatInput(props: IProps) {
     const insertIndex = fileQueue.addList(fileList.length);
     const fileLen = fileList.length;
 
+    if (fileLen > 9) {
+      message.info('臣妾一次最多只能接收9个文件哦');
+      return;
+    }
+
     for (let i = 0; i < fileLen; i++) {
       const formData = new FormData();
       const userId = props.user?.id || '';
+
+      console.log('fileList[i]: ', fileList[i]);
 
       formData.append('file', fileList[i]);
       formData.append('userId', userId);
@@ -283,13 +290,14 @@ function ChatInput(props: IProps) {
             console.log('result: ', result);
 
             const { data } = result;
-            const { fileUrl, filename, mimetype, size } = data;
+            const { fileUrl, fileName, mimeType, size, originalName } = data;
 
             props.onSendMessage({
               msgType: 'file',
               fileUrl,
-              filename,
-              mimetype,
+              fileName,
+              mimeType,
+              originalName,
               size,
             });
           });

@@ -48,6 +48,8 @@ function IM() {
   useEffect(() => {
     return () => {
       socketRef.current?.close();
+      // 重置timer计算器
+      MessageTimeRef.current.clear();
     };
   }, []);
 
@@ -192,11 +194,12 @@ function IM() {
         roomId: params.roomId,
         userId: userRef.current.id,
         fileUrl: '',
-        filename: '',
-        mimetype: '',
+        fileName: '',
+        mimeType: '',
+        originalName: '',
+        size: 0,
         content: '',
         msgType: '',
-        size: 0,
         status: '',
         ...value,
       },
@@ -231,6 +234,12 @@ function IM() {
     }
   };
 
+  const onContextmenu = (e: any) => {
+    e.preventDefault();
+
+    console.log('12312');
+  };
+
   const renderContent = () => {
     return (
       <div className="chat-list" ref={chatRef}>
@@ -244,12 +253,14 @@ function IM() {
             avatar,
             msgType,
             fileUrl,
-            mimetype,
+            fileName,
+            originalName,
+            mimeType,
           } = item;
           const isSelf = userId === userRef.current.id;
           const isSuperEmoji = msgType === 'super_emoji';
-          const isImgFile = msgType === 'file' && mimetype.includes('image');
-          const isOtherFile = msgType === 'file' && !mimetype.includes('image');
+          const isImgFile = msgType === 'file' && mimeType.includes('image');
+          const isOtherFile = msgType === 'file' && !mimeType.includes('image');
           let html = '';
           let htmlContent = content;
 
@@ -263,16 +274,17 @@ function IM() {
           if (isImgFile) {
             const src = `${httpServer}/upload/${userId}/${fileUrl}`;
             // @ts-ignore
-            const imgHtml = <Image src={encodeURI(src)} />;
+            const html = <Image src={encodeURI(src)} />;
 
-            // html = `<img src=${encodeURI(src)} alt="img"}>`;
-            htmlContent = imgHtml;
+            htmlContent = html;
           }
 
           if (isOtherFile) {
             const src = `${httpServer}/upload/${userId}/${fileUrl}`;
             // @ts-ignore
-            html = `<a href=${encodeURI(src)} target="_blank">${fileUrl}</a>`;
+            html = `<a href=${encodeURI(
+              src
+            )} target="_blank">${originalName}</a>`;
             htmlContent = html;
           }
 
@@ -297,24 +309,26 @@ function IM() {
                   {userId !== userRef.current.id && (
                     <div className="name">{name}</div>
                   )}
-                  {!isImgFile ? (
-                    <div
-                      className={`html ${
-                        isSuperEmoji ? 'html_transparent' : ''
-                      }`}
-                      dangerouslySetInnerHTML={{
-                        __html: htmlContent,
-                      }}
-                    />
-                  ) : (
-                    <div
-                      className={`html ${
-                        isSuperEmoji ? 'html_transparent' : ''
-                      }`}
-                    >
-                      {htmlContent}
-                    </div>
-                  )}
+                  <div onContextMenu={onContextmenu}>
+                    {!isImgFile ? (
+                      <div
+                        className={`html ${
+                          isSuperEmoji ? 'html_transparent' : ''
+                        }`}
+                        dangerouslySetInnerHTML={{
+                          __html: htmlContent,
+                        }}
+                      />
+                    ) : (
+                      <div
+                        className={`html ${
+                          isSuperEmoji ? 'html_transparent' : ''
+                        }`}
+                      >
+                        {htmlContent}
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>

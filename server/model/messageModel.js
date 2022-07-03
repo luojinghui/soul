@@ -16,8 +16,9 @@ const messageSchema = new Schema({
   },
   content: String,
   fileUrl: String,
-  filename: String,
-  mimetype: String,
+  fileName: String,
+  originalName: String,
+  mimeType: String,
   size: Number,
   status: {
     type: String,
