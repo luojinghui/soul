@@ -19,6 +19,7 @@ import { ChatInput } from '@/components';
 import { emojiMaxList } from '@/components/ChatInput/emoji';
 import { IUserInfo } from '@/type';
 import { httpServer } from '@/enum';
+import { saveImg } from '@/utils';
 
 import './index.less';
 import 'highlight.js/styles/github.css';
@@ -235,9 +236,11 @@ function IM() {
   };
 
   const onContextmenu = (e: any) => {
-    e.preventDefault();
-
     console.log('12312: ', e);
+
+    alert(`content: ${JSON.stringify(e)}`);
+
+    // saveImg('.ant-image-img', '123.png');
   };
 
   const renderContent = () => {
@@ -309,7 +312,13 @@ function IM() {
                   {userId !== userRef.current.id && (
                     <div className="name">{name}</div>
                   )}
-                  <div onContextMenu={onContextmenu}>
+                  <div
+                    onContextMenu={(e: any) => {
+                      e.preventDefault();
+
+                      onContextmenu(item);
+                    }}
+                  >
                     {!isImgFile ? (
                       <div
                         className={`html ${
