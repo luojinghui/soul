@@ -237,7 +237,7 @@ function IM() {
   const onContextmenu = (e: any) => {
     e.preventDefault();
 
-    console.log('12312');
+    console.log('12312: ', e);
   };
 
   const renderContent = () => {
