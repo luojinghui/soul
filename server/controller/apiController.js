@@ -5,7 +5,7 @@
  * @author jinghui-Luo
  *
  * Created at     : 2022-06-26 00:40:02
- * Last modified  : 2022-07-03 10:39:47
+ * Last modified  : 2022-07-04 01:47:09
  */
 
 const axios = require('axios');
@@ -62,6 +62,79 @@ module.exports = {
         msg: 'register error',
       });
     }
+  },
+
+  getUserInfo: async (req, res) => {
+    const userId = req.query.userId;
+
+    try {
+      const query = await await userModel.findById(userId);
+
+      if (!query) {
+        console.log('not found user: ', userId);
+
+        res.json({
+          data: {},
+          msg: 'failed, not found',
+          code: 302,
+        });
+        return;
+      }
+
+      res.json({
+        data: {
+          name: query.name,
+          id: query.id,
+          avatar: query.avatar,
+          avatarType: query.avatarType,
+        },
+        msg: 'success',
+        code: 200,
+      });
+    } catch (err) {
+      res.status(500).json({
+        data: err,
+        code: 500,
+        msg: 'get userinfo error',
+      });
+    }
+  },
+
+  updateUserInfo: async (req, res) => {
+    const { file, userId, name } = req.body;
+    const uploadFile = req.file;
+
+    console.log('file: ', file);
+    console.log('uploadFile: ', uploadFile);
+    console.log('userId: ', userId);
+    console.log('name: ', name);
+
+    const updateObj = {};
+
+    updateObj.name = name;
+    if (uploadFile) {
+      updateObj.avatarType = 'Remote';
+      updateObj.avatar = uploadFile.filename;
+    }
+
+    console.log('updateObj: ', updateObj);
+
+    const query = await userModel
+      .findByIdAndUpdate(userId, updateObj, { new: true })
+      .exec();
+
+    console.log('query:', query);
+
+    res.json({
+      data: {
+        name: query.name,
+        id: query.id,
+        avatar: query.avatar,
+        avatarType: query.avatarType,
+      },
+      msg: 'success',
+      code: 200,
+    });
   },
 
   createRoom: async (req, res) => {

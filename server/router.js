@@ -5,7 +5,7 @@
  * @author jinghui-Luo
  *
  * Created at     : 2021-04-09 14:17:34
- * Last modified  : 2022-07-03 10:47:59
+ * Last modified  : 2022-07-04 01:30:56
  */
 
 const express = require('express');
@@ -20,6 +20,10 @@ const router = express.Router();
 router.get('/api/rest/test', apiController.test);
 // 用户注册
 router.post('/api/rest/user/register', apiController.registerUser);
+// 获取用户信息
+router.get('/api/rest/user/info', apiController.getUserInfo);
+// 更新用户信息
+router.post('/api/rest/user/update', upload, apiController.updateUserInfo);
 // 获取房间信息
 router.get('/api/rest/room/info', apiController.getRoomInfo);
 // 获取房间列表

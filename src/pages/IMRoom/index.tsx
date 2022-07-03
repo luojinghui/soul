@@ -1,12 +1,12 @@
-import React, { useEffect, useState, useMemo } from 'react';
-import { UserInfo, storage } from '@/utils/storage';
+import { useEffect, useState } from 'react';
 import { message, Button } from 'antd';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, NavLink } from 'react-router-dom';
 import action from '@/action';
 import { LeftOutlined, SettingOutlined, PlusOutlined } from '@ant-design/icons';
-import { AvatarMap } from '@/components';
-
 import ice from '@/assets/images/ice.png';
+
+import { useRecoilValue } from 'recoil';
+import { userInfoState, userAvatarState } from '@/store';
 
 import './index.less';
 
@@ -14,19 +14,16 @@ export const IMRoom = () => {
   const [roomList, setRoomList] = useState([]);
   const navigate = useNavigate();
 
-  const [user, setUser] = useState<any>({});
+  const userInfo = useRecoilValue(userInfoState);
+  const userAvatar = useRecoilValue(userAvatarState);
 
   useEffect(() => {
     (async () => {
-      const userInfo = storage.get(UserInfo);
-      console.log('userInfo: ', userInfo);
-
-      setUser(userInfo);
-
       if (userInfo) {
         const result = await action.getRoomList(userInfo.id);
 
-        console.log('result: ', result);
+        console.log('room list: ', result);
+
         if (result && result.code === 200) {
           setRoomList(result.data);
         }
@@ -34,7 +31,7 @@ export const IMRoom = () => {
         message.info('无用户信息，请先创建');
       }
     })();
-  }, []);
+  }, [userInfo]);
 
   const onJoinRoom = (roomId: string) => {
     navigate(`/chat/${roomId}`);
@@ -43,20 +40,6 @@ export const IMRoom = () => {
   const onHome = () => {
     navigate('/', { replace: true });
   };
-
-  const userAvatar = useMemo(() => {
-    const { avatar, avatarType } = user;
-
-    if (!avatar) {
-      return AvatarMap['1'];
-    }
-
-    if (avatarType === 'Local') {
-      return AvatarMap[avatar];
-    } else {
-      return avatar;
-    }
-  }, [user]);
 
   return (
     <div>
@@ -76,9 +59,9 @@ export const IMRoom = () => {
             <div className="btn">
               <SettingOutlined className="icon setting" />
             </div>
-            <div className="person-avatar">
+            <NavLink to="/user" className="person-avatar">
               <img src={userAvatar} alt="avatar" className="img" />
-            </div>
+            </NavLink>
           </div>
         </header>
 

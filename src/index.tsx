@@ -1,21 +1,24 @@
-import React from 'react';
 import ReactDOM from 'react-dom/client';
 import Router from './route';
 import { BrowserRouter } from 'react-router-dom';
 import reportWebVitals from './reportWebVitals';
-// import VConsole from 'vconsole';
-import './index.less';
+import { RecoilRoot } from 'recoil';
+import '@/assets/style/index.less';
 
+// import VConsole from 'vconsole';
 // const vConsole = new VConsole();
+
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 
 root.render(
   // <React.StrictMode>
-  <BrowserRouter>
-    <Router />
-  </BrowserRouter>
+  <RecoilRoot>
+    <BrowserRouter>
+      <Router />
+    </BrowserRouter>
+  </RecoilRoot>
   // </React.StrictMode>
 );
 

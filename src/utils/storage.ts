@@ -5,7 +5,7 @@
  * @author jinghui-Luo
  *
  * Created at     : 2022-06-23 20:28:09
- * Last modified  : 2022-06-27 12:36:34
+ * Last modified  : 2022-07-03 22:52:51
  */
 
 export const UserInfo = 'SOUL_USER_INFO_v1';

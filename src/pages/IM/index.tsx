@@ -3,16 +3,14 @@ import {
   useEffect,
   useRef,
   useState,
-  useMemo,
   useLayoutEffect,
 } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { message, Image } from 'antd';
 import { LeftOutlined, SettingOutlined, FileFilled } from '@ant-design/icons';
 import { imServer } from '../../enum';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, NavLink } from 'react-router-dom';
 import { AvatarMap } from '@/components';
-import { UserInfo, storage } from '@/utils/storage';
 import { MessageTime } from '@/utils/messageTime';
 import action from '@/action';
 import { ChatInput } from '@/components';
@@ -22,6 +20,9 @@ import { httpServer } from '@/enum';
 import { saveImg } from '@/utils';
 import { platform } from '@/utils/browser';
 import { copyText } from '@/utils/copy';
+
+import { useRecoilValue } from 'recoil';
+import { userInfoState, userAvatarState } from '@/store';
 
 import './index.less';
 import 'highlight.js/styles/github.css';
@@ -40,7 +41,6 @@ function IM() {
   const footerRef = useRef<any>(null);
 
   const [messageList, setMessageList] = useState([]);
-  const [user, setUser] = useState<IUserInfo | null>(null);
   const [roomInfo, setRoomInfo] = useState<any>({});
   const [pageInfo, setPageInfo] = useState({
     currentPage: 0,
@@ -53,6 +53,10 @@ function IM() {
     item: null,
     content: '',
   });
+
+  const userInfo = useRecoilValue(userInfoState);
+  const userAvatar = useRecoilValue(userAvatarState);
+  userRef.current = userInfo;
 
   const navigate = useNavigate();
   const params: any = useParams();
@@ -73,36 +77,20 @@ function IM() {
 
   useEffect(() => {
     (async () => {
-      let userInfo = storage.get(UserInfo);
-
-      if (!userInfo) {
-        const res = await action.registerUser();
-
-        console.log('register res: ', res);
-
-        if (res?.code === 200) {
-          userInfo = res.data;
-        }
-      }
-
-      storage.set(UserInfo, userInfo);
-      userRef.current = userInfo;
-      setUser(userInfo);
-
       const { roomId } = params;
-      const { id: userId } = userInfo;
+      const { id: userId } = userRef.current;
       const result = await action.getRoomInfo(roomId, userId);
 
       // 房间号不存在
       if (result?.code === 204 && roomId !== '888') {
         message.info('房间不存在，请先创建房间！');
+        onBack();
         return;
       }
 
       if (result?.code === 204 && roomId === '888') {
         const createResult = await action.createRootRoom({ roomId, userId });
 
-        console.log('createResult: ', createResult);
         if (createResult?.code === 200) {
           setRoomInfo(createResult.data);
           connectWss();
@@ -332,6 +320,8 @@ function IM() {
             htmlContent = html;
           }
 
+          const avatarSrc = `${httpServer}/upload/${userId}/${avatar}`;
+
           return (
             <div className="item" key={_id}>
               {/* 时间 */}
@@ -340,13 +330,13 @@ function IM() {
               {/* 内容 */}
               <div className={`chat ${isSelf ? 'chat-right' : ''}`}>
                 {/* 头像 */}
-                <div className="avatar">
+                <NavLink to="/user" className="avatar">
                   <img
-                    src={avatarType === 'Local' ? AvatarMap[avatar] : avatar}
+                    src={avatarType === 'Local' ? AvatarMap[avatar] : avatarSrc}
                     alt="avatar"
                     className="img"
                   />
-                </div>
+                </NavLink>
 
                 {/* 聊天文本 */}
                 <div className="content">
@@ -388,20 +378,6 @@ function IM() {
     );
   };
 
-  const userAvatar = useMemo(() => {
-    const { avatar, avatarType } = user || {};
-
-    if (!avatar) {
-      return AvatarMap['1'];
-    }
-
-    if (avatarType === 'Local') {
-      return AvatarMap[avatar];
-    } else {
-      return avatar;
-    }
-  }, [user]);
-
   return (
     <div className="app">
       {/* 头部内容 */}
@@ -416,9 +392,9 @@ function IM() {
           <div className="btn">
             <SettingOutlined className="icon setting" />
           </div>
-          <div className="person-avatar">
+          <NavLink to="/user" className="person-avatar">
             <img src={userAvatar} alt="avatar" className="img" />
-          </div>
+          </NavLink>
         </div>
       </header>
 
@@ -434,7 +410,7 @@ function IM() {
           chatRef={chatInputRef}
           onStateChange={onChatInputStateChange}
           onSendMessage={onSendMessage}
-          user={user}
+          user={userInfo}
         ></ChatInput>
       </div>
 

@@ -1,21 +1,17 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { getTimeText } from './utils';
 import { NavLink, useLocation } from 'react-router-dom';
-import './index.less';
 import { message } from 'antd';
-import { SettingOutlined } from '@ant-design/icons';
-import action from '@/action';
-import { AvatarMap } from '@/components';
-import { UserInfo, storage } from '@/utils/storage';
+import { useRecoilValue } from 'recoil';
+import { userInfoState, userAvatarState } from '@/store';
+
+import './index.less';
 
 function App() {
-  const [time, setTime] = useState('');
-  const [user, setUser] = useState<any>({});
+  const [time] = useState(() => getTimeText());
 
-  useEffect(() => {
-    setTime(getTimeText());
-  });
-
+  const userInfo = useRecoilValue(userInfoState);
+  const userAvatar = useRecoilValue(userAvatarState);
   const location = useLocation();
 
   useEffect(() => {
@@ -23,28 +19,6 @@ function App() {
       document.title = '流浪星球-JingHui';
     }
   }, [location]);
-
-  useEffect(() => {
-    (async () => {
-      const userInfo = storage.get(UserInfo);
-      console.log('userInfo: ', userInfo);
-
-      if (!userInfo) {
-        const res = await action.registerUser();
-
-        console.log('res: ', res);
-
-        if (res?.code === 200) {
-          storage.set(UserInfo, res.data);
-          setUser(res.data);
-        } else {
-          setUser({});
-        }
-      } else {
-        setUser(userInfo);
-      }
-    })();
-  }, []);
 
   const onPush = () => {
     message.info('装修中，敬请期待');
@@ -54,37 +28,19 @@ function App() {
     window.open('http://luojh.me');
   };
 
-  const userAvatar = useMemo(() => {
-    const { avatar, avatarType } = user;
-
-    if (!avatar) {
-      return AvatarMap['1'];
-    }
-
-    if (avatarType === 'Local') {
-      return AvatarMap[avatar];
-    } else {
-      return avatar;
-    }
-  }, [user]);
-
   return (
     <div className="container">
       <div className={`bg12 bgAnimate`}>
         <div className="user center">
-          <div className="avatar">
-            {/* <img
-              src="https://api.dujin.org/bing/1920.php"
-              alt="avatar"
-              className="img"
-            /> */}
-            <img src={userAvatar} alt="avatar" className="img" />
-          </div>
-
-          <div className="name">
-            <span className="time">{time}，</span>
-            <span className="time">{user.name || '...'}</span>
-          </div>
+          <NavLink to="/user" className="user-wrap center">
+            <div className="avatar">
+              <img src={userAvatar} alt="avatar" className="img" />
+            </div>
+            <div className="name">
+              <span className="time">{time}，</span>
+              <span className="time">{userInfo.name}</span>
+            </div>
+          </NavLink>
         </div>
 
         <div className="nav">

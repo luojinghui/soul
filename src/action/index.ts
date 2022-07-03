@@ -27,6 +27,10 @@ class Action {
     });
   }
 
+  async getUserInfo(userId: string) {
+    return await this.http.get(`/api/rest/user/info?userId=${userId}`);
+  }
+
   async getRoomInfo(roomId: string, userId: string) {
     return await this.http.get(
       `/api/rest/room/info?roomId=${roomId}&userId=${userId}`
@@ -51,6 +55,16 @@ class Action {
   async uploadImg(formdata: FormData, userId: string) {
     return await this.http.post(
       `/api/rest/room/uploadImg?userId=${userId}`,
+      formdata,
+      {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      }
+    );
+  }
+
+  async updateUserInfo(formdata: any, userId: string) {
+    return await this.http.post(
+      `/api/rest/user/update?userId=${userId}`,
       formdata,
       {
         headers: { 'Content-Type': 'multipart/form-data' },
