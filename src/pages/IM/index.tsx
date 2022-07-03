@@ -8,7 +8,7 @@ import {
 } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { message, Image } from 'antd';
-import { LeftOutlined, SettingOutlined } from '@ant-design/icons';
+import { LeftOutlined, SettingOutlined, FileFilled } from '@ant-design/icons';
 import { imServer } from '../../enum';
 import { useNavigate, useParams } from 'react-router-dom';
 import { AvatarMap } from '@/components';
@@ -20,9 +20,13 @@ import { emojiMaxList } from '@/components/ChatInput/emoji';
 import { IUserInfo } from '@/type';
 import { httpServer } from '@/enum';
 import { saveImg } from '@/utils';
+import { platform } from '@/utils/browser';
+import { copyText } from '@/utils/copy';
 
 import './index.less';
 import 'highlight.js/styles/github.css';
+
+const browser = platform();
 
 function IM() {
   const socketRef = useRef<Socket | null>();
@@ -41,6 +45,13 @@ function IM() {
   const [pageInfo, setPageInfo] = useState({
     currentPage: 0,
     totalPage: 0,
+  });
+  const [menuSet, setMenuSet] = useState<any>({
+    visible: false,
+    x: 0,
+    y: 0,
+    item: null,
+    content: '',
   });
 
   const navigate = useNavigate();
@@ -235,13 +246,36 @@ function IM() {
     }
   };
 
-  const onContextmenu = (e: any) => {
-    console.log('12312: ', e);
+  const onContextmenu = (item: any, e: any) => {
+    if (browser.isPc) {
+      console.log('item: ', item);
+      console.log('item e: ', e);
 
-    alert(`content: ${JSON.stringify(e)}`);
+      setMenuSet({
+        visible: true,
+        x: e.clientX,
+        y: e.clientY,
+        item,
+        content: e.target.innerText,
+      });
+    }
+  };
+
+  const onDownload = useCallback(() => {
+    console.log('menu: ', menuSet);
 
     // saveImg('.ant-image-img', '123.png');
-  };
+  }, [menuSet]);
+
+  const onCopyText = useCallback(() => {
+    if (!menuSet.content.length) {
+      message.info('没有内容可以复制');
+      return;
+    }
+
+    copyText(menuSet.content);
+    message.info('复制成功');
+  }, [menuSet]);
 
   const renderContent = () => {
     return (
@@ -266,6 +300,7 @@ function IM() {
           const isOtherFile = msgType === 'file' && !mimeType.includes('image');
           let html = '';
           let htmlContent = content;
+          const isRenderContent = !isImgFile && !isOtherFile;
 
           if (isSuperEmoji) {
             // @ts-ignore
@@ -284,10 +319,16 @@ function IM() {
 
           if (isOtherFile) {
             const src = `${httpServer}/upload/${userId}/${fileUrl}`;
-            // @ts-ignore
-            html = `<a href=${encodeURI(
-              src
-            )} target="_blank">${originalName}</a>`;
+
+            const html = (
+              <div className="soul-folder">
+                <a href={src} target="_blank" className="name">
+                  {originalName}
+                </a>
+                <FileFilled className="icon" />
+              </div>
+            );
+
             htmlContent = html;
           }
 
@@ -316,10 +357,10 @@ function IM() {
                     onContextMenu={(e: any) => {
                       e.preventDefault();
 
-                      onContextmenu(item);
+                      onContextmenu(item, e);
                     }}
                   >
-                    {!isImgFile ? (
+                    {isRenderContent ? (
                       <div
                         className={`html ${
                           isSuperEmoji ? 'html_transparent' : ''
@@ -396,6 +437,27 @@ function IM() {
           user={user}
         ></ChatInput>
       </div>
+
+      {menuSet.visible && (
+        <div
+          className="menu-mask"
+          onClick={() => {
+            setMenuSet({ visible: false, x: 0, y: 0, item: null });
+          }}
+        >
+          <div
+            className="menu-content"
+            style={{ left: `${menuSet.x - 60}px`, top: `${menuSet.y}px` }}
+          >
+            <a className="btn" onClick={onCopyText}>
+              复制
+            </a>
+            <a className="btn" onClick={onDownload}>
+              下载
+            </a>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
