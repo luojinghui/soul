@@ -10,7 +10,7 @@ import { userInfoState, userAvatarState } from '@/store';
 
 import './index.less';
 
-export const IMRoom = () => {
+export const ChatHall = () => {
   const [roomList, setRoomList] = useState([]);
   const navigate = useNavigate();
 

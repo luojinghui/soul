@@ -29,7 +29,7 @@ import 'highlight.js/styles/github.css';
 
 const browser = platform();
 
-function IM() {
+function ChatRoom() {
   const socketRef = useRef<Socket | null>();
   const messageListRef = useRef([]);
   const chatRef = useRef(null);
@@ -330,7 +330,10 @@ function IM() {
               {/* 内容 */}
               <div className={`chat ${isSelf ? 'chat-right' : ''}`}>
                 {/* 头像 */}
-                <NavLink to="/user" className="avatar">
+                <NavLink
+                  to={isSelf ? '/user' : `/user/${userId}`}
+                  className="avatar"
+                >
                   <img
                     src={avatarType === 'Local' ? AvatarMap[avatar] : avatarSrc}
                     alt="avatar"
@@ -438,4 +441,4 @@ function IM() {
   );
 }
 
-export default IM;
+export default ChatRoom;

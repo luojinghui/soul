@@ -8,7 +8,7 @@ import action from '@/action';
 
 import './index.less';
 
-export default function User() {
+export default function PersonCenter() {
   const [userInfo, setUserInfo] = useRecoilState(userInfoState);
   const userAvatar = useRecoilValue(userAvatarState);
   const navigate = useNavigate();
@@ -66,7 +66,7 @@ export default function User() {
             <LeftOutlined className="icon back" onClick={onHome} />
           </div>
 
-          <div className="title">星球大厅</div>
+          <div className="title">个人中心</div>
 
           <div className="right"></div>
         </header>
