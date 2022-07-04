@@ -1,8 +1,8 @@
 import React, { useRef } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { userInfoState, userAvatarState } from '@/store';
-import { Button, Checkbox, Form, Input } from 'antd';
-import { LeftOutlined } from '@ant-design/icons';
+import { Button, Checkbox, Form, Input, message } from 'antd';
+import { LeftOutlined, EditFilled } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import action from '@/action';
 
@@ -38,6 +38,8 @@ export default function PersonCenter() {
       const result = await action.updateUserInfo(formData, userInfo.id);
       console.log('update result: ', result);
 
+      message.info('修改成功');
+
       // @ts-ignore
       setUserInfo(result?.data);
     } catch (err) {}
@@ -51,15 +53,27 @@ export default function PersonCenter() {
     console.log('onInputImgs:', e);
 
     inputFileRef.current = e.target.files[0];
+
+    onFinish({ name: userInfo.name });
   };
 
   const onHome = () => {
     navigate(-1);
   };
 
+  const onPressEnter = (e: any) => {
+    const name = e.target.value;
+
+    if (!name) {
+      return;
+    }
+
+    onFinish({ name });
+  };
+
   return (
     <div>
-      <div className="app">
+      <div className="app user-page">
         {/* 头部内容 */}
         <header className="im-header">
           <div className="left">
@@ -72,53 +86,30 @@ export default function PersonCenter() {
         </header>
 
         {/* 聊天内容 */}
-        <div className="im-content">
+        <div className="content">
           <div className="user-page">
             <div className="person-avatar">
               <img src={userAvatar} alt="avatar" className="img" />
+              <label className="upload-file" htmlFor="upload">
+                <EditFilled className="edit-icon" />
+              </label>
+              <input
+                id="upload"
+                type="file"
+                accept="image/*,.pdf,video/*,audio/*"
+                multiple={true}
+                className="upload-input"
+                onChange={onInputImgs}
+              ></input>
             </div>
-            <div className="name">{userInfo.name}</div>
-
-            <br />
-            <div>
-              <Form
-                labelCol={{ span: 4 }}
-                wrapperCol={{ span: 16 }}
-                initialValues={{ remember: true }}
-                onFinish={onFinish}
-                onFinishFailed={onFinishFailed}
-                autoComplete="off"
-              >
-                <Form.Item
-                  label="name"
-                  name="name"
-                  initialValue={userInfo.name}
-                  rules={[
-                    { required: true, message: 'Please input your name!' },
-                  ]}
-                >
-                  <Input />
-                </Form.Item>
-
-                <Form.Item>
-                  <img src={userAvatar} alt="avatar" className="img" />
-                  <label className="upload-file" htmlFor="upload"></label>
-                  <input
-                    id="upload"
-                    type="file"
-                    accept="image/*,.pdf,video/*,audio/*"
-                    multiple={true}
-                    className="upload-input"
-                    onChange={onInputImgs}
-                  ></input>
-                </Form.Item>
-
-                <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-                  <Button type="primary" htmlType="submit">
-                    保存
-                  </Button>
-                </Form.Item>
-              </Form>
+            <div className="name">
+              <div>
+                <Input
+                  defaultValue={userInfo.name}
+                  onPressEnter={onPressEnter}
+                  className="name-input"
+                ></Input>
+              </div>
             </div>
           </div>
         </div>

@@ -30,8 +30,8 @@ export default function UserCenter() {
   };
 
   return (
-    <div>
-      <div className="app">
+    <div className="container">
+      <div className="app user-page">
         {/* 头部内容 */}
         <header className="im-header">
           <div className="left">
@@ -43,12 +43,12 @@ export default function UserCenter() {
           <div className="right"></div>
         </header>
 
-        <div className="im-content">
-          <div className="user-page">
-            <div className="person-avatar">
-              <img src={userInfo.avatarUrl} alt="avatar" className="img" />
-            </div>
-            <div className="name">{userInfo.name}</div>
+        <div className="content">
+          <div className="person-avatar">
+            <img src={userInfo.avatarUrl} alt="avatar" className="img" />
+          </div>
+          <div className="name">
+            <div className="span">{userInfo.name}</div>
           </div>
         </div>
       </div>

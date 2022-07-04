@@ -1,19 +1,18 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { message, Button } from 'antd';
 import { useNavigate, NavLink } from 'react-router-dom';
 import action from '@/action';
 import { LeftOutlined, SettingOutlined, PlusOutlined } from '@ant-design/icons';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { userInfoState, userAvatarState, roomListState } from '@/store';
+
 import ice from '@/assets/images/ice.png';
-
-import { useRecoilValue } from 'recoil';
-import { userInfoState, userAvatarState } from '@/store';
-
 import './index.less';
 
 export const ChatHall = () => {
-  const [roomList, setRoomList] = useState([]);
   const navigate = useNavigate();
 
+  const [roomList, setRoomList] = useRecoilState(roomListState);
   const userInfo = useRecoilValue(userInfoState);
   const userAvatar = useRecoilValue(userAvatarState);
 
@@ -21,8 +20,6 @@ export const ChatHall = () => {
     (async () => {
       if (userInfo) {
         const result = await action.getRoomList(userInfo.id);
-
-        console.log('room list: ', result);
 
         if (result && result.code === 200) {
           setRoomList(result.data);
@@ -56,9 +53,9 @@ export const ChatHall = () => {
             <div className="btn">
               <PlusOutlined className="icon setting" />
             </div>
-            <div className="btn">
+            {/* <div className="btn">
               <SettingOutlined className="icon setting" />
-            </div>
+            </div> */}
             <NavLink to="/user" className="person-avatar">
               <img src={userAvatar} alt="avatar" className="img" />
             </NavLink>
@@ -69,9 +66,9 @@ export const ChatHall = () => {
         <div className="im-content">
           <div className="room-list">
             {roomList.map(
-              ({ _id, roomId, roomName, roomTag, roomDesc }: any) => {
+              ({ _id, roomId, roomName, roomTag, roomDesc }: any, index: number) => {
                 return (
-                  <div key={_id} className="room-info">
+                  <div key={_id} className={`room-info bg${index + 1}`}>
                     <div className="avatar">
                       <img src={ice} alt="avatar" />
                     </div>
@@ -91,7 +88,7 @@ export const ChatHall = () => {
                       onClick={() => {
                         onJoinRoom(roomId);
                       }}
-                      type="text"
+                      type="primary"
                       className="join-btn"
                     >
                       加入房间

@@ -21,8 +21,8 @@ import { saveImg } from '@/utils';
 import { platform } from '@/utils/browser';
 import { copyText } from '@/utils/copy';
 
-import { useRecoilValue } from 'recoil';
-import { userInfoState, userAvatarState } from '@/store';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { userInfoState, userAvatarState, messageListState } from '@/store';
 
 import './index.less';
 import 'highlight.js/styles/github.css';
@@ -40,7 +40,6 @@ function ChatRoom() {
   const chatInputRef = useRef(null);
   const footerRef = useRef<any>(null);
 
-  const [messageList, setMessageList] = useState([]);
   const [roomInfo, setRoomInfo] = useState<any>({});
   const [pageInfo, setPageInfo] = useState({
     currentPage: 0,
@@ -54,6 +53,7 @@ function ChatRoom() {
     content: '',
   });
 
+  const [messageList, setMessageList] = useRecoilState(messageListState);
   const userInfo = useRecoilValue(userInfoState);
   const userAvatar = useRecoilValue(userAvatarState);
   userRef.current = userInfo;
