@@ -1,8 +1,7 @@
 .app {
-  height: 100vh;
-  width: 100vw;
-  overflow-y: auto;
-  overflow-x: hidden;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
   background-color: rgb(232, 233, 232);
 }
 
@@ -83,8 +82,13 @@
 
 // -------Content内容-----------
 .im-content {
+  width: 100%;
   height: calc(100% - var(--im-header-height));
   overflow-y: auto;
+  position: absolute;
+  bottom: 0px;
+  // padding-top: var(--im-header-height);
+  box-sizing: border-box;
 
   .chat-list {
     .time {

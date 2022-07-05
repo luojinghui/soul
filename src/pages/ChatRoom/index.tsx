@@ -223,7 +223,10 @@ function ChatRoom() {
     if (footerRef.current) {
       const footerHeight = footerRef.current.clientHeight;
 
-      contentRef.current.style.height = `calc(100% - var(--im-header-height) - ${footerHeight}px)`;
+      contentRef.current.style = `
+        height: calc(100% - var(--im-header-height) - ${footerHeight}px);
+        bottom: ${footerHeight}px;
+      `;
     }
 
     // @ts-ignore
