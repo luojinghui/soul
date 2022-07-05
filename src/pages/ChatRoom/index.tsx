@@ -116,6 +116,8 @@ function ChatRoom() {
   }, []);
 
   const connectWss = useCallback(() => {
+    console.log("imServer: ", imServer);
+    
     // 连接信令服务器
     socketRef.current = io(imServer, {
       path: '/im',
