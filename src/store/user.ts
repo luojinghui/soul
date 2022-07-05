@@ -1,12 +1,13 @@
 import { atom, selector, selectorFamily } from 'recoil';
 import action from '@/action';
-import { httpServer } from '@/enum';
 import { AvatarMap } from '@/components';
+import { httpServer } from '@/enum';
 import { storage } from '@/utils/storage';
 
 /** 用户信息key */
 export const UserInfoKey = 'SOUL_USER_INFO_v1';
 
+const userStoreMap: any = {};
 let isFirstIn = true;
 
 const getUserInfo = async () => {
@@ -67,46 +68,34 @@ export const userAvatarState = selector({
   },
 });
 
-export const remoteUserInfoState = selectorFamily({
-  key: 'remoteUser',
-  get:
-    ({ userId }: any) =>
-    async () => {
-      try {
-        const result = await action.getUserInfo(userId);
-        const { avatar, avatarType } = result.data;
+export const remoteUserStoreFunc = (key: string) => {
+  if (userStoreMap[key]) {
+    return userStoreMap[key];
+  }
 
-        let avatarUrl = '';
+  console.log('userStoreMap: ', userStoreMap);
 
-        if (!avatar) {
-          avatarUrl = AvatarMap['1'];
-        }
+  const remoteUserInfoState = atom({ key, default: {} });
+  // @ts-ignore
+  userStoreMap[key] = remoteUserInfoState;
 
-        if (avatarType === 'Local') {
-          avatarUrl = AvatarMap[avatar];
-        } else {
-          avatarUrl = `${httpServer}/upload/${userId}/${avatar}`;
-        }
+  return remoteUserInfoState;
+};
 
-        return {
-          state: 'success',
-          ...result?.data,
-          avatarUrl,
-        };
-      } catch (err) {
-        return {
-          state: 'fail',
-          error: err,
-          avatar: '',
-          avatarType: '',
-          id: '',
-          name: '',
-          avatarUrl: '',
-        };
-      }
-    },
-  // 可选 set
-  set:
-    ({ userId }) =>
-    ({ set }, newValue) => {},
-});
+export const getAvatarUrl = (data: any, userId: string) => {
+  const { avatar, avatarType } = data;
+
+  let avatarUrl = '';
+
+  if (!avatar) {
+    avatarUrl = AvatarMap['1'];
+  }
+
+  if (avatarType === 'Local') {
+    avatarUrl = AvatarMap[avatar];
+  } else {
+    avatarUrl = `${httpServer}/upload/${userId}/${avatar}`;
+  }
+
+  return avatarUrl;
+};

@@ -2,7 +2,8 @@ export {
   UserInfoKey,
   userInfoState,
   userAvatarState,
-  remoteUserInfoState,
+  remoteUserStoreFunc,
+  getAvatarUrl,
 } from './user';
 
-export { roomListState, messageListState } from './room';
+export { roomListState, messageListState, messageListStoreFunc } from './room';

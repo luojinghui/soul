@@ -1,5 +1,5 @@
-import { useEffect } from 'react';
-import { message, Button } from 'antd';
+import { useEffect, useState } from 'react';
+import { message, Button, Modal } from 'antd';
 import { useNavigate, NavLink } from 'react-router-dom';
 import action from '@/action';
 import { LeftOutlined, SettingOutlined, PlusOutlined } from '@ant-design/icons';
@@ -15,6 +15,8 @@ export const ChatHall = () => {
   const [roomList, setRoomList] = useRecoilState(roomListState);
   const userInfo = useRecoilValue(userInfoState);
   const userAvatar = useRecoilValue(userAvatarState);
+
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -37,6 +39,10 @@ export const ChatHall = () => {
   const onHome = () => {
     navigate('/', { replace: true });
   };
+
+  const handleOk = () => {};
+
+  const handleCancel = () => {};
 
   return (
     <div>
@@ -66,7 +72,10 @@ export const ChatHall = () => {
         <div className="im-content">
           <div className="room-list">
             {roomList.map(
-              ({ _id, roomId, roomName, roomTag, roomDesc }: any, index: number) => {
+              (
+                { _id, roomId, roomName, roomTag, roomDesc }: any,
+                index: number
+              ) => {
                 return (
                   <div key={_id} className={`room-info bg${index + 1}`}>
                     <div className="avatar">
@@ -100,6 +109,17 @@ export const ChatHall = () => {
           </div>
         </div>
       </div>
+
+      <Modal
+        title="创建房间"
+        visible={isModalVisible}
+        onOk={handleOk}
+        onCancel={handleCancel}
+      >
+        <p>Some contents...</p>
+        <p>Some contents...</p>
+        <p>Some contents...</p>
+      </Modal>
     </div>
   );
 };

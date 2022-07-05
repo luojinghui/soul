@@ -22,7 +22,12 @@ import { platform } from '@/utils/browser';
 import { copyText } from '@/utils/copy';
 
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { userInfoState, userAvatarState, messageListState } from '@/store';
+import {
+  userInfoState,
+  userAvatarState,
+  messageListState,
+  messageListStoreFunc,
+} from '@/store';
 
 import './index.less';
 import 'highlight.js/styles/github.css';
@@ -53,13 +58,15 @@ function ChatRoom() {
     content: '',
   });
 
-  const [messageList, setMessageList] = useRecoilState(messageListState);
+  const navigate = useNavigate();
+  const params: any = useParams();
+  const storeKey = `messageState${params.roomId}`;
+  const messageStore = messageListStoreFunc(storeKey);
+
+  const [messageList, setMessageList] = useRecoilState<any>(messageStore);
   const userInfo = useRecoilValue(userInfoState);
   const userAvatar = useRecoilValue(userAvatarState);
   userRef.current = userInfo;
-
-  const navigate = useNavigate();
-  const params: any = useParams();
 
   useEffect(() => {
     return () => {
@@ -392,9 +399,9 @@ function ChatRoom() {
         <div className="title">{roomInfo.roomName || ''}</div>
 
         <div className="right">
-          <div className="btn">
+          {/* <div className="btn">
             <SettingOutlined className="icon setting" />
-          </div>
+          </div> */}
           <NavLink to="/user" className="person-avatar">
             <img src={userAvatar} alt="avatar" className="img" />
           </NavLink>

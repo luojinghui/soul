@@ -1,29 +1,57 @@
-import { useEffect, useRef } from 'react';
-import { useRecoilValue, useResetRecoilState } from 'recoil';
-import { userAvatarState } from '@/store';
-import { remoteUserInfoState } from '@/store/user';
+import { useEffect } from 'react';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { userAvatarState, remoteUserStoreFunc, getAvatarUrl } from '@/store';
 import { LeftOutlined } from '@ant-design/icons';
 import { useNavigate, useParams } from 'react-router-dom';
+import action from '@/action';
 
 import './index.less';
 
 export default function UserCenter() {
-  const params = useParams();
-
-  const userInfo = useRecoilValue(remoteUserInfoState(params));
-  const resetUserInfo = useResetRecoilState(remoteUserInfoState(params));
-
-  const userAvatar = useRecoilValue(userAvatarState);
+  const params: any = useParams();
   const navigate = useNavigate();
 
-  console.log('userInfo: ', userInfo);
+  const [userInfo, setUserInfo] = useRecoilState<any>(
+    remoteUserStoreFunc(`remote_user_${params.userId}`)
+  );
+
   console.log('params: ', params);
+  console.log('userInfo: ', userInfo);
+
+  const getUserInfo = async () => {
+    let info;
+    const result = await action.getUserInfo(params.userId);
+
+    if (result?.code === 200) {
+      const avatarUrl = getAvatarUrl(result.data, params.userId);
+
+      console.log('avatarUrl: ', avatarUrl);
+
+      info = {
+        state: 'success',
+        avatarUrl,
+        ...result?.data,
+      };
+    } else {
+      info = {
+        state: 'fail',
+        error: null,
+        avatar: '1',
+        avatarType: 'Local',
+        id: '',
+        name: '',
+        avatarUrl: '',
+      };
+    }
+
+    setUserInfo(info);
+  };
 
   useEffect(() => {
-    return () => {
-      resetUserInfo();
-    };
-  });
+    (async () => {
+      await getUserInfo();
+    })();
+  }, []);
 
   const onHome = () => {
     navigate(-1);
