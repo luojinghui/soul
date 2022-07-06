@@ -45,68 +45,66 @@ export const ChatHall = () => {
   const handleCancel = () => {};
 
   return (
-    <div>
-      <div className="app">
-        {/* 头部内容 */}
-        <header className="im-header">
-          <div className="left">
-            <LeftOutlined className="icon back" onClick={onHome} />
+    <div className="app">
+      {/* 头部内容 */}
+      <header className="im-header">
+        <div className="left">
+          <LeftOutlined className="icon back" onClick={onHome} />
+        </div>
+
+        <div className="title">星球大厅</div>
+
+        <div className="right">
+          <div className="btn">
+            <PlusOutlined className="icon setting" />
           </div>
-
-          <div className="title">星球大厅</div>
-
-          <div className="right">
-            <div className="btn">
-              <PlusOutlined className="icon setting" />
-            </div>
-            {/* <div className="btn">
+          {/* <div className="btn">
               <SettingOutlined className="icon setting" />
             </div> */}
-            <NavLink to="/user" className="person-avatar">
-              <img src={userAvatar} alt="avatar" className="img" />
-            </NavLink>
-          </div>
-        </header>
+          <NavLink to="/user" className="person-avatar">
+            <img src={userAvatar} alt="avatar" className="img" />
+          </NavLink>
+        </div>
+      </header>
 
-        {/* 聊天内容 */}
-        <div className="im-content">
-          <div className="room-list">
-            {roomList.map(
-              (
-                { _id, roomId, roomName, roomTag, roomDesc }: any,
-                index: number
-              ) => {
-                return (
-                  <div key={_id} className={`room-info bg${index + 1}`}>
-                    <div className="avatar">
-                      <img src={ice} alt="avatar" />
+      {/* 聊天内容 */}
+      <div className="im-content">
+        <div className="room-list">
+          {roomList.map(
+            (
+              { _id, roomId, roomName, roomTag, roomDesc }: any,
+              index: number
+            ) => {
+              return (
+                <div key={_id} className={`room-info bg${index + 1}`}>
+                  <div className="avatar">
+                    <img src={ice} alt="avatar" />
+                  </div>
+                  <div>
+                    <div>
+                      房间号：<span>{roomId}</span>
                     </div>
                     <div>
-                      <div>
-                        房间号：<span>{roomId}</span>
-                      </div>
-                      <div>
-                        房间名：<span>{roomName}</span>
-                      </div>
-                      <div>
-                        Tag：
-                        <span>{roomTag.map((val: string) => `${val} `)}</span>
-                      </div>
+                      房间名：<span>{roomName}</span>
                     </div>
-                    <Button
-                      onClick={() => {
-                        onJoinRoom(roomId);
-                      }}
-                      type="primary"
-                      className="join-btn"
-                    >
-                      加入房间
-                    </Button>
+                    <div>
+                      Tag：
+                      <span>{roomTag.map((val: string) => `${val} `)}</span>
+                    </div>
                   </div>
-                );
-              }
-            )}
-          </div>
+                  <Button
+                    onClick={() => {
+                      onJoinRoom(roomId);
+                    }}
+                    type="primary"
+                    className="join-btn"
+                  >
+                    加入房间
+                  </Button>
+                </div>
+              );
+            }
+          )}
         </div>
       </div>
 

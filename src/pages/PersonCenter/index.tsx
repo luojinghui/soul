@@ -72,44 +72,42 @@ export default function PersonCenter() {
   };
 
   return (
-    <div>
-      <div className="app user-page">
-        {/* 头部内容 */}
-        <header className="im-header">
-          <div className="left">
-            <LeftOutlined className="icon back" onClick={onHome} />
+    <div className="app user-page">
+      {/* 头部内容 */}
+      <header className="im-header">
+        <div className="left">
+          <LeftOutlined className="icon back" onClick={onHome} />
+        </div>
+
+        <div className="title">个人中心</div>
+
+        <div className="right"></div>
+      </header>
+
+      {/* 聊天内容 */}
+      <div className="content">
+        <div className="user-page">
+          <div className="person-avatar">
+            <img src={userAvatar} alt="avatar" className="img" />
+            <label className="upload-file" htmlFor="upload">
+              <EditFilled className="edit-icon" />
+            </label>
+            <input
+              id="upload"
+              type="file"
+              accept="image/*,.pdf,video/*,audio/*"
+              multiple={true}
+              className="upload-input"
+              onChange={onInputImgs}
+            ></input>
           </div>
-
-          <div className="title">个人中心</div>
-
-          <div className="right"></div>
-        </header>
-
-        {/* 聊天内容 */}
-        <div className="content">
-          <div className="user-page">
-            <div className="person-avatar">
-              <img src={userAvatar} alt="avatar" className="img" />
-              <label className="upload-file" htmlFor="upload">
-                <EditFilled className="edit-icon" />
-              </label>
-              <input
-                id="upload"
-                type="file"
-                accept="image/*,.pdf,video/*,audio/*"
-                multiple={true}
-                className="upload-input"
-                onChange={onInputImgs}
-              ></input>
-            </div>
-            <div className="name">
-              <div>
-                <Input
-                  defaultValue={userInfo.name}
-                  onPressEnter={onPressEnter}
-                  className="name-input"
-                ></Input>
-              </div>
+          <div className="name">
+            <div>
+              <Input
+                defaultValue={userInfo.name}
+                onPressEnter={onPressEnter}
+                className="name-input"
+              ></Input>
             </div>
           </div>
         </div>

@@ -58,26 +58,24 @@ export default function UserCenter() {
   };
 
   return (
-    <div className="container">
-      <div className="app user-page">
-        {/* 头部内容 */}
-        <header className="im-header">
-          <div className="left">
-            <LeftOutlined className="icon back" onClick={onHome} />
-          </div>
+    <div className="app user-page">
+      {/* 头部内容 */}
+      <header className="im-header">
+        <div className="left">
+          <LeftOutlined className="icon back" onClick={onHome} />
+        </div>
 
-          <div className="title">用户中心</div>
+        <div className="title">用户中心</div>
 
-          <div className="right"></div>
-        </header>
+        <div className="right"></div>
+      </header>
 
-        <div className="content">
-          <div className="person-avatar">
-            <img src={userInfo.avatarUrl} alt="avatar" className="img" />
-          </div>
-          <div className="name">
-            <div className="span">{userInfo.name}</div>
-          </div>
+      <div className="content">
+        <div className="person-avatar">
+          <img src={userInfo.avatarUrl} alt="avatar" className="img" />
+        </div>
+        <div className="name">
+          <div className="span">{userInfo.name}</div>
         </div>
       </div>
     </div>
