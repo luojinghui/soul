@@ -5,7 +5,16 @@
   --line-color: #dbdbdb;
 
   --chat-content-bg: #fff;
+  --chat-html-bg: #fff;
+  --chat-tool-bar-hover-bg: #e8e8e8;
+  --chat-app-bg: rgb(232, 233, 232);
+  --content-bg: #fff;
+  --header-bg: #fff;
+  --header-shadow-color: #dadada;
   --chat-content-bg-none: transparent;
+  --chat-footer-header-bg: rgb(244 244 244);
+  --hljs-bg-color: #ececec;
+  --chat-input-bg: #fff;
 
   --common-padding: 12px;
 
@@ -17,4 +26,35 @@
   --emoji-max-show-size: 72px;
 
   --contaier-max-width: 1100px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --base-color: rgb(221, 221, 221);
+    --bg-color: #0c0b0b;
+    --line-color: #dbdbdb;
+
+    --chat-content-bg: rgb(14, 14, 14);
+    --chat-html-bg: rgb(38, 169, 78);
+    --chat-tool-bar-hover-bg: #e8e8e8;
+    --chat-app-bg: rgb(14, 14, 14);
+    --content-bg: rgb(14, 14, 14);
+    --header-bg: rgb(14, 14, 14);
+    --header-shadow-color: rgb(34, 34, 34);
+    --chat-content-bg-none: transparent;
+    --chat-footer-header-bg: rgb(21, 21, 21);
+    --hljs-bg-color: #ececec;
+    --chat-input-bg: rgb(32, 32, 32);
+
+    --common-padding: 12px;
+
+    --im-footer-height: 112px;
+    --im-header-height: 44px;
+
+    --emoji-mini-size: 24px;
+    --emoji-max-size: 36px;
+    --emoji-max-show-size: 72px;
+
+    --contaier-max-width: 1100px;
+  }
 }

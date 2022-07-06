@@ -2,7 +2,7 @@
   height: 100%;
   width: 100%;
   overflow: hidden;
-  background-color: rgb(232, 233, 232);
+  background-color: var(--chat-app-bg);
 }
 
 // -------Header内容-----------
@@ -14,10 +14,9 @@
   align-items: center;
   padding-left: 0px;
   justify-content: center;
-  box-shadow: 4px 3px 10px 0px #dadada;
+  box-shadow: 4px 3px 10px 0px var(--header-shadow-color);
   position: relative;
-  // background-color: rgb(232, 233, 232);
-  background-color: #fff;
+  background-color: var(--header-bg);
 
   .left {
     position: absolute;
@@ -87,7 +86,6 @@
   overflow-y: auto;
   position: absolute;
   bottom: 0px;
-  // padding-top: var(--im-header-height);
   box-sizing: border-box;
 
   .chat-list {
@@ -135,7 +133,7 @@
       .html {
         user-select: text;
         padding: 10px;
-        background-color: var(--chat-content-bg);
+        background-color: var(--chat-html-bg);
         border-radius: 4px;
         font-size: 14px;
         position: relative;
@@ -145,7 +143,6 @@
         cursor: default;
 
         word-break: break-all;
-        // white-space: break-spaces;
 
         &::after {
           content: '';
@@ -219,7 +216,7 @@
   bottom: 0;
   left: 0;
   padding: 12px 0;
-  background-color: rgb(244 244 244);
+  background-color: var(--chat-footer-header-bg);
 
   .wrap {
     padding: 0 var(--common-padding);
@@ -244,7 +241,7 @@
       box-shadow: none !important;
       padding: 7px 70px 7px 10px;
       width: 100%;
-      background-color: #fff;
+      background-color: var(--chat-input-bg);
       border-radius: 2px;
       outline: none;
       overflow: auto;
@@ -279,7 +276,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      background-color: #fff;
+      background-color: var(--chat-content-bg);
       margin-right: 16px;
       margin-bottom: 10px;
       border-radius: 4px;
@@ -304,7 +301,7 @@
       }
 
       &:active {
-        background-color: #e8e8e8;
+        background-color: var(--chat-tool-bar-hover-bg);
       }
 
       .icon {
@@ -369,7 +366,7 @@
 // ----------mixin: html format style-----------
 .markdown-content() {
   .hljs {
-    background-color: #ececec;
+    background-color: var(--hljs-bg-color);
     border-radius: 4px;
     margin-top: 0;
     margin-bottom: 0;
@@ -384,7 +381,7 @@
   }
 
   a {
-    color: #126dda;
+    color: rgb(28, 69, 88);
   }
 
   pre {

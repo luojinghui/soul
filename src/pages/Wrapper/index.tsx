@@ -23,6 +23,8 @@ export default function Wrapper() {
     const result = await action.getWrapperList();
 
     if (result?.code === 200) {
+      console.log('result.data.vertical: ', result.data.vertical);
+
       setList(result.data.vertical);
       return;
     } else {
@@ -128,7 +130,7 @@ export default function Wrapper() {
           }}
         >
           {list.map((item: any) => {
-            return <Image key={item.id} src={item.thumb}></Image>;
+            return <Image key={item.id} src={item.preview}></Image>;
           })}
         </Image.PreviewGroup>
       )}
