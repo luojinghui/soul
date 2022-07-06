@@ -11,11 +11,13 @@ import {
   PictureFilled,
   FolderOpenFilled,
   SmileFilled,
+  FileMarkdownFilled,
 } from '@ant-design/icons';
 import { emojiList, emojiMaxList } from './emoji';
 import action from '@/action';
 import FileQueue, { Status } from './queue';
 import { IUserInfo } from '@/type';
+import { parseMD } from '@/utils/markdown';
 
 let rangeOfInputBox: any;
 const fileQueue = new FileQueue();
@@ -32,6 +34,7 @@ function ChatInput(props: IProps) {
   const inputRef = useRef(null);
 
   const [emojiVisible, setEmojiVisible] = useState(false);
+  const [isMdMode, setIsMdMode] = useState(false);
 
   useImperativeHandle(props.chatRef, () => ({
     clickChatContent: () => {
@@ -106,9 +109,20 @@ function ChatInput(props: IProps) {
       return;
     }
 
-    // @ts-ignore
-    const value = inputRef.current.innerHTML;
-    const nextValue = dealInnerHtml(value);
+    let nextValue;
+
+    if (!isMdMode) {
+      // @ts-ignore
+      const value = inputRef.current.innerHTML;
+      nextValue = dealInnerHtml(value);
+    } else {
+      // @ts-ignore
+      const value = inputRef.current.innerText;
+
+      nextValue = parseMD.render(value);
+    }
+
+    console.log('nextValue: ', nextValue);
 
     if (emojiVisible) {
       setEmojiVisible(false);
@@ -252,6 +266,16 @@ function ChatInput(props: IProps) {
     });
   };
 
+  const toggleMDMode = () => {
+    setIsMdMode(!isMdMode);
+
+    if (!isMdMode) {
+      message.info('已开启 Markdown 输入模式');
+    } else {
+      message.info('已切换至正常输入模式');
+    }
+  };
+
   const onInputImgs = async (e: any) => {
     const fileList = e.target.files;
     console.log('on input fileList: ', fileList);
@@ -365,6 +389,9 @@ function ChatInput(props: IProps) {
               className="upload-input"
               onChange={onInputImgs}
             ></input>
+          </a>
+          <a className={`tool ${isMdMode && 'active'}`} onClick={toggleMDMode}>
+            <FileMarkdownFilled className="icon" />
           </a>
         </div>
       )}
