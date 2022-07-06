@@ -27,7 +27,6 @@ const onSocket = (socket, io) => {
   socket.on('message', (msg) => {
     const type = msg.type;
 
-    console.log('receive msg: ', msg);
     switch (type) {
       case 'join':
         onJoinroom(socket, msg);
@@ -61,8 +60,6 @@ const leaveRoom = async ({ userId, roomId }) => {
       userIds[userIdIndex].state = UserState.offLine;
 
       await roomModel.updateOne({ roomId }, { userIds });
-
-      console.log('delete user: ', userId);
     }
   } catch (err) {
     console.log('leaveRoom update err: ', err);
@@ -124,11 +121,7 @@ const onJoinroom = async (socket, msg) => {
         state: UserState.onLine,
       });
       const update = await roomModel.updateOne({ roomId }, { userIds });
-
-      console.log('update: ', update);
     }
-
-    console.log('userIds: ', userIds);
 
     MessageTableByRoomId[roomId] = tableName;
     const userMap = {};
@@ -162,7 +155,6 @@ const onJoinroom = async (socket, msg) => {
     const msgModel = await getMessageModel(roomId);
     const msgCount = await msgModel.countDocuments({ roomId }).exec();
     const totalPage = Math.ceil(msgCount / 100);
-    console.log('totalPage: ', totalPage);
     const pageMessageQuery = await msgModel
       .find({ roomId })
       .skip(0)
@@ -208,7 +200,6 @@ const getMessageModel = async (roomId) => {
 const sendMessage = (data, roomId = '', socket = '') => {
   const socketInstance = roomId ? ioInstance.to(roomId) : socket;
 
-  console.log('send msg: ', data);
   socketInstance.emit('message', data);
 };
 

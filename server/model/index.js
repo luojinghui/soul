@@ -5,12 +5,13 @@
  * @author jinghui-Luo
  *
  * Created at     : 2021-04-07 16:48:07
- * Last modified  : 2022-06-26 20:30:11
+ * Last modified  : 2022-07-06 10:44:54
  */
 
 const mongoose = require('mongoose');
+const db = require('../../config');
 
-const DBHOST = `mongodb://admin:xxxoooyyy123!@127.0.0.1:27017/soul_db?authSource=admin`;
+const DBHOST = db;
 
 /**
  * 连接数据库

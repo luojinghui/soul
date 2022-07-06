@@ -5,7 +5,7 @@
  * @author jinghui-Luo
  *
  * Created at     : 2022-06-26 00:40:02
- * Last modified  : 2022-07-04 01:47:09
+ * Last modified  : 2022-07-06 10:47:05
  */
 
 const axios = require('axios');
@@ -103,12 +103,6 @@ module.exports = {
   updateUserInfo: async (req, res) => {
     const { file, userId, name } = req.body;
     const uploadFile = req.file;
-
-    console.log('file: ', file);
-    console.log('uploadFile: ', uploadFile);
-    console.log('userId: ', userId);
-    console.log('name: ', name);
-
     const updateObj = {};
 
     updateObj.name = name;
@@ -117,13 +111,9 @@ module.exports = {
       updateObj.avatar = uploadFile.filename;
     }
 
-    console.log('updateObj: ', updateObj);
-
     const query = await userModel
       .findByIdAndUpdate(userId, updateObj, { new: true })
       .exec();
-
-    console.log('query:', query);
 
     res.json({
       data: {
@@ -243,8 +233,6 @@ module.exports = {
 
   roomUploadImgs: async (req, res) => {
     let file = req.file || null;
-
-    console.log('upload file: ', req.files);
 
     if (!file) {
       res.json({
