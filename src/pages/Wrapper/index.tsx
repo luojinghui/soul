@@ -23,7 +23,7 @@ export default function Wrapper() {
     const result = await action.getWrapperList();
 
     if (result?.code === 200) {
-      setList(result.data);
+      setList(result.data.vertical);
       return;
     } else {
       message.info('服务跑路了');

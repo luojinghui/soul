@@ -5,7 +5,7 @@
  * @author jinghui-Luo
  *
  * Created at     : 2022-06-26 00:40:02
- * Last modified  : 2022-07-06 19:36:02
+ * Last modified  : 2022-07-06 21:34:54
  */
 
 const axios = require('axios');
@@ -31,7 +31,7 @@ module.exports = {
 
       if (result && result.data) {
         res.json({
-          data: result.data.res.vertical,
+          data: result.data.res,
           msg: 'success',
           code: 200,
         });
