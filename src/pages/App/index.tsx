@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { getTimeText } from './utils';
 import { NavLink, useLocation } from 'react-router-dom';
-import { message } from 'antd';
 import { useRecoilValue } from 'recoil';
 import { userInfoState, userAvatarState } from '@/store';
 
@@ -19,10 +18,6 @@ function App() {
       document.title = '流浪星球-JingHui';
     }
   }, [location]);
-
-  const onPush = () => {
-    message.info('装修中，敬请期待');
-  };
 
   const onJump = () => {
     window.open('http://luojh.me');
@@ -44,9 +39,9 @@ function App() {
         </div>
 
         <div className="nav">
-          <div className="circle center pic" onClick={onPush}>
+          <NavLink to="/wrapper" className="circle center swim">
             <span className="link">壁纸</span>
-          </div>
+          </NavLink>
 
           <div className="circle center barrage" onClick={onJump}>
             <span className="link">博客</span>

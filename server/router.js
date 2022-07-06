@@ -5,13 +5,13 @@
  * @author jinghui-Luo
  *
  * Created at     : 2021-04-09 14:17:34
- * Last modified  : 2022-07-04 01:30:56
+ * Last modified  : 2022-07-06 19:29:23
  */
 
 const express = require('express');
 const path = require('path');
 const apiController = require('./controller/apiController');
-const multer = require('multer');
+const thirdController = require('./controller/thirdController');
 const { upload } = require('./utils/upload');
 
 const router = express.Router();
@@ -34,10 +34,11 @@ router.post('/api/rest/room/create', apiController.createRoom);
 router.post('/api/rest/room/createRoot', apiController.createRoomRoot);
 // 上传多张图片
 router.post('/api/rest/room/uploadImg', upload, apiController.roomUploadImgs);
+
 // 获取热门图片壁纸
-router.get('/api/happy/wrappaper', apiController.happyWrapper);
+router.get('/api/happy/wrappaper', thirdController.happyWrapper);
 // 获取转发图片内容
-router.get('/api/happy/wrapperUrl', apiController.happyWrapperUrl);
+router.get('/api/happy/wrapperUrl', thirdController.happyWrapperUrl);
 
 router.get('/*', (e) => {
   console.log('match /* route');

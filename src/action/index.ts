@@ -72,27 +72,9 @@ class Action {
     );
   }
 
-  // async verifyPassword() {
-  //   const resp = await this.http.put(
-  //     `/api/rest/uss/v4/en/cloudmeeting/validation`,
-  //     {}
-  //   );
-
-  //   return resp;
-  // }
-
-  // // 埋点
-  // async setStates(data: any) {
-  //   try {
-  //     await this.http.post('/api/rest/v3/device/states', data);
-  //   } catch (err) {}
-  // }
-
-  // async igonreMeetingMonito(confNumber: string, securityKey: string) {
-  //   const sendUrl = `/api/rest/uss/v1/cloudmeeting/monitor?securityKey=${securityKey}&conferenceNumber=${confNumber}&nonce=${nonce}`;
-
-  //   return await this.http.get(sendUrl);
-  // }
+  async getWrapperList() {
+    return await this.http.get(`/api/happy/wrappaper`);
+  }
 }
 
 export default new Action();

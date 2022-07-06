@@ -7,6 +7,7 @@ import { ChatHall } from '../pages/ChatHall';
 import NotFound from '../pages/NotFound';
 import UserCenter from '../pages/UserCenter';
 import PersonCenter from '../pages/PersonCenter';
+import Wrapper from '../pages/Wrapper';
 
 export default function Router() {
   return (
@@ -24,6 +25,8 @@ export default function Router() {
           <Route path="" element={<PersonCenter />}></Route>
           <Route path=":userId" element={<UserCenter />}></Route>
         </Route>
+
+        <Route path="wrapper" element={<Wrapper />}></Route>
 
         <Route path="*" element={<NotFound />} />
       </Routes>

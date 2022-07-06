@@ -18,8 +18,6 @@ const uploadMulter = () => {
       cb(null, nextPath);
     },
     filename: (req, file, cb) => {
-      console.log('file: ', file);
-
       // 获取后缀名
       let extname = path.extname(file.originalname);
       // 获取上传的文件名
@@ -27,8 +25,6 @@ const uploadMulter = () => {
       const nextName = `${fileName}-${getRandomString(
         4
       )}${Date.now()}${extname}`;
-
-      console.log('c nextName: ', nextName);
 
       cb(null, nextName);
     },
@@ -38,13 +34,9 @@ const uploadMulter = () => {
 };
 
 const fileFilter = (req, file, cb) => {
-  console.log('fileter file: ', file);
-
   const originalname = Buffer.from(file.originalname, 'latin1').toString(
     'utf8'
   );
-
-  console.log('originalname: ', originalname);
 
   file.originalname = originalname;
 
