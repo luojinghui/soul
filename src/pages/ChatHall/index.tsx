@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { message, Button, Modal } from 'antd';
+import { message, Button, Modal, Form, Input, Checkbox } from 'antd';
 import { useNavigate, NavLink } from 'react-router-dom';
 import action from '@/action';
 import { LeftOutlined, SettingOutlined, PlusOutlined } from '@ant-design/icons';
@@ -17,6 +17,7 @@ export const ChatHall = () => {
   const userAvatar = useRecoilValue(userAvatarState);
 
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [form] = Form.useForm();
 
   useEffect(() => {
     (async () => {
@@ -42,7 +43,20 @@ export const ChatHall = () => {
 
   const handleOk = () => {};
 
-  const handleCancel = () => {};
+  const handleCancel = () => {
+    setIsModalVisible(!isModalVisible);
+  };
+
+  const onShowAddRoom = () => {
+    setIsModalVisible(!isModalVisible);
+  };
+
+  const onFinish = (e: any) => {
+    console.log('e: ', e);
+
+    form.resetFields();
+    setIsModalVisible(!isModalVisible);
+  };
 
   return (
     <div className="app">
@@ -55,7 +69,7 @@ export const ChatHall = () => {
         <div className="title">星球大厅</div>
 
         <div className="right">
-          <div className="btn">
+          <div className="btn" onClick={onShowAddRoom}>
             <PlusOutlined className="icon setting" />
           </div>
           {/* <div className="btn">
@@ -109,14 +123,69 @@ export const ChatHall = () => {
       </div>
 
       <Modal
-        title="创建房间"
+        title="创建兴趣房间"
         visible={isModalVisible}
         onOk={handleOk}
         onCancel={handleCancel}
+        okText="创建"
+        cancelText="取消"
+        footer={false}
       >
-        <p>Some contents...</p>
-        <p>Some contents...</p>
-        <p>Some contents...</p>
+        <Form
+          form={form}
+          name="roomInfo"
+          labelCol={{ span: 5 }}
+          wrapperCol={{ span: 18 }}
+          initialValues={{ remember: true }}
+          onFinish={onFinish}
+          autoComplete="off"
+        >
+          <Form.Item
+            label="房间号"
+            name="roomId"
+            rules={[{ required: true, message: 'Please input your 房间号!' }]}
+          >
+            <Input />
+          </Form.Item>
+
+          <Form.Item
+            label="房间名称"
+            name="roomName"
+            rules={[{ required: true, message: 'Please input your 房间名称!' }]}
+          >
+            <Input />
+          </Form.Item>
+
+          <Form.Item label="房间标签" name="roomTag">
+            <Input />
+          </Form.Item>
+
+          <Form.Item label="房间简介" name="roomDesc">
+            <Input />
+          </Form.Item>
+
+          <Form.Item label="房间密码" name="pwd">
+            <Input />
+          </Form.Item>
+
+          <Form.Item label="私有房间" name="private" valuePropName="checked">
+            <Checkbox></Checkbox>
+          </Form.Item>
+
+          <Form.Item
+            label="允许设置"
+            name="allowSetting"
+            valuePropName="checked"
+          >
+            <Checkbox></Checkbox>
+          </Form.Item>
+
+          <Form.Item wrapperCol={{ offset: 10, span: 16 }}>
+            <Button type="primary" htmlType="submit">
+              创建
+            </Button>
+          </Form.Item>
+        </Form>
       </Modal>
     </div>
   );
