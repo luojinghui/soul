@@ -5,7 +5,7 @@
  * @author jinghui-Luo
  *
  * Created at     : 2022-06-26 00:40:02
- * Last modified  : 2022-07-06 18:59:01
+ * Last modified  : 2022-07-07 21:13:46
  */
 
 const { userModel } = require('../model/userModel');
@@ -203,7 +203,18 @@ module.exports = {
     const { userId } = req.query;
 
     try {
-      const query = await roomModel.find({}).exec();
+      const _filter = {
+        $or: [
+          {
+            private: false,
+          },
+          {
+            ownerId: userId,
+          },
+        ],
+      };
+
+      const query = await roomModel.find(_filter).exec();
 
       if (!query) {
         res.json({

@@ -115,7 +115,7 @@ export default function Wrapper() {
                   setVisible(true);
                 }}
               >
-                <img src={item.thumb} loading="lazy" alt="preview" />
+                <img src={item.thumb} loading="lazy" alt="" />
               </div>
             );
           })}
