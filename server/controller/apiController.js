@@ -5,7 +5,7 @@
  * @author jinghui-Luo
  *
  * Created at     : 2022-06-26 00:40:02
- * Last modified  : 2022-07-07 21:13:46
+ * Last modified  : 2022-07-08 03:10:54
  */
 
 const { userModel } = require('../model/userModel');
@@ -206,10 +206,16 @@ module.exports = {
       const _filter = {
         $or: [
           {
+            // 不是私有房间
             private: false,
           },
           {
+            // 房间所属用户
             ownerId: userId,
+          },
+          {
+            // 在聊天室发过消息的人，都能看到此房间
+            userIds: { $elemMatch: { userId: userId } },
           },
         ],
       };
