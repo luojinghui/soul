@@ -1,5 +1,15 @@
 import { useEffect, useState } from 'react';
-import { message, Button, Modal, Form, Input, Checkbox } from 'antd';
+import {
+  message,
+  Button,
+  Modal,
+  Form,
+  Input,
+  Switch,
+  Select,
+  Upload,
+} from 'antd';
+import ImgCrop from 'antd-img-crop';
 import { useNavigate, NavLink } from 'react-router-dom';
 import action from '@/action';
 import { LeftOutlined, SettingOutlined, PlusOutlined } from '@ant-design/icons';
@@ -8,6 +18,46 @@ import { userInfoState, userAvatarState, roomListState } from '@/store';
 
 import ice from '@/assets/images/ice.png';
 import './index.less';
+
+const { Option } = Select;
+const tags = [
+  {
+    key: 'wangzhe',
+    name: '王者荣耀',
+  },
+  {
+    key: 'guangyu',
+    name: '光遇',
+  },
+  {
+    key: 'juezhan',
+    name: '决战平安京',
+  },
+  {
+    key: 'danzai',
+    name: '蛋仔派对',
+  },
+  {
+    key: 'xuexi',
+    name: '学习监督',
+  },
+  {
+    key: 'lanqiu',
+    name: '篮球🏀',
+  },
+  {
+    key: 'changge',
+    name: '唱歌',
+  },
+  {
+    key: 'tiaowu',
+    name: '跳舞💃',
+  },
+  {
+    key: 'duanshipin',
+    name: '短视频',
+  },
+];
 
 export const ChatHall = () => {
   const navigate = useNavigate();
@@ -56,6 +106,29 @@ export const ChatHall = () => {
 
     form.resetFields();
     setIsModalVisible(!isModalVisible);
+  };
+
+  const children: React.ReactNode[] = [];
+
+  tags.forEach(({ key, name }) => {
+    children.push(
+      <Option key={key} value={name}>
+        {name}
+      </Option>
+    );
+  });
+
+  const [fileList, setFileList] = useState([]);
+  const handleOnImgChange = ({ fileList: newFileList }: any) => {
+    console.log('newFileList: ', newFileList);
+
+    setFileList(newFileList);
+  };
+
+  const customRequest = (file: any) => {
+    console.log('file: ', file);
+
+    file.onSuccess("123");
   };
 
   return (
@@ -130,54 +203,81 @@ export const ChatHall = () => {
         okText="创建"
         cancelText="取消"
         footer={false}
+        wrapClassName="room-model"
+        width={350}
       >
         <Form
           form={form}
           name="roomInfo"
-          labelCol={{ span: 5 }}
-          wrapperCol={{ span: 18 }}
           initialValues={{ remember: true }}
           onFinish={onFinish}
           autoComplete="off"
         >
           <Form.Item
-            label="房间号"
-            name="roomId"
-            rules={[{ required: true, message: 'Please input your 房间号!' }]}
-          >
-            <Input />
-          </Form.Item>
-
-          <Form.Item
+            className="item"
             label="房间名称"
             name="roomName"
-            rules={[{ required: true, message: 'Please input your 房间名称!' }]}
+            initialValue={''}
           >
             <Input />
           </Form.Item>
 
-          <Form.Item label="房间标签" name="roomTag">
-            <Input />
-          </Form.Item>
-
-          <Form.Item label="房间简介" name="roomDesc">
-            <Input />
-          </Form.Item>
-
-          <Form.Item label="房间密码" name="pwd">
-            <Input />
-          </Form.Item>
-
-          <Form.Item label="私有房间" name="private" valuePropName="checked">
-            <Checkbox></Checkbox>
+          <Form.Item className="item" label="房间头像" name="roomImg">
+            <ImgCrop
+              modalCancel={'取消'}
+              modalOk={'确定'}
+              modalTitle="编辑图片"
+            >
+              <Upload
+                customRequest={customRequest}
+                showUploadList={{
+                  showRemoveIcon: true,
+                  showPreviewIcon: false,
+                }}
+                onChange={handleOnImgChange}
+                maxCount={1}
+                accept="image/*"
+                fileList={fileList}
+                listType="picture-card"
+              >
+                {!fileList.length && '上传'}
+              </Upload>
+            </ImgCrop>
           </Form.Item>
 
           <Form.Item
-            label="允许设置"
-            name="allowSetting"
+            className="item"
+            initialValue={[]}
+            label="房间标签"
+            name="roomTag"
+          >
+            <Select
+              dropdownClassName="ins-item"
+              mode="tags"
+              size="middle"
+              placeholder=""
+            >
+              {children}
+            </Select>
+          </Form.Item>
+
+          <Form.Item
+            className="item"
+            initialValue={''}
+            label="房间密码"
+            name="pwd"
+          >
+            <Input />
+          </Form.Item>
+
+          <Form.Item
+            initialValue={false}
+            className="item item-bottom"
+            label="私有房间"
+            name="private"
             valuePropName="checked"
           >
-            <Checkbox></Checkbox>
+            <Switch></Switch>
           </Form.Item>
 
           <Form.Item wrapperCol={{ offset: 10, span: 16 }}>

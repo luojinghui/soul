@@ -36,3 +36,43 @@
     color: #fff;
   }
 }
+
+.room-model {
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+
+  .item {
+    display: flex;
+
+    .ant-form-item-label {
+      width: 78px !important;
+      flex: unset !important;
+    }
+    .ant-form-item-control {
+      flex: 1 !important;
+      max-width: unset !important;
+    }
+  }
+
+  .item-bottom {
+    margin-bottom: 30px;
+  }
+
+  .ant-input,
+  .ant-input:hover,
+  .ant-input:focus,
+  .ant-input:active,
+  .ant-select-selector {
+    border-top: none !important;
+    border-left: none !important;
+    border-right: none !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+  }
+}
+
+.ins-item {
+  .ant-select-item-option-selected:not(.ant-select-item-option-disabled) {
+    background-color: #ddd !important;
+  }
+}
