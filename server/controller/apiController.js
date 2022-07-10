@@ -5,14 +5,14 @@
  * @author jinghui-Luo
  *
  * Created at     : 2022-06-26 00:40:02
- * Last modified  : 2022-07-08 03:10:54
+ * Last modified  : 2022-07-11 01:13:58
  */
 
 const { userModel } = require('../model/userModel');
 const { roomModel } = require('../model/roomModel');
 const { getRandomString, getRandomNum } = require('../utils/index');
 
-module.exports = {
+const apiController = {
   test: async (req, res) => {
     res.json({
       data: 'hello world',
@@ -125,8 +125,63 @@ module.exports = {
     });
   },
 
+  getRoomId: async () => {
+    const id = getRandomNum(1, 10000);
+    const isExistId = await roomModel.exists({ roomId: id });
+
+    if (isExistId) {
+      return this.getRoomId();
+    }
+
+    return id;
+  },
+
   createRoom: async (req, res) => {
-    console.log('req: ', req);
+    const { userId, data } = req.body;
+    const { roomName, roomImg, roomTag, pwd, private, roomDesc } = data;
+
+    const id = await apiController.getRoomId();
+
+    const tableNameNum = getRandomNum(1, 5);
+    const tableName = `messages_${tableNameNum}`;
+
+    console.log('"id: ', id);
+
+    try {
+      const query = await roomModel.create({
+        roomId: id,
+        roomName,
+        roomTag,
+        roomType: 'group',
+        roomAvatarUrl: roomImg,
+        roomDesc: roomDesc || '在流浪星球探索未知吧～',
+        pwd,
+        tableName: tableName,
+        private,
+        allowSetting: true,
+        ownerId: userId,
+        userIds: [],
+        limitLen: 50,
+        receiveId: '',
+        lastMsgId: '',
+        lastUserId: '',
+        isFixed: false,
+      });
+
+      res.json({
+        data: query,
+        code: 200,
+        msg: 'success',
+      });
+    } catch (err) {
+      console.log('err: ', err);
+
+      res.status(500).json({
+        data: err,
+        code: 500,
+        msg: 'create room error',
+      });
+    }
   },
 
   createRoomRoot: async (req, res) => {
@@ -273,3 +328,5 @@ module.exports = {
     }
   },
 };
+
+module.exports = apiController;

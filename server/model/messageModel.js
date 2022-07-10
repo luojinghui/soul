@@ -33,8 +33,14 @@ const messageSchema = new Schema({
 
 const messageModel = model('messages_1', messageSchema);
 const message2Model = model('messages_2', messageSchema);
+const message3Model = model('messages_3', messageSchema);
+const message4Model = model('messages_4', messageSchema);
+const message5Model = model('messages_5', messageSchema);
 
 module.exports = {
   messageModel,
   message2Model,
+  message3Model,
+  message4Model,
+  message5Model,
 };

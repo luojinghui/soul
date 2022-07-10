@@ -4,12 +4,21 @@
 
 const { userModel } = require('../model/userModel');
 const { roomModel, UserState } = require('../model/roomModel');
-const { message2Model, messageModel } = require('../model/messageModel');
+const {
+  message2Model,
+  messageModel,
+  message3Model,
+  message4Model,
+  message5Model,
+} = require('../model/messageModel');
 
 const cacheUserMap = {};
 const messageModelMap = {
   messages_1: messageModel,
   messages_2: message2Model,
+  messages_3: message3Model,
+  messages_4: message4Model,
+  messages_5: message5Model,
 };
 const MessageTableByRoomId = {};
 let ioInstance = null;

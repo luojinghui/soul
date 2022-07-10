@@ -44,8 +44,8 @@ class Action {
     });
   }
 
-  async createRoom(roomId: string, userId: string) {
-    return await this.http.post(`/api/rest/room/info`, { roomId, userId });
+  async createRoom(data: any, userId: string) {
+    return await this.http.post(`/api/rest/room/create`, { data, userId });
   }
 
   async getRoomList(userId: string) {

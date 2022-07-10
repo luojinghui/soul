@@ -21,7 +21,13 @@ const roomSchema = new Schema({
   tableName: {
     type: String,
     enum: {
-      values: ['messages_1', 'messages_2'],
+      values: [
+        'messages_1',
+        'messages_2',
+        'messages_3',
+        'messages_4',
+        'messages_5',
+      ],
       message: 'table name {VALUE} is not supported',
     },
   },

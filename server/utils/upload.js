@@ -21,10 +21,7 @@ const uploadMulter = () => {
       // 获取后缀名
       let extname = path.extname(file.originalname);
       // 获取上传的文件名
-      let fileName = path.parse(file.originalname).name;
-      const nextName = `${fileName}-${getRandomString(
-        4
-      )}${Date.now()}${extname}`;
+      const nextName = `${getRandomString(8)}${Date.now()}${extname}`;
 
       cb(null, nextName);
     },

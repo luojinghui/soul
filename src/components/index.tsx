@@ -10,6 +10,7 @@ import girl_keai from '@/assets/images/girl_keai.svg';
 import girl_mawei from '@/assets/images/girl_mawei.svg';
 import girl_wanzi from '@/assets/images/girl_wanzi.svg';
 import ChatInput from './ChatInput';
+import UploadImg from './UploadImg';
 
 export const AvatarMap: any = {
   '1': boy_huzi,
@@ -25,4 +26,4 @@ export const AvatarMap: any = {
   '11': girl_wanzi,
 };
 
-export { ChatInput };
+export { ChatInput, UploadImg };

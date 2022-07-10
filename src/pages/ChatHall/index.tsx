@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   message,
   Button,
@@ -9,14 +9,15 @@ import {
   Select,
   Upload,
 } from 'antd';
-import ImgCrop from 'antd-img-crop';
+import { UploadImg } from '@/components';
 import { useNavigate, NavLink } from 'react-router-dom';
 import action from '@/action';
-import { LeftOutlined, SettingOutlined, PlusOutlined } from '@ant-design/icons';
+import { LeftOutlined, PlusOutlined } from '@ant-design/icons';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { userInfoState, userAvatarState, roomListState } from '@/store';
+import { httpServer } from '@/enum';
 
-import ice from '@/assets/images/ice.png';
+import logo from '@/assets/images/logo.svg';
 import './index.less';
 
 const { Option } = Select;
@@ -69,19 +70,25 @@ export const ChatHall = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [form] = Form.useForm();
 
+  const imgRef = useRef<any>('');
+
   useEffect(() => {
     (async () => {
       if (userInfo) {
-        const result = await action.getRoomList(userInfo.id);
-
-        if (result && result.code === 200) {
-          setRoomList(result.data);
-        }
+        await getRoomList();
       } else {
         message.info('无用户信息，请先创建');
       }
     })();
   }, [userInfo]);
+
+  const getRoomList = async () => {
+    const result = await action.getRoomList(userInfo.id);
+
+    if (result && result.code === 200) {
+      setRoomList(result.data);
+    }
+  };
 
   const onJoinRoom = (roomId: string) => {
     navigate(`/chat/${roomId}`);
@@ -101,9 +108,36 @@ export const ChatHall = () => {
     setIsModalVisible(!isModalVisible);
   };
 
-  const onFinish = (e: any) => {
-    console.log('e: ', e);
+  const onFinish = async (e: any) => {
+    const data = {
+      ...e,
+      roomName: e.roomName.trim() + '星球',
+      roomImg: imgRef.current?.response?.data?.fileUrl || '',
+    };
 
+    console.log('data:', data);
+
+    if (!data.roomName.length) {
+      message.info('填写星球名称');
+
+      return;
+    }
+
+    if (!data.roomImg) {
+      message.info('上传一张星球头像');
+
+      return;
+    }
+
+    try {
+      const result = await action.createRoom(data, userInfo.id);
+
+      if (result.code === 200) {
+        message.info('创建星球成功');
+
+        await getRoomList();
+      }
+    } catch (err: any) {}
     form.resetFields();
     setIsModalVisible(!isModalVisible);
   };
@@ -118,17 +152,10 @@ export const ChatHall = () => {
     );
   });
 
-  const [fileList, setFileList] = useState([]);
-  const handleOnImgChange = ({ fileList: newFileList }: any) => {
-    console.log('newFileList: ', newFileList);
+  const onUploadChange = (fileList: any) => {
+    console.log('fileList: ', fileList);
 
-    setFileList(newFileList);
-  };
-
-  const customRequest = (file: any) => {
-    console.log('file: ', file);
-
-    file.onSuccess("123");
+    imgRef.current = fileList[0] || '';
   };
 
   return (
@@ -159,20 +186,34 @@ export const ChatHall = () => {
         <div className="room-list">
           {roomList.map(
             (
-              { _id, roomId, roomName, roomTag, roomDesc }: any,
+              {
+                _id,
+                roomId,
+                roomName,
+                roomTag,
+                roomDesc,
+                roomAvatarUrl,
+                ownerId,
+              }: any,
               index: number
             ) => {
+              let imgUrl = logo;
+              if (roomAvatarUrl) {
+                imgUrl = `${httpServer}/upload/${ownerId}/${roomAvatarUrl}`;
+              }
+
               return (
                 <div key={_id} className={`room-info bg${index + 1}`}>
                   <div className="avatar">
-                    <img src={ice} alt="avatar" />
+                    <img src={imgUrl} alt="" />
                   </div>
                   <div>
                     <div>
-                      房间号：<span>{roomId}</span>
+                      星球名：<span>{roomName}</span>
                     </div>
                     <div>
-                      房间名：<span>{roomName}</span>
+                      描述：
+                      <span>{roomDesc}</span>
                     </div>
                     <div>
                       Tag：
@@ -186,7 +227,7 @@ export const ChatHall = () => {
                     type="primary"
                     className="join-btn"
                   >
-                    加入房间
+                    进入
                   </Button>
                 </div>
               );
@@ -196,7 +237,7 @@ export const ChatHall = () => {
       </div>
 
       <Modal
-        title="创建兴趣房间"
+        title="创建兴趣星球"
         visible={isModalVisible}
         onOk={handleOk}
         onCancel={handleCancel}
@@ -214,41 +255,30 @@ export const ChatHall = () => {
           autoComplete="off"
         >
           <Form.Item
-            className="item"
-            label="房间名称"
+            className="item room-name-item"
+            label="名称"
             name="roomName"
             initialValue={''}
           >
-            <Input />
+            <div>
+              <Input />
+              <span>星球</span>
+            </div>
           </Form.Item>
 
-          <Form.Item className="item" label="房间头像" name="roomImg">
-            <ImgCrop
-              modalCancel={'取消'}
-              modalOk={'确定'}
-              modalTitle="编辑图片"
-            >
-              <Upload
-                customRequest={customRequest}
-                showUploadList={{
-                  showRemoveIcon: true,
-                  showPreviewIcon: false,
-                }}
-                onChange={handleOnImgChange}
-                maxCount={1}
-                accept="image/*"
-                fileList={fileList}
-                listType="picture-card"
-              >
-                {!fileList.length && '上传'}
-              </Upload>
-            </ImgCrop>
+          <Form.Item
+            initialValue={''}
+            className="item"
+            label="头像"
+            name="roomImg"
+          >
+            <UploadImg onChange={onUploadChange} userId={userInfo.id} />
           </Form.Item>
 
           <Form.Item
             className="item"
             initialValue={[]}
-            label="房间标签"
+            label="标签"
             name="roomTag"
           >
             <Select
@@ -256,6 +286,7 @@ export const ChatHall = () => {
               mode="tags"
               size="middle"
               placeholder=""
+              showArrow={true}
             >
               {children}
             </Select>
@@ -263,17 +294,21 @@ export const ChatHall = () => {
 
           <Form.Item
             className="item"
+            label="介绍"
+            name="roomDesc"
             initialValue={''}
-            label="房间密码"
-            name="pwd"
           >
+            <Input />
+          </Form.Item>
+
+          <Form.Item className="item" initialValue={''} label="密码" name="pwd">
             <Input />
           </Form.Item>
 
           <Form.Item
             initialValue={false}
             className="item item-bottom"
-            label="私有房间"
+            label="私有"
             name="private"
             valuePropName="checked"
           >
