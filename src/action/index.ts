@@ -76,8 +76,10 @@ class Action {
     return await this.http.get(`/api/happy/wrappaper`);
   }
 
-  async getWrapperV2List() {
-    return await this.http.get(`/api/happy/v2/wrappaper`);
+  async getWrapperV2List(pageIndex: number) {
+    return await this.http.get(
+      `/api/happy/v2/wrappaper?pageIndex=${pageIndex}`
+    );
   }
 }
 

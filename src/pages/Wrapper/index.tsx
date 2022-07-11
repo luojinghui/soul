@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import action from '@/action';
 import { Image } from 'antd';
 import { httpServer } from '@/enum';
+import InfiniteScroll from 'react-infinite-scroll-component';
 
 import './index.less';
 import { message } from 'antd';
@@ -17,6 +18,7 @@ export default function Wrapper() {
   const [visible, setVisible] = useState(false);
   const [current, setCurrent] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [pageIndex, setPageIndex] = useState(1);
 
   const contentRef = useRef(null);
 
@@ -27,17 +29,27 @@ export default function Wrapper() {
     // };
   }, []);
 
-  const getWrapperList = async () => {
-    const result = await action.getWrapperV2List();
+  const getWrapperList = async (index: number) => {
+    const result = await action.getWrapperV2List(index);
 
     if (result?.code === 200) {
       console.log('result.data: ', result.data);
 
-      setList(result.data);
+      const nextList: any = result.data;
+      const newList = list.concat(nextList);
+
+      setList(newList);
       return;
     } else {
-      message.info('服务跑路了');
+      setList([]);
     }
+  };
+
+  console.log('pageIndex: ', pageIndex);
+
+  const fetchData = () => {
+    console.log('load img: ', pageIndex);
+    setPageIndex(pageIndex + 1);
   };
 
   const getImgSize = (size: number) => {
@@ -87,14 +99,16 @@ export default function Wrapper() {
   };
 
   useEffect(() => {
-    (async () => {
-      setListStyle();
+    setListStyle();
+  });
 
-      await getWrapperList();
+  useEffect(() => {
+    (async () => {
+      await getWrapperList(pageIndex);
 
       setLoading(false);
     })();
-  }, []);
+  }, [pageIndex]);
 
   const onHome = () => {
     navigate(-1);
@@ -114,29 +128,50 @@ export default function Wrapper() {
       <div className="content" id="content" ref={contentRef}>
         {loading && <div className="loading">一波图片正在袭来，请等候...</div>}
 
-        {list.length &&
-          list.map((item: any, index: number) => {
-            return (
-              <div
-                className="item"
-                key={item.id}
-                style={{
-                  width: `${style.width}px`,
-                  height: `${style.height}px`,
-                }}
-                onClick={() => {
-                  setCurrent(index);
-                  setVisible(true);
-                }}
-              >
-                <img
-                  src={`${httpServer}${item.thumb_url}`}
-                  loading="lazy"
-                  alt=""
-                />
-              </div>
-            );
-          })}
+        <InfiniteScroll
+          scrollableTarget="content"
+          className="scroll"
+          dataLength={list.length}
+          next={fetchData}
+          hasMore={pageIndex <= 10}
+          scrollThreshold={0.8}
+          loader={
+            <h4
+              style={{ textAlign: 'center', width: '100vw', marginTop: '10px' }}
+            >
+              Loading...
+            </h4>
+          }
+          endMessage={
+            <p style={{ textAlign: 'center' }}>
+              <b>没有数据啦...</b>
+            </p>
+          }
+        >
+          {list.length &&
+            list.map((item: any, index: number) => {
+              return (
+                <div
+                  className="item"
+                  key={item.id}
+                  style={{
+                    width: `${style.width}px`,
+                    height: `${style.height}px`,
+                  }}
+                  onClick={() => {
+                    setCurrent(index);
+                    setVisible(true);
+                  }}
+                >
+                  <img
+                    src={`${httpServer}${item.thumb_url}`}
+                    loading="lazy"
+                    alt=""
+                  />
+                </div>
+              );
+            })}
+        </InfiniteScroll>
       </div>
 
       {visible && (

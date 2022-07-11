@@ -1,7 +1,6 @@
 .wrapper-page {
   background-color: var(--content-bg);
   position: relative;
-  overflow: auto;
 
   .content {
     height: 100%;
@@ -10,7 +9,17 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: flex-start;
-    padding-left: 10px;
+
+    .scroll {
+      height: 100%;
+      width: 100%;
+      overflow: auto;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-start;
+      padding-left: 10px;
+      padding-bottom: 20px;
+    }
 
     .loading {
       background-color: var(--content-bg);
@@ -19,7 +28,6 @@
     .item {
       padding-right: 10px;
       padding-top: 10px;
-      padding-bottom: 10px;
 
       img {
         width: 100%;

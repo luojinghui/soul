@@ -5,7 +5,7 @@
  * @author jinghui-Luo
  *
  * Created at     : 2022-06-26 00:40:02
- * Last modified  : 2022-07-11 21:10:58
+ * Last modified  : 2022-07-11 21:19:02
  */
 
 const axios = require('axios');
@@ -56,7 +56,7 @@ module.exports = {
   },
 
   happyWrapperV2: async (req, res) => {
-    const { skip = 0, pageSize = 30, pageIndex = 1 } = req.query;
+    const { pageIndex = 1 } = req.query;
     try {
       const url = `http://images.kindofpure.cn/api/images_api/latest?categoryId=10156108437800210000&page=${pageIndex}`;
       console.log('url: ', url);
