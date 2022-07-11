@@ -5,7 +5,7 @@
  * @author jinghui-Luo
  *
  * Created at     : 2022-06-26 00:40:02
- * Last modified  : 2022-07-06 21:34:54
+ * Last modified  : 2022-07-11 20:48:13
  */
 
 const axios = require('axios');
@@ -32,6 +32,66 @@ module.exports = {
       if (result && result.data) {
         res.json({
           data: result.data.res,
+          msg: 'success',
+          code: 200,
+        });
+
+        return;
+      }
+
+      res.json({
+        data: {},
+        msg: 'failed',
+        code: 401,
+      });
+    } catch (err) {
+      console.log('err: ', err);
+
+      res.json({
+        data: {},
+        msg: 'failed',
+        code: 400,
+      });
+    }
+  },
+
+  happyWrapperV2: async (req, res) => {
+    const { skip = 0, pageSize = 30, pageIndex = 1 } = req.query;
+    try {
+      const url = `http://images.kindofpure.cn/api/images_api/latest?categoryId=10156108437800210000&page=${pageIndex}`;
+      console.log('url: ', url);
+
+      const userAgent = getUserAgent();
+      const result = await axios.get(url, {
+        headers: {
+          'user-agent': userAgent,
+          Accept: '*/*',
+          'User-Agent': 'request',
+        },
+      });
+
+      if (result && result.data) {
+        const data = result.data.data;
+        const nextData = data.map((item) => {
+          return {
+            ...item,
+            full_image_url: item.full_image_url.replace(
+              'http://p1-bos.532106.com',
+              '/third1'
+            ),
+            small_image_url: item.small_image_url.replace(
+              'http://p1-bos.532106.com',
+              '/third1'
+            ),
+            thumb_url: item.thumb_url.replace(
+              'http://p1-bos.532106.com',
+              '/third1'
+            ),
+          };
+        });
+
+        res.json({
+          data: nextData,
           msg: 'success',
           code: 200,
         });

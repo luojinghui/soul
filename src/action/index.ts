@@ -75,6 +75,10 @@ class Action {
   async getWrapperList() {
     return await this.http.get(`/api/happy/wrappaper`);
   }
+
+  async getWrapperV2List() {
+    return await this.http.get(`/api/happy/v2/wrappaper`);
+  }
 }
 
 export default new Action();

@@ -87,7 +87,8 @@ export default function PersonCenter() {
       {/* 聊天内容 */}
       <div className="content">
         <div className="user-page">
-          <div className="person-avatar">
+          <div className="user-bg"></div>
+          {/* <div className="person-avatar">
             <img src={userAvatar} alt="avatar" className="img" />
             <label className="upload-file" htmlFor="upload">
               <EditFilled className="edit-icon" />
@@ -109,7 +110,7 @@ export default function PersonCenter() {
                 className="name-input"
               ></Input>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

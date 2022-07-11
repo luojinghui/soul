@@ -5,6 +5,7 @@ import { LeftOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import action from '@/action';
 import { Image } from 'antd';
+import { httpServer } from '@/enum';
 
 import './index.less';
 import { message } from 'antd';
@@ -19,13 +20,20 @@ export default function Wrapper() {
 
   const contentRef = useRef(null);
 
+  useEffect(() => {
+    // window.addEventListener('resize', setListStyle);
+    // return () => {
+    //   window.removeEventListener('resize', setListStyle);
+    // };
+  }, []);
+
   const getWrapperList = async () => {
-    const result = await action.getWrapperList();
+    const result = await action.getWrapperV2List();
 
     if (result?.code === 200) {
-      console.log('result.data.vertical: ', result.data.vertical);
+      console.log('result.data: ', result.data);
 
-      setList(result.data.vertical);
+      setList(result.data);
       return;
     } else {
       message.info('服务跑路了');
@@ -36,7 +44,7 @@ export default function Wrapper() {
     // @ts-ignore
     const width = contentRef.current.clientWidth;
 
-    const realWidth = Math.floor(width / size);
+    const realWidth = Math.floor((width - 10) / size);
     const realHeight = Math.floor(realWidth * 1.54);
 
     return {
@@ -45,36 +53,40 @@ export default function Wrapper() {
     };
   };
 
+  const setListStyle = () => {
+    // @ts-ignore
+    const width = contentRef.current.clientWidth;
+
+    let size: any;
+
+    if (width <= 500) {
+      size = getImgSize(3);
+    } else if (width <= 900) {
+      size = getImgSize(4);
+    } else if (width <= 1300) {
+      size = getImgSize(5);
+    } else if (width <= 1700) {
+      size = getImgSize(6);
+    } else if (width <= 2100) {
+      size = getImgSize(7);
+    } else if (width <= 2500) {
+      size = getImgSize(8);
+    } else if (width <= 2900) {
+      size = getImgSize(9);
+    } else if (width <= 3300) {
+      size = getImgSize(10);
+    } else if (width <= 3700) {
+      size = getImgSize(11);
+    } else {
+      size = getImgSize(10);
+    }
+
+    setStyle(JSON.parse(JSON.stringify(size)));
+  };
+
   useEffect(() => {
     (async () => {
-      // @ts-ignore
-      const width = contentRef.current.clientWidth;
-
-      let size: any;
-
-      if (width <= 500) {
-        size = getImgSize(2);
-      } else if (width <= 900) {
-        size = getImgSize(3);
-      } else if (width <= 1300) {
-        size = getImgSize(4);
-      } else if (width <= 1700) {
-        size = getImgSize(5);
-      } else if (width <= 2100) {
-        size = getImgSize(6);
-      } else if (width <= 2500) {
-        size = getImgSize(7);
-      } else if (width <= 2900) {
-        size = getImgSize(8);
-      } else if (width <= 3300) {
-        size = getImgSize(9);
-      } else if (width <= 3700) {
-        size = getImgSize(10);
-      } else {
-        size = getImgSize(10);
-      }
-
-      setStyle(size);
+      setListStyle();
 
       await getWrapperList();
 
@@ -115,7 +127,7 @@ export default function Wrapper() {
                   setVisible(true);
                 }}
               >
-                <img src={item.thumb} loading="lazy" alt="" />
+                <img src={`${httpServer}${item.thumb_url}`} loading="lazy" alt="" />
               </div>
             );
           })}
@@ -130,7 +142,14 @@ export default function Wrapper() {
           }}
         >
           {list.map((item: any) => {
-            return <Image key={item.id} src={item.preview}></Image>;
+            return (
+              <Image
+                className="preive-img"
+                key={item.id}
+                // src={item.full_image_url}
+                src={`${httpServer}${item.full_image_url}`}
+              ></Image>
+            );
           })}
         </Image.PreviewGroup>
       )}

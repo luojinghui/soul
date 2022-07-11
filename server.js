@@ -6,7 +6,7 @@
  * @author jinghui-Luo
  *
  * Created at     : 2021-04-09 14:22:59
- * Last modified  : 2022-07-02 00:30:49
+ * Last modified  : 2022-07-11 20:44:54
  */
 
 const express = require('express');
@@ -18,6 +18,7 @@ const { createServer } = require('http');
 const { crossConfig } = require('./server/middleware/cros');
 const { port } = require('./server/config/index');
 const { Server } = require('socket.io');
+const { createProxyMiddleware } = require('http-proxy-middleware');
 
 const app = express();
 const server = createServer(app);
@@ -35,6 +36,16 @@ app
 io.on('connection', (socket) => {
   chatController.onSocket(socket, io);
 });
+
+app.use(
+  '/third1',
+  createProxyMiddleware({
+    target: 'https://p1-bos.532106.com/',
+    changeOrigin: true,
+    pathRewrite: { '^/third1': '/' },
+  })
+);
+
 // rest服务
 app.use(router);
 
