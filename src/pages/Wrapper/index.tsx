@@ -33,8 +33,6 @@ export default function Wrapper() {
     const result = await action.getWrapperV2List(index);
 
     if (result?.code === 200) {
-      console.log('result.data: ', result.data);
-
       const nextList: any = result.data;
       const newList = list.concat(nextList);
 
@@ -44,8 +42,6 @@ export default function Wrapper() {
       setList([]);
     }
   };
-
-  console.log('pageIndex: ', pageIndex);
 
   const fetchData = () => {
     console.log('load img: ', pageIndex);
