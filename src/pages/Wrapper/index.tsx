@@ -107,6 +107,8 @@ export default function Wrapper() {
   }, [pageIndex]);
 
   const onHome = () => {
+    setList([]);
+
     navigate(-1);
   };
 
@@ -124,50 +126,56 @@ export default function Wrapper() {
       <div className="content" id="content" ref={contentRef}>
         {loading && <div className="loading">一波图片正在袭来，请等候...</div>}
 
-        <InfiniteScroll
-          scrollableTarget="content"
-          className="scroll"
-          dataLength={list.length}
-          next={fetchData}
-          hasMore={pageIndex <= 10}
-          scrollThreshold={0.8}
-          loader={
-            <h4
-              style={{ textAlign: 'center', width: '100vw', marginTop: '10px' }}
-            >
-              Loading...
-            </h4>
-          }
-          endMessage={
-            <p style={{ textAlign: 'center' }}>
-              <b>没有数据啦...</b>
-            </p>
-          }
-        >
-          {list.length &&
-            list.map((item: any, index: number) => {
-              return (
-                <div
-                  className="item"
-                  key={item.id}
-                  style={{
-                    width: `${style.width}px`,
-                    height: `${style.height}px`,
-                  }}
-                  onClick={() => {
-                    setCurrent(index);
-                    setVisible(true);
-                  }}
-                >
-                  <img
-                    src={`${httpServer}${item.thumb_url}`}
-                    loading="lazy"
-                    alt=""
-                  />
-                </div>
-              );
-            })}
-        </InfiniteScroll>
+        {list.length && (
+          <InfiniteScroll
+            scrollableTarget="content"
+            className="scroll"
+            dataLength={list.length}
+            next={fetchData}
+            hasMore={pageIndex <= 10}
+            scrollThreshold={0.8}
+            loader={
+              <h4
+                style={{
+                  textAlign: 'center',
+                  width: '100vw',
+                  marginTop: '10px',
+                }}
+              >
+                Loading...
+              </h4>
+            }
+            endMessage={
+              <p style={{ textAlign: 'center' }}>
+                <b>没有数据啦...</b>
+              </p>
+            }
+          >
+            {list.length &&
+              list.map((item: any, index: number) => {
+                return (
+                  <div
+                    className="item"
+                    key={item.id}
+                    style={{
+                      width: `${style.width}px`,
+                      height: `${style.height}px`,
+                    }}
+                    onClick={() => {
+                      setCurrent(index);
+                      setVisible(true);
+                    }}
+                  >
+                    <img
+                      src={`${httpServer}${item.thumb_url}`}
+                      loading="lazy"
+                      alt=""
+                    />
+                  </div>
+                );
+              })}
+          </InfiniteScroll>
+        )}
       </div>
 
       {visible && (
