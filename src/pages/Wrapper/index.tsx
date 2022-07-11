@@ -45,7 +45,9 @@ export default function Wrapper() {
     const width = contentRef.current.clientWidth;
 
     const realWidth = Math.floor((width - 10) / size);
-    const realHeight = Math.floor(realWidth * 1.54);
+    const realHeight = Math.floor(realWidth * 2.164);
+    // const realWidth = Math.floor((width - 10) / size);
+    // const realHeight = Math.floor(realWidth * 1.54);
 
     return {
       height: realHeight,
