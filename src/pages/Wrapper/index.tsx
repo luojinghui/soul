@@ -127,7 +127,11 @@ export default function Wrapper() {
                   setVisible(true);
                 }}
               >
-                <img src={`${httpServer}${item.thumb_url}`} loading="lazy" alt="" />
+                <img
+                  src={`${httpServer}${item.thumb_url}`}
+                  loading="lazy"
+                  alt=""
+                />
               </div>
             );
           })}

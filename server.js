@@ -6,7 +6,7 @@
  * @author jinghui-Luo
  *
  * Created at     : 2021-04-09 14:22:59
- * Last modified  : 2022-07-11 20:44:54
+ * Last modified  : 2022-07-11 21:04:13
  */
 
 const express = require('express');
@@ -40,8 +40,17 @@ io.on('connection', (socket) => {
 app.use(
   '/third1',
   createProxyMiddleware({
-    target: 'https://p1-bos.532106.com/',
+    target: 'http://p1-bos.532106.com/',
     changeOrigin: true,
+    headers: {
+      Accept: '*/*',
+      'User-Agent': 'request',
+      'Sec-Fetch-Site': 'none',
+      'Sec-Fetch-Mode': 'navigate',
+      'Sec-Fetch-Dest': 'document',
+      host: 'http://p1-bos.532106.com',
+    },
+    hostRewrite: true,
     pathRewrite: { '^/third1': '/' },
   })
 );
