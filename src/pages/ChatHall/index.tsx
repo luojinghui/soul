@@ -203,32 +203,28 @@ export const ChatHall = () => {
               }
 
               return (
-                <div key={_id} className={`room-info bg${index + 1}`}>
+                <div
+                  key={_id}
+                  className={`room-info bg${index + 1}`}
+                  onClick={() => {
+                    onJoinRoom(roomId);
+                  }}
+                >
                   <div className="avatar">
                     <img src={imgUrl} alt="" />
                   </div>
-                  <div>
+                  <div className='info'>
                     <div>
-                      星球名：<span>{roomName}</span>
+                      <span className='title'>{roomName}</span>
                     </div>
                     <div>
-                      描述：
                       <span>{roomDesc}</span>
                     </div>
                     <div>
-                      Tag：
+                      <span>标签：</span>
                       <span>{roomTag.map((val: string) => `${val} `)}</span>
                     </div>
                   </div>
-                  <Button
-                    onClick={() => {
-                      onJoinRoom(roomId);
-                    }}
-                    type="primary"
-                    className="join-btn"
-                  >
-                    进入
-                  </Button>
                 </div>
               );
             }
