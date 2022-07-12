@@ -4,3 +4,10 @@ export interface IUserInfo {
   id: string;
   name: string;
 }
+
+export interface IImgSize {
+  height: number;
+  width: number;
+  realW: number;
+  realH: number;
+}

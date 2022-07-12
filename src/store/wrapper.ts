@@ -6,9 +6,11 @@ export const wrapperListState = atom({
 });
 
 export const wrapperSizeState = atom({
-  key: '',
+  key: 'wrapperSizeState',
   default: {
     width: 200,
     height: 308,
+    realW: 0,
+    realH: 0,
   },
 });
