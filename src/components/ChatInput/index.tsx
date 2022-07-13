@@ -329,6 +329,17 @@ function ChatInput(props: IProps) {
     }
   };
 
+  const onKeyDown = (e: any) => {
+    const key = e.keyCode;
+
+    if (key === 13 && !e.shiftKey) {
+      e.preventDefault();
+
+      // @ts-ignore
+      formRef.current.submit();
+    }
+  };
+
   return (
     <>
       <div className="wrap">
@@ -346,6 +357,7 @@ function ChatInput(props: IProps) {
               onInput={onInputContent}
               className="from-input"
               contentEditable="true"
+              onKeyDown={onKeyDown}
             ></div>
           </Form.Item>
 

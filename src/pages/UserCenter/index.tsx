@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import { userAvatarState, remoteUserStoreFunc, getAvatarUrl } from '@/store';
-import { LeftOutlined } from '@ant-design/icons';
+import { useRecoilState } from 'recoil';
+import { remoteUserStoreFunc, getAvatarUrl } from '@/store';
 import { useNavigate, useParams } from 'react-router-dom';
 import action from '@/action';
+import { Header } from '@/components';
 
 import './index.less';
 
@@ -53,22 +53,9 @@ export default function UserCenter() {
     })();
   }, []);
 
-  const onHome = () => {
-    navigate(-1);
-  };
-
   return (
     <div className="app user-page">
-      {/* 头部内容 */}
-      <header className="im-header">
-        <div className="left">
-          <LeftOutlined className="icon back" onClick={onHome} />
-        </div>
-
-        <div className="title">用户中心</div>
-
-        <div className="right"></div>
-      </header>
+      <Header title="用户中心"></Header>
 
       <div className="content">
         <div className="person-avatar">

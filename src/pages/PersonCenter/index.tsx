@@ -1,16 +1,15 @@
-import React, { useRef } from 'react';
+import { useRef } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { userInfoState, userAvatarState } from '@/store';
-import { Button, Checkbox, Form, Input, message } from 'antd';
-import { LeftOutlined, EditFilled } from '@ant-design/icons';
+import { message } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import action from '@/action';
+import { Header } from '@/components';
 
 import './index.less';
 
 export default function PersonCenter() {
   const [userInfo, setUserInfo] = useRecoilState(userInfoState);
-  const userAvatar = useRecoilValue(userAvatarState);
   const navigate = useNavigate();
   const inputFileRef = useRef(null);
 
@@ -57,10 +56,6 @@ export default function PersonCenter() {
     onFinish({ name: userInfo.name });
   };
 
-  const onHome = () => {
-    navigate(-1);
-  };
-
   const onPressEnter = (e: any) => {
     const name = e.target.value;
 
@@ -73,16 +68,7 @@ export default function PersonCenter() {
 
   return (
     <div className="app user-page">
-      {/* 头部内容 */}
-      <header className="im-header">
-        <div className="left">
-          <LeftOutlined className="icon back" onClick={onHome} />
-        </div>
-
-        <div className="title">个人中心</div>
-
-        <div className="right"></div>
-      </header>
+      <Header title="个人中心"></Header>
 
       {/* 聊天内容 */}
       <div className="content">

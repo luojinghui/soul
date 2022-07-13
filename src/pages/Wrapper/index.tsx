@@ -8,6 +8,7 @@ import { Image } from 'antd';
 import { httpServer } from '@/enum';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { IImgSize } from '@/type';
+import { Header } from '@/components';
 
 import './index.less';
 import { message } from 'antd';
@@ -132,14 +133,7 @@ export default function Wrapper() {
 
   return (
     <div className="app wrapper-page">
-      {/* 头部内容 */}
-      <header className="im-header">
-        <div className="left">
-          <LeftOutlined className="icon back" onClick={onHome} />
-        </div>
-        <div className="title">热门壁纸</div>
-        <div className="right"></div>
-      </header>
+      <Header title="热门壁纸"></Header>
 
       <div className="content" id="content" ref={contentRef}>
         {loading && <div className="loading">一波图片正在袭来，请等候...</div>}

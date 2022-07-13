@@ -1,18 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
-import {
-  message,
-  Button,
-  Modal,
-  Form,
-  Input,
-  Switch,
-  Select,
-  Upload,
-} from 'antd';
-import { UploadImg } from '@/components';
-import { useNavigate, NavLink } from 'react-router-dom';
+import { message, Button, Modal, Form, Input, Switch, Select } from 'antd';
+import { UploadImg, Header } from '@/components';
+import { useNavigate } from 'react-router-dom';
 import action from '@/action';
-import { LeftOutlined, PlusOutlined } from '@ant-design/icons';
+import { PlusOutlined } from '@ant-design/icons';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { userInfoState, userAvatarState, roomListState } from '@/store';
 import { httpServer } from '@/enum';
@@ -160,26 +151,14 @@ export const ChatHall = () => {
 
   return (
     <div className="app">
-      {/* 头部内容 */}
-      <header className="im-header">
-        <div className="left">
-          <LeftOutlined className="icon back" onClick={onHome} />
-        </div>
-
-        <div className="title">星球大厅</div>
-
-        <div className="right">
+      <Header
+        title="星球大厅"
+        rightContent={
           <div className="btn" onClick={onShowAddRoom}>
             <PlusOutlined className="icon setting" />
           </div>
-          {/* <div className="btn">
-              <SettingOutlined className="icon setting" />
-            </div> */}
-          <NavLink to="/user" className="person-avatar">
-            <img src={userAvatar} alt="avatar" className="img" />
-          </NavLink>
-        </div>
-      </header>
+        }
+      ></Header>
 
       {/* 聊天内容 */}
       <div className="im-content">
@@ -213,9 +192,9 @@ export const ChatHall = () => {
                   <div className="avatar">
                     <img src={imgUrl} alt="" />
                   </div>
-                  <div className='info'>
+                  <div className="info">
                     <div>
-                      <span className='title'>{roomName}</span>
+                      <span className="title">{roomName}</span>
                     </div>
                     <div>
                       <span>{roomDesc}</span>

@@ -1,0 +1,80 @@
+// -------Header内容-----------
+.soul_header {
+  height: var(--im-header-height);
+  width: 100%;
+  display: flex;
+  font-size: 14px;
+  align-items: center;
+  padding-left: 0px;
+  justify-content: center;
+  box-shadow: 3px 0px 4px 0px var(--header-shadow-color);
+  position: relative;
+  background-color: var(--header-bg);
+
+  .left {
+    position: absolute;
+    left: 0;
+    height: 100%;
+  }
+
+  .title {
+    max-width: 200px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .right {
+    position: absolute;
+    right: 0;
+    height: 100%;
+    display: flex;
+
+    .person-avatar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      padding: 0 12px;
+      box-sizing: content-box;
+
+      .img {
+        width: 30px;
+        height: 30px;
+        border-radius: 30px;
+        border: 1px solid #e5e5e5;
+      }
+    }
+  }
+
+  .icon {
+    font-size: 20px;
+    padding: 0px 11px;
+    height: 100%;
+    cursor: pointer;
+    color: #666;
+    transition: color ease 0.5s;
+    display: flex;
+    align-items: center;
+
+    &:hover {
+      color: #333;
+    }
+
+    &:active {
+      color: #000;
+    }
+  }
+
+  .setting {
+    font-size: 18px;
+    padding: 12px;
+  }
+}
+
+@media screen and (max-width: 666px) {
+  .soul_header {
+    padding-left: 40px;
+    justify-content: flex-start;
+  }
+}

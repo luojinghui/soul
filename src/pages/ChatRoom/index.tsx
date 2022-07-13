@@ -10,7 +10,7 @@ import { message, Image } from 'antd';
 import { LeftOutlined, SettingOutlined, FileFilled } from '@ant-design/icons';
 import { imServer } from '../../enum';
 import { useNavigate, useParams, NavLink } from 'react-router-dom';
-import { AvatarMap } from '@/components';
+import { AvatarMap, Header } from '@/components';
 import { MessageTime } from '@/utils/messageTime';
 import action from '@/action';
 import { ChatInput } from '@/components';
@@ -116,8 +116,8 @@ function ChatRoom() {
   }, []);
 
   const connectWss = useCallback(() => {
-    console.log("imServer: ", imServer);
-    
+    console.log('imServer: ', imServer);
+
     // 连接信令服务器
     socketRef.current = io(imServer, {
       path: '/im',
@@ -396,7 +396,7 @@ function ChatRoom() {
   return (
     <div className="app">
       {/* 头部内容 */}
-      <header className="im-header">
+      {/* <header className="im-header">
         <div className="left">
           <LeftOutlined className="icon back" onClick={onBack} />
         </div>
@@ -404,14 +404,15 @@ function ChatRoom() {
         <div className="title">{roomInfo.roomName || ''}</div>
 
         <div className="right">
-          {/* <div className="btn">
+          <div className="btn">
             <SettingOutlined className="icon setting" />
-          </div> */}
+          </div>
           <NavLink to="/user" className="person-avatar">
             <img src={userAvatar} alt="avatar" className="img" />
           </NavLink>
         </div>
-      </header>
+      </header> */}
+      <Header title={roomInfo.roomName || ''}></Header>
 
       {/* 聊天内容 */}
       <div className="im-content" ref={contentRef} onClick={onClickChatContent}>
