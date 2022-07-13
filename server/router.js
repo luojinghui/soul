@@ -24,6 +24,8 @@ router.post('/api/rest/user/register', apiController.registerUser);
 router.get('/api/rest/user/info', apiController.getUserInfo);
 // 更新用户信息
 router.post('/api/rest/user/update', upload, apiController.updateUserInfo);
+// 更新用户信息
+router.post('/api/rest/user/updatev2', apiController.updateUserInfoV2);
 // 获取房间信息
 router.get('/api/rest/room/info', apiController.getRoomInfo);
 // 获取房间列表

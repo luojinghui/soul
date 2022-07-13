@@ -72,6 +72,16 @@ class Action {
     );
   }
 
+  async updateUserInfoV2(formdata: any, userId: string) {
+    return await this.http.post(
+      `/api/rest/user/updatev2?userId=${userId}`,
+      formdata,
+      {
+        headers: { 'Content-Type': 'application/json' },
+      }
+    );
+  }
+
   async getWrapperList() {
     return await this.http.get(`/api/happy/wrappaper`);
   }

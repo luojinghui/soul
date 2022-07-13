@@ -5,7 +5,7 @@
  * @author jinghui-Luo
  *
  * Created at     : 2022-06-26 00:40:02
- * Last modified  : 2022-07-11 01:13:58
+ * Last modified  : 2022-07-13 22:24:36
  */
 
 const { userModel } = require('../model/userModel');
@@ -108,6 +108,30 @@ const apiController = {
       updateObj.avatarType = 'Remote';
       updateObj.avatar = uploadFile.filename;
     }
+
+    const query = await userModel
+      .findByIdAndUpdate(userId, updateObj, { new: true })
+      .exec();
+
+    res.json({
+      data: {
+        name: query.name,
+        id: query.id,
+        avatar: query.avatar,
+        avatarType: query.avatarType,
+      },
+      msg: 'success',
+      code: 200,
+    });
+  },
+
+  updateUserInfoV2: async (req, res) => {
+    const { userId, name, avatar } = req.body;
+    const updateObj = {};
+
+    updateObj.name = name;
+    updateObj.avatarType = 'Remote';
+    updateObj.avatar = avatar;
 
     const query = await userModel
       .findByIdAndUpdate(userId, updateObj, { new: true })
