@@ -163,16 +163,19 @@ const onJoinroom = async (socket, msg) => {
 
     const msgModel = await getMessageModel(roomId);
     const msgCount = await msgModel.countDocuments({ roomId }).exec();
-    const totalPage = Math.ceil(msgCount / 100);
+    const totalPage = Math.ceil(msgCount / 200);
     const pageMessageQuery = await msgModel
       .find({ roomId })
+      .sort({ createTime: -1 })
       .skip(0)
-      .limit(100)
+      .limit(200)
       .exec();
+
+    const reverseList = pageMessageQuery.reverse();
 
     const historyData = {
       type: 'message_list',
-      data: { totalPage, currentPage: 1, list: pageMessageQuery },
+      data: { totalPage, currentPage: 1, list: reverseList },
       msg: 'All msg list',
     };
 
