@@ -1,24 +1,15 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRecoilState } from 'recoil';
-import { wrapperListState, wrapperSizeState } from '@/store';
-import { LeftOutlined } from '@ant-design/icons';
+import { wrapperSizeState } from '@/store';
 import { useNavigate } from 'react-router-dom';
 import action from '@/action';
-import { Image } from 'antd';
 import { httpServer } from '@/enum';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { IImgSize } from '@/type';
 import { Header } from '@/components';
-
 import './index.less';
-import { message } from 'antd';
-
-import { Gallery, Item } from 'react-photoswipe-gallery';
-import 'photoswipe/dist/photoswipe.css';
 
 export default function Wrapper() {
-  const navigate = useNavigate();
-
   const contentRef = useRef(null);
   const firstIn = useRef(true);
 
@@ -27,8 +18,10 @@ export default function Wrapper() {
   const [list, setList] = useState([]);
 
   const [loading, setLoading] = useState(true);
-  const [visible, setVisible] = useState(false);
-  const [current, setCurrent] = useState(0);
+  const [model, setVisible] = useState({
+    visible: false,
+    url: '',
+  });
   const [pageIndex, setPageIndex] = useState(1);
 
   // 初始化计算每个item的size信息
@@ -53,6 +46,10 @@ export default function Wrapper() {
         firstIn.current = false;
       }
     })();
+  }, [pageIndex]);
+
+  const getMoreData = useCallback(() => {
+    setPageIndex(pageIndex + 1);
   }, [pageIndex]);
 
   const getWrapperList = async (index: number) => {
@@ -83,11 +80,9 @@ export default function Wrapper() {
     const width = contentRef.current.clientWidth;
     // @ts-ignore
     const height = document.body.clientHeight;
-    console.log('height; ', height);
 
     const realWidth = Math.floor((width - 10) / size);
-    // const realHeight = Math.floor(realWidth * 2.164);
-    const realHeight = Math.floor(realWidth * 2);
+    const realHeight = Math.floor(realWidth * 1.6);
 
     let realH = height;
     let realW = height / 2;
@@ -124,12 +119,12 @@ export default function Wrapper() {
     return size;
   };
 
-  const onHome = () => {
-    navigate('/');
+  const onToggleModel = () => {
+    setVisible({
+      visible: false,
+      url: '',
+    });
   };
-
-  console.log('dataList: ', list);
-  console.log('stule: ', style);
 
   return (
     <div className="app wrapper-page">
@@ -138,40 +133,60 @@ export default function Wrapper() {
       <div className="content" id="content" ref={contentRef}>
         {loading && <div className="loading">一波图片正在袭来，请等候...</div>}
 
-        <div className="scroll">
-          <Gallery>
-            {list.map((item: any) => {
-              const { id, full_image_url, thumb_url } = item;
-              const oriUrl = `${httpServer}${full_image_url}`;
-              const thumbUrl = `${httpServer}${thumb_url}`;
+        <InfiniteScroll
+          scrollableTarget="content"
+          className="scroll"
+          dataLength={list.length}
+          next={getMoreData}
+          hasMore={pageIndex <= 10}
+          scrollThreshold={0.9}
+          loader={
+            <h4
+              style={{
+                textAlign: 'center',
+                width: '100vw',
+                marginTop: '10px',
+              }}
+            >
+              Loading...
+            </h4>
+          }
+          endMessage={<p style={{ textAlign: 'center' }}>没有数据啦...</p>}
+        >
+          {list.map((item: any) => {
+            const { id, full_image_url, thumb_url } = item;
+            const oriUrl = `${httpServer}${full_image_url}`;
+            const thumbUrl = `${httpServer}${thumb_url}`;
 
-              return (
-                <Item
-                  key={id}
-                  original={oriUrl}
-                  thumbnail={thumbUrl}
-                  width={style.realW}
-                  height={style.realH}
-                >
-                  {({ ref, open }: any) => (
-                    <div
-                      className="item"
-                      key={item.id}
-                      style={{
-                        width: `${style.width}px`,
-                        height: `${style.height}px`,
-                      }}
-                      onClick={open}
-                    >
-                      <img ref={ref} src={thumbUrl} />
-                    </div>
-                  )}
-                </Item>
-              );
-            })}
-          </Gallery>
-        </div>
+            return (
+              <div
+                className="item"
+                key={id}
+                style={{
+                  width: `${style.width}px`,
+                  height: `${style.height}px`,
+                }}
+                onClick={() => {
+                  setVisible({
+                    visible: true,
+                    url: oriUrl,
+                  });
+                }}
+              >
+                <img src={thumbUrl} loading="lazy" alt="" />
+              </div>
+            );
+          })}
+        </InfiniteScroll>
       </div>
+
+      {model.visible && (
+        <div className="wrapper-model" onClick={onToggleModel}>
+          <div className="model">
+            <img src={model.url} alt="" />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
