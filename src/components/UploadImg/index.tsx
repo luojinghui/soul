@@ -2,17 +2,19 @@ import { useState } from 'react';
 import { httpServer } from '@/enum';
 import ImgCrop from 'antd-img-crop';
 import { Upload } from 'antd';
+import { IFile } from '@/type';
 
 import './index.less';
 
 interface IProps {
   onChange: (list: any) => void;
   userId: string;
+  fileList: IFile[];
 }
 
 export default function UploadImg(props: IProps) {
   const userId = props.userId;
-  const [fileList, setFileList] = useState<any[]>([]);
+  const [fileList, setFileList] = useState<any>(props.fileList);
 
   const handleImgChange = ({ fileList: newFileList }: any) => {
     setFileList(newFileList);

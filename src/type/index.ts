@@ -11,3 +11,11 @@ export interface IImgSize {
   realW: number;
   realH: number;
 }
+
+export type IFile = {
+  uid: string;
+  name: string;
+  status: string;
+  url: string;
+  oriUrl: string;
+};

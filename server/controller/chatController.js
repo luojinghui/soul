@@ -163,12 +163,12 @@ const onJoinroom = async (socket, msg) => {
 
     const msgModel = await getMessageModel(roomId);
     const msgCount = await msgModel.countDocuments({ roomId }).exec();
-    const totalPage = Math.ceil(msgCount / 200);
+    const totalPage = Math.ceil(msgCount / 100);
     const pageMessageQuery = await msgModel
       .find({ roomId })
       .sort({ createTime: -1 })
       .skip(0)
-      .limit(200)
+      .limit(100)
       .exec();
 
     const reverseList = pageMessageQuery.reverse();

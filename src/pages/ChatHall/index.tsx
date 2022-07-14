@@ -1,5 +1,14 @@
 import { useEffect, useRef, useState } from 'react';
-import { message, Button, Modal, Form, Input, Switch, Select } from 'antd';
+import {
+  message,
+  Button,
+  Modal,
+  Form,
+  Input,
+  Switch,
+  Select,
+  Tabs,
+} from 'antd';
 import { UploadImg, Header } from '@/components';
 import { useNavigate } from 'react-router-dom';
 import action from '@/action';
@@ -11,6 +20,7 @@ import { httpServer } from '@/enum';
 import logo from '@/assets/images/logo.svg';
 import './index.less';
 
+const { TabPane } = Tabs;
 const { Option } = Select;
 const tags = [
   {
@@ -247,7 +257,11 @@ export const ChatHall = () => {
             label="头像"
             name="roomImg"
           >
-            <UploadImg onChange={onUploadChange} userId={userInfo.id} />
+            <UploadImg
+              fileList={[]}
+              onChange={onUploadChange}
+              userId={userInfo.id}
+            />
           </Form.Item>
 
           <Form.Item

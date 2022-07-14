@@ -248,9 +248,6 @@ function ChatRoom() {
 
   const onContextmenu = (item: any, e: any) => {
     if (browser.isPc) {
-      console.log('item: ', item);
-      console.log('item e: ', e);
-
       setMenuSet({
         visible: true,
         x: e.clientX,
@@ -262,8 +259,6 @@ function ChatRoom() {
   };
 
   const onDownload = useCallback(() => {
-    console.log('menu: ', menuSet);
-
     // saveImg('.ant-image-img', '123.png');
   }, [menuSet]);
 
