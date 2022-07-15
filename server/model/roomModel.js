@@ -33,6 +33,7 @@ const roomSchema = new Schema({
   },
   private: Boolean,
   allowSetting: Boolean,
+  createTime: { type: Date, default: Date.now },
   updateTime: { type: Date, default: Date.now },
   ownerId: String,
   limitLen: Number,

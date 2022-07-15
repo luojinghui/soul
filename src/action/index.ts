@@ -48,8 +48,10 @@ class Action {
     return await this.http.post(`/api/rest/room/create`, { data, userId });
   }
 
-  async getRoomList(userId: string) {
-    return await this.http.get(`/api/rest/room/list?userId=${userId}`);
+  async getRoomList(userId: string, type: 'all' | 'mine' | 'join') {
+    return await this.http.get(
+      `/api/rest/room/list?userId=${userId}&filter=${type}`
+    );
   }
 
   async uploadImg(formdata: FormData, userId: string) {

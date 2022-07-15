@@ -6,6 +6,13 @@ export {
   getAvatarUrl,
 } from './user';
 
-export { roomListState, messageListState, messageListStoreFunc } from './room';
+export {
+  allRoomListState,
+  joinedRoomListState,
+  mineRoomListState,
+  messageListState,
+  activeKeyState,
+  messageListStoreFunc,
+} from './room';
 
 export { wrapperListState, wrapperSizeState } from './wrapper';

@@ -19,3 +19,5 @@ export type IFile = {
   url: string;
   oriUrl: string;
 };
+
+export type IActiveKey = 'all' | 'mine' | 'join';

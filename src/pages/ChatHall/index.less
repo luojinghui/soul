@@ -1,50 +1,87 @@
-.room-list {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  justify-content: center;
-  padding-bottom: 30px;
-
-  .room-info {
-    width: 300px;
-    padding: 15px 15px;
-    margin: 26px 13px 0px;
-    border-radius: 4px;
-    background-color: var(--chat-content-bg);
-    position: relative;
+.chat-hall {
+  .fixed-btn {
+    position: fixed;
+    bottom: 50px;
+    right: 50px;
+    background-color: var(--btn-bg-color);
+    width: 48px;
+    height: 48px;
+    box-shadow: 0 2px 4px rgb(0 0 0 / 10%), 0 12px 28px rgb(0 0 0 / 20%);
+    border-radius: 100%;
     display: flex;
-    color: #fff;
-    font-size: 14px;
+    justify-content: center;
+    align-items: center;
+    font-size: 22px;
     cursor: pointer;
-  }
+    transition: background-color ease 0.3s;
 
-  .avatar {
-    width: 50px;
-    height: 50px;
-    border-radius: 4px;
-    overflow: hidden;
-    margin-right: 10px;
-
-    img {
-      width: 100%;
+    &:hover {
+      background-color: var(--btn-bg-hover-color);
     }
   }
 
-  .info {
-    .title {
-      font-size: 18px;
-      font-weight: 500;
-      line-height: 1;
+  .sour_header_tabs {
+    .ant-tabs-nav {
+      margin-bottom: 0px;
+    }
+  }
+
+  .room-list {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding-bottom: 60px;
+
+    .room-info {
+      width: 300px;
+      padding: 15px 15px;
+      margin: 26px 13px 0px;
+      border-radius: 4px;
+      background-color: var(--chat-content-bg);
+      position: relative;
       display: flex;
-      margin-bottom: 8px;
+      color: #fff;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-right: 10px;
+
+      img {
+        width: 100%;
+      }
+    }
+
+    .info {
+      .title {
+        font-size: 18px;
+        font-weight: 500;
+        line-height: 1;
+        display: flex;
+        margin-bottom: 8px;
+      }
+    }
+
+    .join-btn {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      color: #fff;
     }
   }
 
-  .join-btn {
-    position: absolute;
-    bottom: 20px;
-    right: 20px;
-    color: #fff;
+  .active {
+    display: flex;
+  }
+
+  .hidden {
+    display: none;
   }
 }
 
@@ -95,5 +132,16 @@
 .ins-item {
   .ant-select-item-option-selected:not(.ant-select-item-option-disabled) {
     background-color: #ddd !important;
+  }
+}
+
+@media screen and (max-width: 666px) {
+  .chat-hall {
+    .fixed-btn {
+      bottom: 20px;
+      right: 20px;
+      width: 48px;
+      height: 48px;
+    }
   }
 }
