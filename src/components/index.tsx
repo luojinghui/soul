@@ -12,6 +12,7 @@ import girl_wanzi from '@/assets/images/girl_wanzi.svg';
 import ChatInput from './ChatInput';
 import UploadImg from './UploadImg';
 import Header from './Header';
+import AddRoomMoel from './AddRoomModel';
 
 export const AvatarMap: any = {
   '1': boy_huzi,
@@ -27,4 +28,4 @@ export const AvatarMap: any = {
   '11': girl_wanzi,
 };
 
-export { ChatInput, UploadImg, Header };
+export { ChatInput, UploadImg, Header, AddRoomMoel };

@@ -1,77 +1,21 @@
-import { useEffect, useRef, useState } from 'react';
-import {
-  message,
-  Button,
-  Modal,
-  Form,
-  Input,
-  Switch,
-  Select,
-  Tabs,
-} from 'antd';
-import { UploadImg, Header } from '@/components';
+import { useEffect, useState } from 'react';
+import { message, Dropdown, Menu } from 'antd';
+import { PlusOutlined, DownOutlined, SmileOutlined } from '@ant-design/icons';
+import { Header, AddRoomMoel } from '@/components';
 import { useNavigate } from 'react-router-dom';
 import action from '@/action';
-import { PlusOutlined } from '@ant-design/icons';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { userInfoState, userAvatarState, roomListState } from '@/store';
+import { userInfoState, roomListState } from '@/store';
 import { httpServer } from '@/enum';
 
 import logo from '@/assets/images/logo.svg';
 import './index.less';
 
-const { TabPane } = Tabs;
-const { Option } = Select;
-const tags = [
-  {
-    key: 'wangzhe',
-    name: '王者荣耀',
-  },
-  {
-    key: 'guangyu',
-    name: '光遇',
-  },
-  {
-    key: 'juezhan',
-    name: '决战平安京',
-  },
-  {
-    key: 'danzai',
-    name: '蛋仔派对',
-  },
-  {
-    key: 'xuexi',
-    name: '学习监督',
-  },
-  {
-    key: 'lanqiu',
-    name: '篮球🏀',
-  },
-  {
-    key: 'changge',
-    name: '唱歌',
-  },
-  {
-    key: 'tiaowu',
-    name: '跳舞💃',
-  },
-  {
-    key: 'duanshipin',
-    name: '短视频',
-  },
-];
-
 export const ChatHall = () => {
   const navigate = useNavigate();
-
   const [roomList, setRoomList] = useRecoilState(roomListState);
   const userInfo = useRecoilValue(userInfoState);
-  const userAvatar = useRecoilValue(userAvatarState);
-
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [form] = Form.useForm();
-
-  const imgRef = useRef<any>('');
 
   useEffect(() => {
     (async () => {
@@ -95,74 +39,49 @@ export const ChatHall = () => {
     navigate(`/chat/${roomId}`);
   };
 
-  const onHome = () => {
-    navigate('/', { replace: true });
-  };
-
-  const handleOk = () => {};
-
-  const handleCancel = () => {
-    setIsModalVisible(!isModalVisible);
+  const onCreateOK = async () => {
+    await getRoomList();
   };
 
   const onShowAddRoom = () => {
     setIsModalVisible(!isModalVisible);
   };
 
-  const onFinish = async (e: any) => {
-    const data = {
-      ...e,
-      roomName: e.roomName.trim() + '星球',
-      roomImg: imgRef.current?.response?.data?.fileUrl || '',
-    };
-
-    console.log('data:', data);
-
-    if (!data.roomName.length) {
-      message.info('填写星球名称');
-
-      return;
-    }
-
-    if (!data.roomImg) {
-      message.info('上传一张星球头像');
-
-      return;
-    }
-
-    try {
-      const result = await action.createRoom(data, userInfo.id);
-
-      if (result.code === 200) {
-        message.info('创建星球成功');
-
-        await getRoomList();
-      }
-    } catch (err: any) {}
-    form.resetFields();
-    setIsModalVisible(!isModalVisible);
-  };
-
-  const children: React.ReactNode[] = [];
-
-  tags.forEach(({ key, name }) => {
-    children.push(
-      <Option key={key} value={name}>
-        {name}
-      </Option>
-    );
-  });
-
-  const onUploadChange = (fileList: any) => {
-    console.log('fileList: ', fileList);
-
-    imgRef.current = fileList[0] || '';
-  };
+  const menu = (
+    <Menu
+      items={[
+        {
+          key: '1',
+          label: '星球大厅',
+          icon: <SmileOutlined />,
+        },
+        {
+          key: '2',
+          label: '我参与的',
+          icon: <SmileOutlined />,
+        },
+        {
+          key: '3',
+          label: '我创建的',
+          icon: <SmileOutlined />,
+        },
+      ]}
+    />
+  );
 
   return (
     <div className="app">
       <Header
-        title="星球大厅"
+        title={
+          <div>
+            <Dropdown overlay={menu} placement="bottom" trigger={['click']}>
+              <a onClick={(e) => e.preventDefault()}>
+                星球大厅
+                <DownOutlined />
+              </a>
+            </Dropdown>
+          </div>
+        }
         rightContent={
           <div className="btn" onClick={onShowAddRoom}>
             <PlusOutlined className="icon setting" />
@@ -221,96 +140,12 @@ export const ChatHall = () => {
         </div>
       </div>
 
-      <Modal
-        title="创建兴趣星球"
+      <AddRoomMoel
+        onCancel={onShowAddRoom}
+        onCreateOK={onCreateOK}
         visible={isModalVisible}
-        onOk={handleOk}
-        onCancel={handleCancel}
-        okText="创建"
-        cancelText="取消"
-        footer={false}
-        wrapClassName="room-model"
-        width={350}
-      >
-        <Form
-          form={form}
-          name="roomInfo"
-          initialValues={{ remember: true }}
-          onFinish={onFinish}
-          autoComplete="off"
-        >
-          <Form.Item
-            className="item room-name-item"
-            label="名称"
-            name="roomName"
-            initialValue={''}
-          >
-            <div>
-              <Input />
-              <span>星球</span>
-            </div>
-          </Form.Item>
-
-          <Form.Item
-            initialValue={''}
-            className="item"
-            label="头像"
-            name="roomImg"
-          >
-            <UploadImg
-              fileList={[]}
-              onChange={onUploadChange}
-              userId={userInfo.id}
-            />
-          </Form.Item>
-
-          <Form.Item
-            className="item"
-            initialValue={[]}
-            label="标签"
-            name="roomTag"
-          >
-            <Select
-              dropdownClassName="ins-item"
-              mode="tags"
-              size="middle"
-              placeholder=""
-              showArrow={true}
-            >
-              {children}
-            </Select>
-          </Form.Item>
-
-          <Form.Item
-            className="item"
-            label="介绍"
-            name="roomDesc"
-            initialValue={''}
-          >
-            <Input />
-          </Form.Item>
-
-          <Form.Item className="item" initialValue={''} label="密码" name="pwd">
-            <Input />
-          </Form.Item>
-
-          <Form.Item
-            initialValue={false}
-            className="item item-bottom"
-            label="私有"
-            name="private"
-            valuePropName="checked"
-          >
-            <Switch></Switch>
-          </Form.Item>
-
-          <Form.Item wrapperCol={{ offset: 10, span: 16 }}>
-            <Button type="primary" htmlType="submit">
-              创建
-            </Button>
-          </Form.Item>
-        </Form>
-      </Modal>
+        userId={userInfo.id}
+      />
     </div>
   );
 };
