@@ -14,11 +14,13 @@ import {
 } from '@/store';
 import { httpServer } from '@/enum';
 import { IActiveKey } from '@/type';
+import { platform } from '@/utils/browser';
 
 import logo from '@/assets/images/logo.svg';
 import './index.less';
 
 const { TabPane } = Tabs;
+const browser = platform();
 
 export const ChatHall = () => {
   const navigate = useNavigate();
@@ -107,7 +109,7 @@ export const ChatHall = () => {
           return (
             <div
               key={_id}
-              className={`room-info bg${index + 1}`}
+              className={`room-info bg${(index % 19) + 1}`}
               onClick={() => {
                 onJoinRoom(roomId);
               }}
@@ -178,7 +180,11 @@ export const ChatHall = () => {
         userId={userInfo.id}
       />
 
-      <Popover placement="left" title={false} content="创建星球">
+      <Popover
+        placement="left"
+        title={false}
+        content={browser.isPc ? '创建星球' : ''}
+      >
         <div className="fixed-btn" onClick={onShowAddRoom}>
           <PlusOutlined className="icon setting" />
         </div>

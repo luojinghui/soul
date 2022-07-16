@@ -103,6 +103,41 @@
   }
 }
 
+.player {
+  position: fixed;
+  left: 0;
+  bottom: 20px;
+  width: 100px;
+  height: 48px;
+  z-index: 100;
+  background-color: #fff;
+  overflow: hidden;
+  border-top-right-radius: 48px;
+  border-bottom-right-radius: 48px;
+
+  .player_operate {
+    height: 100%;
+    position: relative;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 7px 0 7px;
+
+    .btn {
+      font-size: 28px;
+      cursor: pointer;
+    }
+    .play {
+      padding: 7px;
+    }
+    .close {
+      font-size: 18px;
+      padding: 8px;
+    }
+  }
+}
+
 @keyframes hue {
   from {
     filter: hue-rotate(0deg);

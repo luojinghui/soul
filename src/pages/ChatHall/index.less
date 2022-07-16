@@ -31,13 +31,16 @@
     align-items: center;
     flex-wrap: wrap;
     justify-content: center;
+    padding: 15px;
     padding-bottom: 60px;
 
     .room-info {
       width: 300px;
-      padding: 15px 15px;
-      margin: 26px 13px 0px;
+      padding: 15px;
+      margin: 13px 0px;
       border-radius: 4px;
+      padding: 15px;
+      margin: 0 13px 20px 0;
       background-color: var(--chat-content-bg);
       position: relative;
       display: flex;
@@ -142,6 +145,32 @@
       right: 20px;
       width: 48px;
       height: 48px;
+    }
+  }
+}
+
+@media screen and (max-width: 500px) {
+  .chat-hall {
+    .room-list {
+      .room-info {
+        width: 100%;
+        height: 100px;
+        padding: 12px;
+        margin: 0 0 15px 0;
+      }
+
+      .avatar {
+        width: 50px;
+        height: 50px;
+      }
+
+      .info {
+        .title {
+          font-size: 18px;
+          font-weight: 500;
+          line-height: 1;
+        }
+      }
     }
   }
 }

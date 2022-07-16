@@ -9,6 +9,7 @@ import UserCenter from '../pages/UserCenter';
 import PersonCenter from '../pages/PersonCenter';
 import Wrapper from '../pages/Wrapper';
 import Dashboard from '../pages/Dashboard';
+import MusicHall from '../pages/Music/MusicHall';
 
 export default function Router() {
   return (
@@ -30,6 +31,10 @@ export default function Router() {
           </Route>
 
           <Route path="wrapper" element={<Wrapper />}></Route>
+
+          <Route path="music">
+            <Route path="" element={<MusicHall />}></Route>
+          </Route>
 
           <Route path="*" element={<NotFound />} />
         </Route>

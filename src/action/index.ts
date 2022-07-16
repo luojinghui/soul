@@ -10,10 +10,15 @@ import { httpServer } from '../enum';
 
 class Action {
   private http: HttpClient;
+  private oriHttp: HttpClient;
 
   constructor() {
     this.http = new HttpClient({
       baseURL: httpServer,
+      timeout: 20000,
+    });
+
+    this.oriHttp = new HttpClient({
       timeout: 20000,
     });
   }
@@ -92,6 +97,16 @@ class Action {
     return await this.http.get(
       `/api/happy/v2/wrappaper?pageIndex=${pageIndex}`
     );
+  }
+
+  async getMusicTopList(limit: number, cat: string, offset: number) {
+    return await this.http.get(
+      `/api/song/top/playlist?limit=${limit}&cat=${cat}&offset=${offset}&order=hot`
+    );
+  }
+
+  async getMusicInfo() {
+    return await this.oriHttp.get(`https://tenapi.cn/comment`);
   }
 }
 

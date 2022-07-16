@@ -19,10 +19,6 @@ function App() {
     }
   }, [location]);
 
-  const onJump = () => {
-    window.open('http://luojh.me');
-  };
-
   return (
     <div className="container app-page">
       <div className={`bg12 bgAnimate`}>
@@ -43,9 +39,9 @@ function App() {
             <span className="link">壁纸</span>
           </NavLink>
 
-          {/* <div className="circle center barrage" onClick={onJump}>
-            <span className="link">博客</span>
-          </div> */}
+          <NavLink to="/music" className="circle center swim">
+            <span className="link">音乐</span>
+          </NavLink>
 
           <NavLink to="/chat" className="circle center swim">
             <span className="link">星球</span>

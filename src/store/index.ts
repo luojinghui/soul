@@ -16,3 +16,5 @@ export {
 } from './room';
 
 export { wrapperListState, wrapperSizeState } from './wrapper';
+
+export * from './music';

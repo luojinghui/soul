@@ -26,10 +26,18 @@ export default function Wrapper() {
 
   // 初始化计算每个item的size信息
   useEffect(() => {
+    resizePage();
+    window.addEventListener('resize', resizePage);
+    return () => {
+      window.removeEventListener('resize', resizePage);
+    };
+  }, []);
+
+  const resizePage = () => {
     const size = getImgSize();
 
     setStyle(size);
-  }, []);
+  };
 
   useEffect(() => {
     (async () => {
@@ -131,7 +139,7 @@ export default function Wrapper() {
       <Header title="热门壁纸"></Header>
 
       <div className="content" id="content" ref={contentRef}>
-        {loading && <div className="loading">一波图片正在袭来，请等候...</div>}
+        {loading && <div className="loading">稍等片刻...</div>}
 
         <InfiniteScroll
           scrollableTarget="content"
