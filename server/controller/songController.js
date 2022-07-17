@@ -5,7 +5,7 @@
  * @author jinghui-Luo
  *
  * Created at     : 2022-06-26 00:40:02
- * Last modified  : 2022-07-17 00:28:37
+ * Last modified  : 2022-07-17 23:57:23
  */
 
 const {
@@ -61,6 +61,8 @@ module.exports = {
       console.log('req.query: ', req.query);
 
       const result = await top_playlist({ cat, limit, offset, order });
+
+      console.log('result: ', result);
 
       res.json({
         data: result,

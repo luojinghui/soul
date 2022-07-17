@@ -7,7 +7,7 @@ import {
   PauseCircleFilled,
   CloseOutlined,
 } from '@ant-design/icons';
-import Draggable from 'react-draggable';
+import Draggable, { DraggableData } from 'react-draggable';
 
 export default function Dashboard() {
   const audioRef = useRef(null);
@@ -48,16 +48,28 @@ export default function Dashboard() {
   return (
     <>
       {musicInfo.url && (
-        <Draggable bounds={{ left: 0 }} axis="y" defaultClassName="player">
+        <Draggable bounds="#root" defaultClassName="player">
           <div className="">
             <div className="player_operate">
               {pauseState ? (
-                <PlayCircleFilled onClick={play} className="btn play" />
+                <PlayCircleFilled
+                  onTouchEnd={play}
+                  onClick={play}
+                  className="btn play"
+                />
               ) : (
-                <PauseCircleFilled onClick={pause} className="btn play" />
+                <PauseCircleFilled
+                  onTouchEnd={pause}
+                  onClick={pause}
+                  className="btn play"
+                />
               )}
 
-              <CloseOutlined className="btn close" onClick={onClose} />
+              <CloseOutlined
+                className="btn close"
+                onTouchEnd={onClose}
+                onClick={onClose}
+              />
             </div>
 
             <audio controls={false} ref={audioRef}>
