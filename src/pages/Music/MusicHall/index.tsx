@@ -19,20 +19,39 @@ export default function MusicHall() {
 
   useEffect(() => {
     (async () => {
-      const { list } = await getTopList(10, '华语', 0);
+      // const { list } = await getTopList(10, '华语', 0);
+      const { list } = await getCommentList();
 
       setChineseMusicPlayList(list);
     })();
   }, []);
 
-  const playMusic = async () => {
+  const playMusic = async (item: any) => {
     setMusicBarVisible(true);
 
-    const result = await action.getMusicInfo();
+    setMusicInfo(item);
+  };
 
-    if (result.code === 200) {
-      setMusicInfo(result.data);
+  const getCommentList = async () => {
+    try {
+      const result = await action.getCommentList();
+
+      if (result?.code === 200) {
+        console.log('result: ', result);
+
+        return {
+          list: result.data,
+          code: 200,
+        };
+      }
+    } catch (err) {
+      console.log('get list error: ', err);
     }
+
+    return {
+      list: [],
+      code: 300,
+    };
   };
 
   const getTopList = async (limit: number, cat: string, offset: number) => {
@@ -62,34 +81,34 @@ export default function MusicHall() {
   const renderRoomList = useCallback(() => {
     let list = chineseMusicPlayList;
 
-    return list.map(
-      ({ coverImgUrl, name, id, trackUpdateTime }: any, index: number) => {
-        return (
-          <div
-            key={id}
-            className={`room-info bg${(index % 19) + 1}`}
-            onClick={() => {
-              playMusic();
-            }}
-          >
-            <div className="avatar">
-              <img src={coverImgUrl.replace('http', 'https')} alt="" />
+    return list.map(({ cover, song, id, sing }: any, index: number) => {
+      return (
+        <div
+          key={id}
+          className={`room-info bg${(index % 19) + 1}`}
+          onClick={() => {
+            playMusic(list[index]);
+          }}
+        >
+          <div className="avatar">
+            <img src={cover} alt="" />
+          </div>
+          <div className="info">
+            <div>
+              <span className="title">{song}</span>
             </div>
-            <div className="info">
-              <div>
-                <span className="title">{name}</span>
-              </div>
 
-              <div>
-                <span className="time">
-                  更新时间：{getTime(trackUpdateTime, 'M')}
-                </span>
-              </div>
+            <div>
+              <span>{sing}</span>
+            </div>
+
+            <div>
+              {/* <span className="time">更新时间：{getTime(createTime, 'M')}</span> */}
             </div>
           </div>
-        );
-      }
-    );
+        </div>
+      );
+    });
   }, [chineseMusicPlayList]);
 
   return (
@@ -100,7 +119,8 @@ export default function MusicHall() {
       <div className="im-content music-heall-content">
         {loading && <div className="loading">稍等片刻...</div>}
 
-        <h3>华语热门歌单</h3>
+        {/* <h3>华语热门歌单</h3> */}
+        {/* <div className={`room-list`}>{renderRoomList()}</div> */}
         <div className={`room-list`}>{renderRoomList()}</div>
       </div>
     </div>

@@ -5,7 +5,7 @@
  * @author jinghui-Luo
  *
  * Created at     : 2021-04-09 14:17:34
- * Last modified  : 2022-07-16 23:59:23
+ * Last modified  : 2022-07-19 01:12:04
  */
 
 const express = require('express');
@@ -62,6 +62,8 @@ router.get(
 router.get('/api/song/top/playlist', songController.top_playlist);
 // 获取获得每日推荐歌曲 ( 需要登录 )
 router.get('/api/song//recommend/songs', songController.recommend_songs);
+// 获取获得每日推荐歌曲
+router.get('/api/song/comment/list', songController.comment_list);
 
 /**
  * 主页面加载入口

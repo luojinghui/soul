@@ -105,6 +105,10 @@ class Action {
     );
   }
 
+  async getCommentList() {
+    return await this.http.get(`/api/song/comment/list`);
+  }
+
   async getMusicInfo() {
     return await this.oriHttp.get(`https://tenapi.cn/comment`);
   }

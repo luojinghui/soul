@@ -8,6 +8,7 @@ import {
   CloseOutlined,
 } from '@ant-design/icons';
 import Draggable from 'react-draggable';
+import { message } from 'antd';
 
 export default function Dashboard() {
   const audioRef = useRef(null);
@@ -159,6 +160,14 @@ export default function Dashboard() {
     countRef.current = 0;
   };
 
+  const onError = () => {
+    if (musicInfo.url) {
+      message.info('播放失败，切换别的歌曲吧');
+
+      setPause(true);
+    }
+  };
+
   const playerClassName = useMemo(() => {
     const playStateClass = visible ? 'player_show' : 'player_hidden';
     const playerBorderClass = position.left ? 'left' : 'right';
@@ -175,7 +184,6 @@ export default function Dashboard() {
             defaultClassName={`player ${playerClassName}`}
             onStart={handleStart}
             onDrag={handleDrag}
-            // @ts-ignore
             onStop={handleStop}
             position={position}
           >
@@ -190,7 +198,12 @@ export default function Dashboard() {
                 <CloseOutlined className="btn close" data-type="close" />
               </div>
 
-              <audio src={musicInfo.url} controls={false} ref={audioRef} />
+              <audio
+                onError={onError}
+                src={musicInfo.url}
+                controls={false}
+                ref={audioRef}
+              />
             </div>
           </Draggable>
         }

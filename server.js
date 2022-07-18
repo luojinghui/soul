@@ -6,7 +6,7 @@
  * @author jinghui-Luo
  *
  * Created at     : 2021-04-09 14:22:59
- * Last modified  : 2022-07-11 21:04:13
+ * Last modified  : 2022-07-19 00:42:29
  */
 
 const express = require('express');
@@ -19,6 +19,7 @@ const { crossConfig } = require('./server/middleware/cros');
 const { port } = require('./server/config/index');
 const { Server } = require('socket.io');
 const { createProxyMiddleware } = require('http-proxy-middleware');
+const startNodeSchedule = require('./server/utils/schedule');
 
 const app = express();
 const server = createServer(app);
@@ -57,6 +58,8 @@ app.use(
 
 // rest服务
 app.use(router);
+
+startNodeSchedule();
 
 server.listen(port, () => {
   console.log('current env: ', process.env.NODE_ENV);
