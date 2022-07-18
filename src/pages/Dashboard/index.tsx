@@ -117,6 +117,10 @@ export default function Dashboard() {
   };
 
   const getDataType = (node: any): string => {
+    if (node && !node.getAttribute) {
+      return '';
+    }
+
     const classNames = node.getAttribute('class') || '';
 
     if (classNames && classNames.includes('player_operate')) {
