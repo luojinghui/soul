@@ -38,8 +38,9 @@ const rule = new schedule.RecurrenceRule();
 rule.dayOfWeek = [1, 2, 3, 4, 5];
 // 每小时0，1点
 rule.hour = [0, 1, 2, 3];
+rule.minute = [5, 15, 30, 45, 55];
 // 每隔 30 秒执行一次
-rule.second = [0, 30];
+// rule.second = [30];
 
 // 启动任务
 let job;
