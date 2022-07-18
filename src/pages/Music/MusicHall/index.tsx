@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useRecoilState } from 'recoil';
-import { ChineseMusicPlayList, MusicInfo } from '@/store';
+import { useRecoilState, useSetRecoilState } from 'recoil';
+import { ChineseMusicPlayList, MusicInfo, MusicBarVisible } from '@/store';
 import action from '@/action';
 import { Header } from '@/components';
 import { getTime } from '@/utils';
@@ -12,6 +12,7 @@ export default function MusicHall() {
   const [chineseMusicPlayList, setChineseMusicPlayList] =
     useRecoilState(ChineseMusicPlayList);
   const [musicInfo, setMusicInfo] = useRecoilState(MusicInfo);
+  const setMusicBarVisible = useSetRecoilState(MusicBarVisible);
 
   const [list, setList] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -25,6 +26,8 @@ export default function MusicHall() {
   }, []);
 
   const playMusic = async () => {
+    setMusicBarVisible(true);
+
     const result = await action.getMusicInfo();
 
     if (result.code === 200) {

@@ -21,3 +21,13 @@ export const MusicInfo = atom({
     url: '',
   },
 });
+
+export const MusicBarVisible = atom({
+  key: 'MusicBarVisible',
+  default: false,
+});
+
+export const MusicBarPosition = atom({
+  key: 'MusicBarPosition',
+  default: { x: 0, y: 160, left: true },
+});
