@@ -139,6 +139,21 @@ export default function Dashboard() {
       const positionObj = getMusicBarPosition(data);
 
       setPosition(positionObj);
+
+      setTimeout(() => {
+        if (pauseState) {
+          const titleNode = document.getElementById('soul_music_title');
+
+          if (titleNode) {
+            console.log('12');
+
+            titleNode.style.marginRight = '7px';
+            setTimeout(() => {
+              titleNode.style.marginRight = '6px';
+            }, 2);
+          }
+        }
+      }, 10);
     }
 
     countRef.current = 0;
@@ -249,6 +264,7 @@ export default function Dashboard() {
                 </div>
 
                 <div
+                  id="soul_music_title"
                   className={`title mr ${
                     miniMode ? 'soul_player_hidden' : 'soul_player_show_flex'
                   }`}
