@@ -1,18 +1,22 @@
 .soul_player_show {
-  display: block;
+  display: block !important;
+}
+
+.soul_player_show_flex {
+  display: flex !important;
 }
 
 .soul_player_hidden {
-  display: none;
+  display: none !important;
 }
 
 .soul_player_draging {
   &.left {
-    border-radius: 48px;
+    border-radius: var(--music-bar-radius);
   }
 
   &.right {
-    border-radius: 48px;
+    border-radius: var(--music-bar-radius);
   }
 }
 
@@ -22,7 +26,6 @@
   z-index: 100;
   background-color: #fff;
   overflow: hidden;
-  padding: 0 10px;
   box-shadow: 0 2px 4px rgb(0 0 0 / 10%), 0 12px 28px rgb(0 0 0 / 20%);
 
   .player_operate {
@@ -34,19 +37,85 @@
     justify-content: center;
 
     .btn {
+      height: 100%;
       font-size: 30px;
       cursor: pointer;
-      padding: 10px 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .mr {
-      margin-right: 4px;
+      margin: 0 6px;
+    }
+
+    .toggle {
+      cursor: pointer;
+      height: 100%;
+      display: flex;
+
+      .toggle-icon {
+        font-size: 26px;
+        width: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #999;
+        background-color: #f3f3f3;
+
+        &:hover {
+          color: #333;
+        }
+      }
     }
 
     .close {
       font-size: 18px;
-      padding: 15px 4px;
-      color: #666;
+      padding: 0 2px;
+      color: #999;
+
+      &:hover {
+        color: #333;
+      }
+    }
+
+    .title {
+      font-size: 12px;
+      display: flex;
+      flex-direction: column;
+      max-width: 100px;
+      overflow: hidden;
+
+      .song,
+      .sing {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        width: 100%;
+        word-break: keep-all;
+        white-space: nowrap;
+        display: inline-block;
+      }
+    }
+
+    .cover {
+      width: 38px;
+      height: 100%;
+      overflow: hidden;
+      align-items: center;
+      justify-content: center;
+
+      img {
+        width: 38px;
+        height: 38px;
+        border-radius: 100%;
+        border: 1px solid #ebebeb;
+        animation: circle 30s linear infinite;
+      }
+
+      .rotate-pause {
+        animation-play-state: paused !important;
+      }
     }
   }
 
@@ -57,21 +126,26 @@
   }
 
   &.left {
-    border-top-right-radius: 48px;
-    border-bottom-right-radius: 48px;
+    border-top-right-radius: var(--music-bar-radius);
+    border-bottom-right-radius: var(--music-bar-radius);
 
     .player_operate {
       flex-direction: row-reverse;
-
-      .mr {
-        margin-right: 0px;
-        margin-left: 0px;
-      }
     }
   }
 
   &.right {
-    border-top-left-radius: 48px;
-    border-bottom-left-radius: 48px;
+    border-top-left-radius: var(--music-bar-radius);
+    border-bottom-left-radius: var(--music-bar-radius);
+  }
+}
+
+@keyframes circle {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
   }
 }

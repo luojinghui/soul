@@ -18,6 +18,14 @@ export const KoreanMusicPlayList = atom({
 export const MusicInfo = atom({
   key: 'musicInfo',
   default: {
+    album: '',
+    content: '',
+    cover: '',
+    createTime: '',
+    id: '',
+    name: '',
+    sing: '',
+    song: '',
     url: '',
   },
 });
@@ -27,7 +35,12 @@ export const MusicBarVisible = atom({
   default: false,
 });
 
+export const MusicBarMiniMode = atom({
+  key: 'MusicBarMiniMode',
+  default: true,
+});
+
 export const MusicBarPosition = atom({
   key: 'MusicBarPosition',
-  default: { x: 0, y: 160, left: true },
+  default: { x: document.body.clientWidth, y: 160, left: false },
 });

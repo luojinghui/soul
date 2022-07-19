@@ -1,7 +1,12 @@
 import { useEffect, useState, useRef, useMemo, useCallback } from 'react';
 import { Outlet } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
-import { MusicInfo, MusicBarPosition, MusicBarVisible } from '@/store';
+import {
+  MusicInfo,
+  MusicBarPosition,
+  MusicBarVisible,
+  MusicBarMiniMode,
+} from '@/store';
 import {
   PlayCircleFilled,
   PauseCircleFilled,
@@ -19,6 +24,7 @@ export default function Dashboard() {
 
   const [pauseState, setPause] = useState(true);
   const [isDrag, setIsDrag] = useState(false);
+  const [miniMode, setMiniMode] = useRecoilState(MusicBarMiniMode);
   const [visible, setMusicBarVisible] = useRecoilState(MusicBarVisible);
   const [musicInfo] = useRecoilState(MusicInfo);
   const [position, setPosition] = useRecoilState(MusicBarPosition);
@@ -40,19 +46,11 @@ export default function Dashboard() {
   }, [visible, position]);
 
   useEffect(() => {
-    if (visible) {
-      const positionObj = getMusicBarPosition({
-        x: document.body.clientWidth,
-        node: playerRef.current,
-        y: 160,
-      });
-
-      setPosition(positionObj);
-    }
-  }, [visible]);
+    resizePage();
+  }, [visible, musicInfo, miniMode]);
 
   const resizePage = () => {
-    if (visible) {
+    if (visible && musicInfo.url) {
       const positionObj = getMusicBarPosition({
         x: position.x,
         node: playerRef.current,
@@ -83,7 +81,6 @@ export default function Dashboard() {
     const node = data.node;
     const slefBodyWidth = Math.ceil(bodyWidth / 2);
     const slftNodeWidth = Math.ceil(node.clientWidth / 2);
-
     const offsetX = data.x + slftNodeWidth;
     let x = 0;
     let left = true;
@@ -111,11 +108,11 @@ export default function Dashboard() {
       return '';
     }
 
-    if (!classNames || !classNames.includes('btn')) {
+    if (!classNames || !classNames.includes('event')) {
       return getDataType(node.parentNode);
     }
 
-    if (classNames.includes('btn')) {
+    if (classNames.includes('event')) {
       return node.getAttribute('data-type');
     }
 
@@ -132,6 +129,8 @@ export default function Dashboard() {
         // @ts-ignore
         const event = eventMap[type];
 
+        console.log('type: ', type);
+
         if (event) {
           event();
         }
@@ -143,6 +142,10 @@ export default function Dashboard() {
     }
 
     countRef.current = 0;
+  };
+
+  const toggleMode = () => {
+    setMiniMode(!miniMode);
   };
 
   const onError = () => {
@@ -189,6 +192,7 @@ export default function Dashboard() {
     play: play,
     pause: pause,
     close: onClose,
+    toggle: toggleMode,
   };
 
   const playerClassName = useMemo(() => {
@@ -197,6 +201,18 @@ export default function Dashboard() {
 
     return `${playStateClass} ${playerBorderClass}`;
   }, [musicInfo, position, visible]);
+
+  const toggleClassName = useMemo(() => {
+    let className = '';
+
+    if (position.left) {
+      className = miniMode ? 'icon-xianghou' : 'icon-xiangqian';
+    } else {
+      className = miniMode ? 'icon-xiangqian' : 'icon-xianghou';
+    }
+
+    return className;
+  }, [miniMode, position]);
 
   return (
     <>
@@ -213,13 +229,44 @@ export default function Dashboard() {
           >
             <div ref={playerRef}>
               <div className="player_operate">
+                <div className="toggle event" data-type="toggle">
+                  <span
+                    className={`iconfont ${toggleClassName} toggle-icon`}
+                  ></span>
+                </div>
+
+                <div
+                  className={`cover mr ${
+                    miniMode ? 'soul_player_hidden' : 'soul_player_show_flex'
+                  }`}
+                >
+                  <img
+                    draggable={false}
+                    className={pauseState ? 'rotate-pause' : ''}
+                    src={musicInfo.cover}
+                    alt=""
+                  />
+                </div>
+
+                <div
+                  className={`title mr ${
+                    miniMode ? 'soul_player_hidden' : 'soul_player_show_flex'
+                  }`}
+                >
+                  <span className="song">{musicInfo.song}</span>
+                  <span className="sing">{musicInfo.sing}</span>
+                </div>
+
                 {pauseState ? (
-                  <PlayCircleFilled className="btn mr" data-type="play" />
+                  <PlayCircleFilled className="btn event mr" data-type="play" />
                 ) : (
-                  <PauseCircleFilled className="btn mr" data-type="pause" />
+                  <PauseCircleFilled
+                    className="btn event mr"
+                    data-type="pause"
+                  />
                 )}
 
-                <CloseOutlined className="btn close" data-type="close" />
+                <CloseOutlined className="btn event close" data-type="close" />
               </div>
 
               <audio
