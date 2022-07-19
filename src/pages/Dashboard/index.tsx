@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, useMemo } from 'react';
+import { useEffect, useState, useRef, useMemo, useCallback } from 'react';
 import { Outlet } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import { MusicInfo, MusicBarPosition, MusicBarVisible } from '@/store';
@@ -10,23 +10,34 @@ import {
 import Draggable from 'react-draggable';
 import { message } from 'antd';
 
+import './index.less';
+
 export default function Dashboard() {
-  const audioRef = useRef(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
   const playerRef = useRef(null);
   const countRef = useRef(0);
 
   const [pauseState, setPause] = useState(true);
+  const [isDrag, setIsDrag] = useState(false);
   const [visible, setMusicBarVisible] = useRecoilState(MusicBarVisible);
   const [musicInfo] = useRecoilState(MusicInfo);
   const [position, setPosition] = useRecoilState(MusicBarPosition);
 
   useEffect(() => {
     if (musicInfo.url) {
-      console.log('play music: ', musicInfo);
+      console.log('music info: ', musicInfo);
 
       play();
     }
   }, [musicInfo]);
+
+  useEffect(() => {
+    window.addEventListener('resize', resizePage);
+
+    return () => {
+      window.removeEventListener('resize', resizePage);
+    };
+  }, [visible, position]);
 
   useEffect(() => {
     if (visible) {
@@ -40,44 +51,21 @@ export default function Dashboard() {
     }
   }, [visible]);
 
-  const play = async () => {
-    console.log('audioRef.currentL', audioRef.current);
-    console.log('play');
+  const resizePage = () => {
+    if (visible) {
+      const positionObj = getMusicBarPosition({
+        x: position.x,
+        node: playerRef.current,
+        y: position.y,
+      });
 
-    try {
-      // @ts-ignore
-      await audioRef.current.play();
-
-      console.log('played');
-      setPause(false);
-    } catch (err) {
-      console.log('play err: ', err);
-    }
-
-    // audioRef.current.play().then(
-    //   () => {
-    //     console.log('played');
-    //     setPause(false);
-    //   },
-    //   (err: any) => {
-    //     console.log('play err: ', err);
-    //   }
-    // );
-  };
-
-  const pause = async () => {
-    console.log('pause');
-
-    // @ts-ignore
-    if (!audioRef.current.paused) {
-      // @ts-ignore
-      await audioRef.current.pause();
-
-      setPause(true);
+      setPosition(positionObj);
     }
   };
 
   const onClose = async () => {
+    console.log('close music');
+
     await pause();
 
     setMusicBarVisible(false);
@@ -86,6 +74,7 @@ export default function Dashboard() {
   const handleStart = (e: any) => {};
 
   const handleDrag = (e: any) => {
+    setIsDrag(true);
     countRef.current += 1;
   };
 
@@ -111,12 +100,6 @@ export default function Dashboard() {
     };
   };
 
-  const eventMap = {
-    play: play,
-    pause: pause,
-    close: onClose,
-  };
-
   const getDataType = (node: any): string => {
     if (node && !node.getAttribute) {
       return '';
@@ -140,6 +123,8 @@ export default function Dashboard() {
   };
 
   const handleStop = (e: any, data: any) => {
+    setIsDrag(false);
+
     if (!countRef.current) {
       const type = getDataType(e.target);
 
@@ -168,8 +153,46 @@ export default function Dashboard() {
     }
   };
 
+  const play = async () => {
+    console.log('play music');
+
+    try {
+      if (audioRef.current) {
+        await audioRef.current.play();
+      }
+    } catch (err) {
+      console.log('play err: ', err);
+    }
+  };
+
+  const pause = async () => {
+    console.log('pause music');
+
+    if (audioRef.current && !audioRef.current.paused) {
+      try {
+        await audioRef.current.pause();
+      } catch (err) {
+        console.log('pause err: ', err);
+      }
+    }
+  };
+
+  const onPause = () => {
+    setPause(true);
+  };
+
+  const onPlay = () => {
+    setPause(false);
+  };
+
+  const eventMap = {
+    play: play,
+    pause: pause,
+    close: onClose,
+  };
+
   const playerClassName = useMemo(() => {
-    const playStateClass = visible ? 'player_show' : 'player_hidden';
+    const playStateClass = visible ? 'soul_player_show' : 'soul_player_hidden';
     const playerBorderClass = position.left ? 'left' : 'right';
 
     return `${playStateClass} ${playerBorderClass}`;
@@ -181,7 +204,8 @@ export default function Dashboard() {
         {
           <Draggable
             bounds="#root"
-            defaultClassName={`player ${playerClassName}`}
+            defaultClassNameDragging={isDrag ? 'soul_player_draging' : ''}
+            defaultClassName={`soul_player ${playerClassName}`}
             onStart={handleStart}
             onDrag={handleDrag}
             onStop={handleStop}
@@ -199,6 +223,8 @@ export default function Dashboard() {
               </div>
 
               <audio
+                onPause={onPause}
+                onPlay={onPlay}
                 onError={onError}
                 src={musicInfo.url}
                 controls={false}

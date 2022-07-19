@@ -1,0 +1,77 @@
+.soul_player_show {
+  display: block;
+}
+
+.soul_player_hidden {
+  display: none;
+}
+
+.soul_player_draging {
+  &.left {
+    border-radius: 48px;
+  }
+
+  &.right {
+    border-radius: 48px;
+  }
+}
+
+.soul_player {
+  position: fixed;
+  height: 48px;
+  z-index: 100;
+  background-color: #fff;
+  overflow: hidden;
+  padding: 0 10px;
+  box-shadow: 0 2px 4px rgb(0 0 0 / 10%), 0 12px 28px rgb(0 0 0 / 20%);
+
+  .player_operate {
+    height: 100%;
+    position: relative;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .btn {
+      font-size: 30px;
+      cursor: pointer;
+      padding: 10px 4px;
+    }
+
+    .mr {
+      margin-right: 4px;
+    }
+
+    .close {
+      font-size: 18px;
+      padding: 15px 4px;
+      color: #666;
+    }
+  }
+
+  .handle {
+    height: 100%;
+    width: 40px;
+    background-color: lightblue;
+  }
+
+  &.left {
+    border-top-right-radius: 48px;
+    border-bottom-right-radius: 48px;
+
+    .player_operate {
+      flex-direction: row-reverse;
+
+      .mr {
+        margin-right: 0px;
+        margin-left: 0px;
+      }
+    }
+  }
+
+  &.right {
+    border-top-left-radius: 48px;
+    border-bottom-left-radius: 48px;
+  }
+}
