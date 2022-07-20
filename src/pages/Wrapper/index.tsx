@@ -9,6 +9,7 @@ import { IImgSize } from '@/type';
 import { Header } from '@/components';
 import { MacScrollbar } from 'mac-scrollbar';
 import './index.less';
+import 'mac-scrollbar/dist/mac-scrollbar.css';
 
 export default function Wrapper() {
   const contentRef = useRef(null);
