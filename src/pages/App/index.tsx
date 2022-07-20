@@ -5,6 +5,7 @@ import { useRecoilValue } from 'recoil';
 import { userInfoState, userAvatarState } from '@/store';
 
 import './index.less';
+import 'mac-scrollbar/dist/mac-scrollbar.css';
 
 function App() {
   const [time] = useState(() => getTimeText());

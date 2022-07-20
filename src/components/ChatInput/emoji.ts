@@ -110,10 +110,6 @@ import em8 from '@/assets/emoji/em_8.png';
 import em9 from '@/assets/emoji/em_9.png';
 import em10 from '@/assets/emoji/em_10.png';
 
-for (let i = 40; i <= 100; i++) {
-  console.log(`{ src: e${i}, alt: '😀', type: 'mini' },`);
-}
-
 export const emojiList = [
   { src: e1, alt: '😀', type: 'mini' },
   { src: e2, alt: '😀', type: 'mini' },

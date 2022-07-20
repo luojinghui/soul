@@ -7,6 +7,7 @@ import { httpServer } from '@/enum';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { IImgSize } from '@/type';
 import { Header } from '@/components';
+import { MacScrollbar } from 'mac-scrollbar';
 import './index.less';
 
 export default function Wrapper() {
@@ -141,51 +142,53 @@ export default function Wrapper() {
       <div className="content" id="content" ref={contentRef}>
         {loading && <div className="loading">稍等片刻...</div>}
 
-        <InfiniteScroll
-          scrollableTarget="content"
-          className="scroll"
-          dataLength={list.length}
-          next={getMoreData}
-          hasMore={pageIndex <= 10}
-          scrollThreshold={0.9}
-          loader={
-            <h4
-              style={{
-                textAlign: 'center',
-                width: '100vw',
-                marginTop: '10px',
-              }}
-            >
-              Loading...
-            </h4>
-          }
-          endMessage={<p style={{ textAlign: 'center' }}>没有数据啦...</p>}
-        >
-          {list.map((item: any) => {
-            const { id, full_image_url, thumb_url } = item;
-            const oriUrl = `${httpServer}${full_image_url}`;
-            const thumbUrl = `${httpServer}${thumb_url}`;
-
-            return (
-              <div
-                className="item"
-                key={id}
+        <MacScrollbar>
+          <InfiniteScroll
+            scrollableTarget="content"
+            className="scroll"
+            dataLength={list.length}
+            next={getMoreData}
+            hasMore={pageIndex <= 10}
+            scrollThreshold={0.9}
+            loader={
+              <h4
                 style={{
-                  width: `${style.width}px`,
-                  height: `${style.height}px`,
-                }}
-                onClick={() => {
-                  setVisible({
-                    visible: true,
-                    url: oriUrl,
-                  });
+                  textAlign: 'center',
+                  width: '100vw',
+                  marginTop: '10px',
                 }}
               >
-                <img src={thumbUrl} loading="lazy" alt="" />
-              </div>
-            );
-          })}
-        </InfiniteScroll>
+                Loading...
+              </h4>
+            }
+            endMessage={<p style={{ textAlign: 'center' }}>没有数据啦...</p>}
+          >
+            {list.map((item: any) => {
+              const { id, full_image_url, thumb_url } = item;
+              const oriUrl = `${httpServer}${full_image_url}`;
+              const thumbUrl = `${httpServer}${thumb_url}`;
+
+              return (
+                <div
+                  className="item"
+                  key={id}
+                  style={{
+                    width: `${style.width}px`,
+                    height: `${style.height}px`,
+                  }}
+                  onClick={() => {
+                    setVisible({
+                      visible: true,
+                      url: oriUrl,
+                    });
+                  }}
+                >
+                  <img src={thumbUrl} loading="lazy" alt="" />
+                </div>
+              );
+            })}
+          </InfiniteScroll>
+        </MacScrollbar>
       </div>
 
       {model.visible && (
