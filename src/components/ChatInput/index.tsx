@@ -198,14 +198,21 @@ function ChatInput(props: IProps) {
     (e: any) => {
       if (emojiVisible) {
         setEmojiVisible(false);
-      }
-      setCaretForEmoji(e.target);
 
-      setTimeout(() => {
-        document.body.scrollTop = document.body.scrollHeight;
-        // @ts-ignore
-        inputRef.current.scrollIntoView(false);
-      }, 300);
+        setTimeout(() => {
+          const content = document.getElementById('appContent');
+
+          if (content) {
+            content.scrollTop = content.clientHeight;
+          }
+
+          document.body.scrollTop = document.body.scrollHeight;
+          // @ts-ignore
+          inputRef.current.scrollIntoView(false);
+        }, 300);
+      }
+
+      setCaretForEmoji(e.target);
     },
     [emojiVisible]
   );

@@ -389,7 +389,7 @@ function ChatRoom() {
   };
 
   return (
-    <div className="app">
+    <div className="app" id="appContent">
       {/* 头部内容 */}
       <Header title={roomInfo.roomName || ''}></Header>
 
