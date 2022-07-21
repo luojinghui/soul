@@ -99,16 +99,63 @@ import e98 from '@/assets/emoji/e98.png';
 import e99 from '@/assets/emoji/e99.png';
 import e100 from '@/assets/emoji/e100.png';
 
-import em1 from '@/assets/emoji/em_1.png';
-import em2 from '@/assets/emoji/em_2.png';
-import em3 from '@/assets/emoji/em_3.png';
-import em4 from '@/assets/emoji/em_4.png';
-import em5 from '@/assets/emoji/em_5.png';
-import em6 from '@/assets/emoji/em_6.png';
-import em7 from '@/assets/emoji/em_7.png';
-import em8 from '@/assets/emoji/em_8.png';
-import em9 from '@/assets/emoji/em_9.png';
-import em10 from '@/assets/emoji/em_10.png';
+import em1 from '@/assets/emoji/gif_1.png';
+import em2 from '@/assets/emoji/gif_2.png';
+import em3 from '@/assets/emoji/gif_3.png';
+import em4 from '@/assets/emoji/gif_4.png';
+import em5 from '@/assets/emoji/gif_5.png';
+import em6 from '@/assets/emoji/gif_6.png';
+import em7 from '@/assets/emoji/gif_7.png';
+import em8 from '@/assets/emoji/gif_8.png';
+import em9 from '@/assets/emoji/gif_9.png';
+import em10 from '@/assets/emoji/gif_10.png';
+import em11 from '@/assets/emoji/gif_11.png';
+import em12 from '@/assets/emoji/gif_12.png';
+import em13 from '@/assets/emoji/gif_13.png';
+import em14 from '@/assets/emoji/gif_14.png';
+import em15 from '@/assets/emoji/gif_15.png';
+import em16 from '@/assets/emoji/gif_16.png';
+import em17 from '@/assets/emoji/gif_17.png';
+import em18 from '@/assets/emoji/gif_18.png';
+import em19 from '@/assets/emoji/gif_19.png';
+import em20 from '@/assets/emoji/gif_20.png';
+import em21 from '@/assets/emoji/gif_21.png';
+import em22 from '@/assets/emoji/gif_22.png';
+import em23 from '@/assets/emoji/gif_23.png';
+import em24 from '@/assets/emoji/gif_24.png';
+import em25 from '@/assets/emoji/gif_25.png';
+import em26 from '@/assets/emoji/gif_26.png';
+import em27 from '@/assets/emoji/gif_27.png';
+import em28 from '@/assets/emoji/gif_28.png';
+import em29 from '@/assets/emoji/gif_29.png';
+import em30 from '@/assets/emoji/gif_30.png';
+import em31 from '@/assets/emoji/gif_31.png';
+import em32 from '@/assets/emoji/gif_32.png';
+import em33 from '@/assets/emoji/gif_33.png';
+import em34 from '@/assets/emoji/gif_34.png';
+import em35 from '@/assets/emoji/gif_35.png';
+import em36 from '@/assets/emoji/gif_36.png';
+import em37 from '@/assets/emoji/gif_37.png';
+import em38 from '@/assets/emoji/gif_38.png';
+import em39 from '@/assets/emoji/gif_39.png';
+import em40 from '@/assets/emoji/gif_40.png';
+import em41 from '@/assets/emoji/gif_41.png';
+import em42 from '@/assets/emoji/gif_42.png';
+import em43 from '@/assets/emoji/gif_43.png';
+import em44 from '@/assets/emoji/gif_44.png';
+import em45 from '@/assets/emoji/gif_45.png';
+import em46 from '@/assets/emoji/gif_46.png';
+import em47 from '@/assets/emoji/gif_47.png';
+import em48 from '@/assets/emoji/gif_48.png';
+import em49 from '@/assets/emoji/gif_49.png';
+import em50 from '@/assets/emoji/gif_50.png';
+
+// for (let i = 1; i <= 50; i++) {
+//   console.log(`import em${i} from '@/assets/emoji/gif_${i}.png';`);
+// }
+// for (let i = 1; i <= 50; i++) {
+//   console.log(`em${i}: { src: em${i}, alt: '😀', type: 'max' },`);
+// }
 
 export const emojiList = [
   { src: e1, alt: '😀', type: 'mini' },
@@ -224,4 +271,44 @@ export const emojiMaxList = {
   em8: { src: em8, alt: '😀', type: 'max' },
   em9: { src: em9, alt: '😀', type: 'max' },
   em10: { src: em10, alt: '😀', type: 'max' },
+  em11: { src: em11, alt: '😀', type: 'max' },
+  em12: { src: em12, alt: '😀', type: 'max' },
+  em13: { src: em13, alt: '😀', type: 'max' },
+  em14: { src: em14, alt: '😀', type: 'max' },
+  em15: { src: em15, alt: '😀', type: 'max' },
+  em16: { src: em16, alt: '😀', type: 'max' },
+  em17: { src: em17, alt: '😀', type: 'max' },
+  em18: { src: em18, alt: '😀', type: 'max' },
+  em19: { src: em19, alt: '😀', type: 'max' },
+  em20: { src: em20, alt: '😀', type: 'max' },
+  em21: { src: em21, alt: '😀', type: 'max' },
+  em22: { src: em22, alt: '😀', type: 'max' },
+  em23: { src: em23, alt: '😀', type: 'max' },
+  em24: { src: em24, alt: '😀', type: 'max' },
+  em25: { src: em25, alt: '😀', type: 'max' },
+  em26: { src: em26, alt: '😀', type: 'max' },
+  em27: { src: em27, alt: '😀', type: 'max' },
+  em28: { src: em28, alt: '😀', type: 'max' },
+  em29: { src: em29, alt: '😀', type: 'max' },
+  em30: { src: em30, alt: '😀', type: 'max' },
+  em31: { src: em31, alt: '😀', type: 'max' },
+  em32: { src: em32, alt: '😀', type: 'max' },
+  em33: { src: em33, alt: '😀', type: 'max' },
+  em34: { src: em34, alt: '😀', type: 'max' },
+  em35: { src: em35, alt: '😀', type: 'max' },
+  em36: { src: em36, alt: '😀', type: 'max' },
+  em37: { src: em37, alt: '😀', type: 'max' },
+  em38: { src: em38, alt: '😀', type: 'max' },
+  em39: { src: em39, alt: '😀', type: 'max' },
+  em40: { src: em40, alt: '😀', type: 'max' },
+  em41: { src: em41, alt: '😀', type: 'max' },
+  em42: { src: em42, alt: '😀', type: 'max' },
+  em43: { src: em43, alt: '😀', type: 'max' },
+  em44: { src: em44, alt: '😀', type: 'max' },
+  em45: { src: em45, alt: '😀', type: 'max' },
+  em46: { src: em46, alt: '😀', type: 'max' },
+  em47: { src: em47, alt: '😀', type: 'max' },
+  em48: { src: em48, alt: '😀', type: 'max' },
+  em49: { src: em49, alt: '😀', type: 'max' },
+  em50: { src: em50, alt: '😀', type: 'max' },
 };
