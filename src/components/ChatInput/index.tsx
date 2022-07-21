@@ -38,6 +38,7 @@ function ChatInput(props: IProps) {
   const formRef = useRef(null);
   const inputRef = useRef(null);
   const swiperRef = useRef(null);
+  const swiperContentRef = useRef(null);
 
   const [emojiSelectIndex, setEmojiSelectIndex] =
     useRecoilState(emojiSelectedIndex);
@@ -302,6 +303,11 @@ function ChatInput(props: IProps) {
   };
 
   const onChange = (current: number) => {
+    if (swiperContentRef.current) {
+      // @ts-ignore
+      swiperContentRef.current.scrollTop = 0;
+    }
+
     setEmojiSelectIndex(current);
   };
 
@@ -417,7 +423,7 @@ function ChatInput(props: IProps) {
             <input
               id="upload"
               type="file"
-              accept="image/*,.pdf,video/*,audio/*"
+              accept="image/*,video/*,audio/*"
               multiple={true}
               className="upload-input"
               onChange={onInputImgs}
@@ -466,7 +472,7 @@ function ChatInput(props: IProps) {
             </ul>
           </div>
 
-          <div className="swiper">
+          <div className="swiper" ref={swiperContentRef}>
             <Carousel
               className="wrap-swiper"
               dots={false}

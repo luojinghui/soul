@@ -10,7 +10,7 @@ import {
   Upload,
 } from 'antd';
 import { UploadImg } from '@/components';
-import { useNavigate, NavLink } from 'react-router-dom';
+import { useNavigate, NavLink, useNavigationType } from 'react-router-dom';
 import action from '@/action';
 import { LeftOutlined, PlusOutlined } from '@ant-design/icons';
 import { useRecoilValue } from 'recoil';
@@ -28,6 +28,7 @@ interface IProps {
 function Header(props: IProps) {
   const { title, onBack, showAvatar = true, rightContent } = props;
   const navigate = useNavigate();
+  const navigateType = useNavigationType();
 
   const cachePageTitle = useRef('');
 
@@ -53,7 +54,11 @@ function Header(props: IProps) {
       return;
     }
 
-    navigate(-1);
+    if (navigateType === 'POP') {
+      navigate('/');
+    } else {
+      navigate(-1);
+    }
   };
 
   return (
