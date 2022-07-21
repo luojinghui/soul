@@ -203,6 +203,8 @@ function ChatInput(props: IProps) {
 
       setTimeout(() => {
         document.body.scrollTop = document.body.scrollHeight;
+        // @ts-ignore
+        inputRef.current.scrollIntoView(false);
       }, 300);
     },
     [emojiVisible]
