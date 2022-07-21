@@ -391,22 +391,6 @@ function ChatRoom() {
   return (
     <div className="app">
       {/* 头部内容 */}
-      {/* <header className="im-header">
-        <div className="left">
-          <LeftOutlined className="icon back" onClick={onBack} />
-        </div>
-
-        <div className="title">{roomInfo.roomName || ''}</div>
-
-        <div className="right">
-          <div className="btn">
-            <SettingOutlined className="icon setting" />
-          </div>
-          <NavLink to="/user" className="person-avatar">
-            <img src={userAvatar} alt="avatar" className="img" />
-          </NavLink>
-        </div>
-      </header> */}
       <Header title={roomInfo.roomName || ''}></Header>
 
       {/* 聊天内容 */}

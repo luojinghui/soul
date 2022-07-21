@@ -18,3 +18,5 @@ export {
 export { wrapperListState, wrapperSizeState } from './wrapper';
 
 export * from './music';
+
+export * from './chat';

@@ -5,19 +5,24 @@ import {
   useState,
   useImperativeHandle,
 } from 'react';
-import { Button, Form, message } from 'antd';
+import { Button, Form, message, Carousel } from 'antd';
 import urlRegex from 'url-regex';
 import {
   PictureFilled,
   FolderOpenFilled,
   SmileFilled,
   FileMarkdownFilled,
+  HeartOutlined,
+  SmileOutlined,
 } from '@ant-design/icons';
 import { emojiList, emojiMaxList } from './emoji';
 import action from '@/action';
 import FileQueue, { Status } from './queue';
 import { IUserInfo } from '@/type';
 import { parseMD } from '@/utils/markdown';
+
+import { useRecoilState } from 'recoil';
+import { emojiSelectedIndex } from '@/store';
 
 let rangeOfInputBox: any;
 const fileQueue = new FileQueue();
@@ -32,6 +37,10 @@ interface IProps {
 function ChatInput(props: IProps) {
   const formRef = useRef(null);
   const inputRef = useRef(null);
+  const swiperRef = useRef(null);
+
+  const [emojiSelectIndex, setEmojiSelectIndex] =
+    useRecoilState(emojiSelectedIndex);
 
   const [emojiVisible, setEmojiVisible] = useState(false);
   const [isMdMode, setIsMdMode] = useState(false);
@@ -266,6 +275,22 @@ function ChatInput(props: IProps) {
     });
   };
 
+  const renderYelloEmoji = () => {
+    return emojiList.map(({ src, alt }, index: number) => {
+      return (
+        <a
+          className="item"
+          key={`emoji-${index}`}
+          onClick={() => {
+            insertEmoji(src);
+          }}
+        >
+          <img src={src} alt={alt} />
+        </a>
+      );
+    });
+  };
+
   const toggleMDMode = () => {
     setIsMdMode(!isMdMode);
 
@@ -274,6 +299,10 @@ function ChatInput(props: IProps) {
     } else {
       message.info('已切换至正常输入模式');
     }
+  };
+
+  const onChange = (current: number) => {
+    setEmojiSelectIndex(current);
   };
 
   const onInputImgs = async (e: any) => {
@@ -295,8 +324,6 @@ function ChatInput(props: IProps) {
     for (let i = 0; i < fileLen; i++) {
       const formData = new FormData();
       const userId = props.user?.id || '';
-
-      console.log('fileList[i]: ', fileList[i]);
 
       formData.append('file', fileList[i]);
       formData.append('userId', userId);
@@ -337,6 +364,14 @@ function ChatInput(props: IProps) {
 
       // @ts-ignore
       formRef.current.submit();
+    }
+  };
+
+  const onSwipe = (index: number) => {
+    if (swiperRef.current) {
+      // @ts-ignore
+      swiperRef.current.goTo(index, true);
+      setEmojiSelectIndex(index);
     }
   };
 
@@ -410,24 +445,46 @@ function ChatInput(props: IProps) {
 
       {emojiVisible && (
         <div className="emoji">
-          <div className="emoji-title">小黄人表情</div>
-          <div className="emoji-list">
-            {emojiList.map(({ src, alt, type }, index: number) => {
-              return (
-                <a
-                  className="item"
-                  key={`emoji-${index}`}
-                  onClick={() => {
-                    insertEmoji(src);
-                  }}
-                >
-                  <img src={src} alt={alt} />
-                </a>
-              );
-            })}
+          <div className="tabs">
+            <ul className="tab">
+              <li
+                className={`item ${emojiSelectIndex === 0 && 'active'}`}
+                onClick={() => {
+                  onSwipe(0);
+                }}
+              >
+                <SmileOutlined className="icon" />
+              </li>
+              <li
+                className={`item ${emojiSelectIndex === 1 && 'active'}`}
+                onClick={() => {
+                  onSwipe(1);
+                }}
+              >
+                <HeartOutlined className="icon" />
+              </li>
+            </ul>
           </div>
-          <div className="emoji-title">发送超级表情</div>
-          <div className="emoji-list">{renderEmojiMax()}</div>
+
+          <div className="swiper">
+            <Carousel
+              className="wrap-swiper"
+              dots={false}
+              afterChange={onChange}
+              infinite={false}
+              ref={swiperRef}
+              initialSlide={emojiSelectIndex}
+            >
+              <div>
+                <div className="emoji-title">小黄人表情</div>
+                <div className="emoji-list">{renderYelloEmoji()}</div>
+              </div>
+              <div>
+                <div className="emoji-title">发送超级表情</div>
+                <div className="emoji-list">{renderEmojiMax()}</div>
+              </div>
+            </Carousel>
+          </div>
         </div>
       )}
     </>

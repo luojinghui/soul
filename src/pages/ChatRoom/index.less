@@ -141,7 +141,7 @@
   position: fixed;
   bottom: 0;
   left: 0;
-  padding: 12px 0;
+  padding: 12px 0 0;
   background-color: var(--chat-footer-header-bg);
 
   .wrap {
@@ -187,7 +187,7 @@
       top: -4px;
 
       .submit-btn {
-        height: 36px;
+        height: 34px;
       }
     }
   }
@@ -195,6 +195,7 @@
   .toolbar {
     display: flex;
     margin-top: 8px;
+    padding-bottom: 12px;
 
     .tool {
       width: 42px;
@@ -251,28 +252,65 @@
   }
 
   .emoji {
-    padding: 5px 0;
     margin-top: 10px;
-    max-height: 220px;
-    overflow-y: auto;
+    height: 260px;
+
+    .tabs {
+      padding: 0 var(--common-padding) 10px;
+      height: var(--emoji-bar-height);
+
+      .tab {
+        display: flex;
+        padding: 0;
+        margin: 0;
+      }
+
+      .item {
+        list-style: none;
+        width: 38px;
+        height: 38px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        border-radius: 4px;
+      }
+
+      .active {
+        background-color: #fff;
+      }
+
+      .icon {
+        font-size: 20px;
+        color: #666;
+      }
+    }
+
+    .swiper {
+      height: calc(100% - var(--emoji-bar-height));
+      overflow: auto;
+      background-color: var(--chat-app-bg);
+      padding-bottom: 20px;
+    }
 
     .emoji-title {
-      margin-bottom: 8px;
+      margin: 8px 0 4px;
       font-size: 12px;
       padding: 0 var(--common-padding);
     }
 
     .emoji-list {
-      display: flex;
+      display: flex !important;
       flex-wrap: wrap;
       margin-bottom: 6px;
 
       .item {
         display: flex;
         align-items: center;
-        justify-content: center;
-        padding: 5px var(--common-padding) var(--common-padding);
+        justify-content: space-around;
         cursor: pointer;
+        width: 50px;
+        height: 50px;
 
         img {
           width: 28px;
