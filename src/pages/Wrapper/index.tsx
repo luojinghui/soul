@@ -7,12 +7,16 @@ import { httpServer } from '@/enum';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { IImgSize } from '@/type';
 import { Header } from '@/components';
-import { MacScrollbar } from 'mac-scrollbar';
+
+import { Scrollbars } from 'react-custom-scrollbars-2';
+
 import './index.less';
-import 'mac-scrollbar/dist/mac-scrollbar.css';
+
+let falg = false;
 
 export default function Wrapper() {
   const contentRef = useRef(null);
+  const scrollRef = useRef(null);
   const firstIn = useRef(true);
 
   // const [list, setList] = useRecoilState(wrapperListState);
@@ -143,135 +147,22 @@ export default function Wrapper() {
       <div className="content" id="content" ref={contentRef}>
         {loading && <div className="loading">稍等片刻...</div>}
 
-        <MacScrollbar>
-          <div className="scroll">
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-            <h1>123123</h1>
-          </div>
+        <Scrollbars
+          autoHide={true}
+          autoHideTimeout={1000}
+          onScroll={(e: any) => {
+            if (
+              e.target.scrollTop >=
+              e.target.scrollHeight - (e.target.clientHeight + 50)
+            ) {
+              if (!falg) {
+                getMoreData();
+              }
+
+              falg = true;
+            }
+          }}
+        >
           {/* <InfiniteScroll
             scrollableTarget="content"
             className="scroll"
@@ -291,7 +182,8 @@ export default function Wrapper() {
               </h4>
             }
             endMessage={<p style={{ textAlign: 'center' }}>没有数据啦...</p>}
-          >
+          > */}
+          <div className="scroll">
             {list.map((item: any) => {
               const { id, full_image_url, thumb_url } = item;
               const oriUrl = `${httpServer}${full_image_url}`;
@@ -316,8 +208,9 @@ export default function Wrapper() {
                 </div>
               );
             })}
-          </InfiniteScroll> */}
-        </MacScrollbar>
+            {/* </InfiniteScroll> */}
+          </div>
+        </Scrollbars>
       </div>
 
       {model.visible && (
