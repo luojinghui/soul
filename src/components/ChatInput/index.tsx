@@ -206,9 +206,11 @@ function ChatInput(props: IProps) {
             content.scrollTop = content.clientHeight;
           }
 
-          document.body.scrollTop = document.body.scrollHeight;
-          // @ts-ignore
-          inputRef.current.scrollIntoView(false);
+          // const scrollTop =
+          //   document.documentElement.scrollTop ||
+          //   window.pageYOffset ||
+          //   document.body.scrollTop;
+          window.scrollTo(0, document.body.scrollHeight);
         }, 300);
       }
 
