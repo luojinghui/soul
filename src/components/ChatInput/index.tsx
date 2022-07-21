@@ -200,6 +200,10 @@ function ChatInput(props: IProps) {
         setEmojiVisible(false);
       }
       setCaretForEmoji(e.target);
+
+      setTimeout(() => {
+        document.body.scrollTop = document.body.scrollHeight;
+      }, 300);
     },
     [emojiVisible]
   );
