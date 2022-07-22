@@ -24,7 +24,7 @@ import { parseMD } from '@/utils/markdown';
 import { useRecoilState } from 'recoil';
 import { emojiSelectedIndex } from '@/store';
 
-// import { FloatingPanel, List } from 'antd-mobile';
+import { Toast } from 'antd-mobile';
 
 let rangeOfInputBox: any;
 const fileQueue = new FileQueue();
@@ -323,7 +323,11 @@ function ChatInput(props: IProps) {
     setEmojiSelectIndex(current);
   };
 
-  const toggleMusicBox = () => {};
+  const toggleMusicBox = () => {
+    Toast.show({
+      content: '装修中，敬请期待',
+    });
+  };
 
   const onInputImgs = async (e: any) => {
     const fileList = e.target.files;
