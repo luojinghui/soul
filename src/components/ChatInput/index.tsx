@@ -200,16 +200,11 @@ function ChatInput(props: IProps) {
         setEmojiVisible(false);
 
         setTimeout(() => {
-          const content = document.getElementById('appContent');
+          // const content = document.getElementById('appContent');
 
-          if (content) {
-            content.scrollTop = content.clientHeight;
-          }
-
-          // const scrollTop =
-          //   document.documentElement.scrollTop ||
-          //   window.pageYOffset ||
-          //   document.body.scrollTop;
+          // if (content) {
+          //   content.scrollTop = content.clientHeight;
+          // }
           window.scrollTo(0, document.body.scrollHeight);
         }, 300);
       }
