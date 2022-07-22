@@ -24,6 +24,8 @@ import { parseMD } from '@/utils/markdown';
 import { useRecoilState } from 'recoil';
 import { emojiSelectedIndex } from '@/store';
 
+// import { FloatingPanel, List } from 'antd-mobile';
+
 let rangeOfInputBox: any;
 const fileQueue = new FileQueue();
 
@@ -321,6 +323,8 @@ function ChatInput(props: IProps) {
     setEmojiSelectIndex(current);
   };
 
+  const toggleMusicBox = () => {};
+
   const onInputImgs = async (e: any) => {
     const fileList = e.target.files;
     console.log('on input fileList: ', fileList);
@@ -456,6 +460,9 @@ function ChatInput(props: IProps) {
           <a className={`tool ${isMdMode && 'active'}`} onClick={toggleMDMode}>
             <FileMarkdownFilled className="icon" />
           </a>
+          <a className={`tool`} onClick={toggleMusicBox}>
+            <span className={`iconfont icon-yinleyule icon`}></span>
+          </a>
         </div>
       )}
 
@@ -503,6 +510,14 @@ function ChatInput(props: IProps) {
           </div>
         </div>
       )}
+
+      {/* <FloatingPanel anchors={anchors}>
+        <List>
+          {data.map((item, index) => (
+            <List.Item key={index}>{item}</List.Item>
+          ))}
+        </List>
+      </FloatingPanel> */}
     </>
   );
 }

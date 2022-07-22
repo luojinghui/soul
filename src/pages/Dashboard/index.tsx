@@ -17,6 +17,8 @@ import { message } from 'antd';
 import logger from '@/utils/log';
 import { useNavigate } from 'react-router-dom';
 
+import { FloatingBubble, Toast } from 'antd-mobile';
+
 import './index.less';
 
 export default function Dashboard() {
@@ -308,6 +310,38 @@ export default function Dashboard() {
             </div>
           </Draggable>
         }
+
+        <FloatingBubble
+          axis="xy"
+          magnetic="x"
+          style={{
+            '--initial-position-bottom': '24px',
+            '--initial-position-right': '24px',
+            '--edge-distance': '24px',
+          }}
+        >
+          <button
+            onClick={() => {
+              Toast.show({ content: 'click 1' });
+            }}
+          >
+            11
+          </button>
+          <button
+            onClick={() => {
+              Toast.show({ content: 'click 2' });
+            }}
+          >
+            22
+          </button>
+          <button
+            onClick={() => {
+              Toast.show({ content: 'click 3' });
+            }}
+          >
+            33
+          </button>
+        </FloatingBubble>
       </div>
 
       <Outlet />
