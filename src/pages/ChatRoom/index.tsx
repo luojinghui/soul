@@ -196,6 +196,10 @@ function ChatRoom() {
     navigate('../', { replace: true });
   };
 
+  // const onBackHall = () => {
+  //   navigate('/chat', { replace: true });
+  // };
+
   const onSendMessage = (value: any) => {
     const data = {
       type: 'chat',

@@ -106,3 +106,16 @@ export const saveImg = (selector: any, name: any) => {
 
   image.src = document.querySelector(selector).src;
 };
+
+/**
+ * 获取URL参数信息
+ *
+ * @param { string } name params key value
+ * @returns { string } result
+ */
+export const getParameterByName = (name: string) => {
+  name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+  const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+  const results = regex.exec(window.location.search);
+  return results === null ? '' : decodeURIComponent(results[1]);
+};

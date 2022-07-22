@@ -1,20 +1,9 @@
-import React, { ReactNode, useEffect, useRef } from 'react';
-import {
-  message,
-  Button,
-  Modal,
-  Form,
-  Input,
-  Switch,
-  Select,
-  Upload,
-} from 'antd';
-import { UploadImg } from '@/components';
+import { ReactNode, useEffect, useRef } from 'react';
 import { useNavigate, NavLink, useNavigationType } from 'react-router-dom';
-import action from '@/action';
-import { LeftOutlined, PlusOutlined } from '@ant-design/icons';
+import { LeftOutlined } from '@ant-design/icons';
 import { useRecoilValue } from 'recoil';
 import { userAvatarState } from '@/store';
+import logger from '@/utils/log';
 
 import './index.less';
 
@@ -53,6 +42,8 @@ function Header(props: IProps) {
       onBack();
       return;
     }
+
+    console.log('navigateType: ', navigateType);
 
     if (navigateType === 'POP') {
       navigate('/');

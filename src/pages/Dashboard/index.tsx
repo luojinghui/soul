@@ -14,6 +14,8 @@ import {
 } from '@ant-design/icons';
 import Draggable from 'react-draggable';
 import { message } from 'antd';
+import logger from '@/utils/log';
+import { useNavigate } from 'react-router-dom';
 
 import './index.less';
 
@@ -21,6 +23,8 @@ export default function Dashboard() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const playerRef = useRef(null);
   const countRef = useRef(0);
+
+  const navigate = useNavigate();
 
   const [pauseState, setPause] = useState(true);
   const [isDrag, setIsDrag] = useState(false);
@@ -69,11 +73,15 @@ export default function Dashboard() {
     setMusicBarVisible(false);
   };
 
-  const handleStart = (e: any) => {};
+  const handleStart = (e: any) => {
+    logger.log('drag start');
+  };
 
   const handleDrag = (e: any) => {
     setIsDrag(true);
     countRef.current += 1;
+
+    logger.log('draging');
   };
 
   const getMusicBarPosition = (data: any) => {
@@ -120,6 +128,7 @@ export default function Dashboard() {
   };
 
   const handleStop = (e: any, data: any) => {
+    logger.log('drag stop');
     setIsDrag(false);
 
     if (!countRef.current) {
@@ -129,7 +138,7 @@ export default function Dashboard() {
         // @ts-ignore
         const event = eventMap[type];
 
-        console.log('type: ', type);
+        logger.log('type: ', type);
 
         if (event) {
           event();
@@ -254,6 +263,9 @@ export default function Dashboard() {
                   className={`cover mr ${
                     miniMode ? 'soul_player_hidden' : 'soul_player_show_flex'
                   }`}
+                  onClick={() => {
+                    navigate('/music');
+                  }}
                 >
                   <img
                     draggable={false}
