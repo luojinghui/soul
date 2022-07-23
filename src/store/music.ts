@@ -16,7 +16,7 @@ export const KoreanMusicPlayList = atom({
 });
 
 export const MusicInfo = atom({
-  key: 'musicInfo',
+  key: 'MusicInfo',
   default: {
     album: '',
     content: '',
@@ -42,7 +42,7 @@ export const MusicBarMiniMode = atom({
 
 export const MusicBarPosition = atom({
   key: 'MusicBarPosition',
-  default: { x: document.body.clientWidth, y: 160 },
+  default: { x: document.body.clientWidth, y: 88 },
 });
 
 export const MusicBarMagneticLeft = atom({

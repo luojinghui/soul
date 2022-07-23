@@ -3,19 +3,15 @@ import { useRecoilState, useSetRecoilState } from 'recoil';
 import { ChineseMusicPlayList, MusicInfo, MusicBarVisible } from '@/store';
 import action from '@/action';
 import { Header } from '@/components';
-import { getTime } from '@/utils';
 import './index.less';
 
 export default function MusicHall() {
-  const contentRef = useRef(null);
-
   const [chineseMusicPlayList, setChineseMusicPlayList] =
     useRecoilState(ChineseMusicPlayList);
   const [musicInfo, setMusicInfo] = useRecoilState(MusicInfo);
   const setMusicBarVisible = useSetRecoilState(MusicBarVisible);
 
-  const [list, setList] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading] = useState(false);
 
   useEffect(() => {
     (async () => {

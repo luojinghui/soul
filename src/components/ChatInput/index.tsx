@@ -21,10 +21,15 @@ import FileQueue, { Status } from './queue';
 import { IUserInfo } from '@/type';
 import { parseMD } from '@/utils/markdown';
 
-import { useRecoilState } from 'recoil';
-import { emojiSelectedIndex } from '@/store';
+import { useRecoilState, useSetRecoilState } from 'recoil';
+import {
+  emojiSelectedIndex,
+  RoomMusicList,
+  MusicBarVisible,
+  MusicInfo,
+} from '@/store';
 
-import { Toast } from 'antd-mobile';
+import { AutoCenter, FloatingPanel, Toast } from 'antd-mobile';
 
 let rangeOfInputBox: any;
 const fileQueue = new FileQueue();
@@ -40,10 +45,16 @@ function ChatInput(props: IProps) {
   const formRef = useRef(null);
   const inputRef = useRef(null);
   const swiperRef = useRef(null);
+  const musicBoxRef = useRef(null);
   const swiperContentRef = useRef(null);
+
+  const contaierHeight = window.innerHeight * 0.7;
 
   const [emojiSelectIndex, setEmojiSelectIndex] =
     useRecoilState(emojiSelectedIndex);
+  const [musicList, setMusicList] = useRecoilState(RoomMusicList);
+  const setMusicBarVisible = useSetRecoilState(MusicBarVisible);
+  const setMusicInfo = useSetRecoilState(MusicInfo);
 
   const [emojiVisible, setEmojiVisible] = useState(false);
   const [isMdMode, setIsMdMode] = useState(false);
@@ -133,8 +144,6 @@ function ChatInput(props: IProps) {
 
       nextValue = parseMD.render(value);
     }
-
-    console.log('nextValue: ', nextValue);
 
     if (emojiVisible) {
       setEmojiVisible(false);
@@ -318,10 +327,54 @@ function ChatInput(props: IProps) {
     setEmojiSelectIndex(current);
   };
 
-  const toggleMusicBox = () => {
+  const onSendMusic = () => {
     Toast.show({
-      content: '装修中，敬请期待',
+      content: '美好的东西即将到来',
     });
+  };
+
+  const onPlayMusic = (item: any) => {
+    setMusicBarVisible(true);
+    setMusicInfo(item);
+  };
+
+  const toggleMusicBox = () => {
+    if (musicBoxRef.current) {
+      // @ts-ignore
+      musicBoxRef.current.setHeight(contaierHeight);
+    }
+  };
+
+  const onHeightChange = (height: number, animating: boolean) => {
+    if (!animating && height === contaierHeight && !musicList.length) {
+      (async () => {
+        const { list } = await getCommentList();
+
+        setMusicList(list);
+      })();
+    }
+  };
+
+  const getCommentList = async () => {
+    try {
+      const result = await action.getCommentList();
+
+      if (result?.code === 200) {
+        console.log('result: ', result);
+
+        return {
+          list: result.data,
+          code: 200,
+        };
+      }
+    } catch (err) {
+      console.log('get list error: ', err);
+    }
+
+    return {
+      list: [],
+      code: 300,
+    };
   };
 
   const onInputImgs = async (e: any) => {
@@ -510,13 +563,40 @@ function ChatInput(props: IProps) {
         </div>
       )}
 
-      {/* <FloatingPanel anchors={anchors}>
-        <List>
-          {data.map((item, index) => (
-            <List.Item key={index}>{item}</List.Item>
-          ))}
-        </List>
-      </FloatingPanel> */}
+      <FloatingPanel
+        ref={musicBoxRef}
+        anchors={[0, contaierHeight]}
+        onHeightChange={onHeightChange}
+      >
+        <div className="music-panel">
+          <h3>
+            <AutoCenter>随心听</AutoCenter>
+          </h3>
+          {musicList.map(({ id, song, sing }: any, index: number) => {
+            return (
+              <div key={id} className="panel">
+                <div className="info">
+                  {sing} - {song}
+                </div>
+                <div className="btns">
+                  <Button
+                    className="btn"
+                    type="text"
+                    onClick={() => {
+                      onPlayMusic(musicList[index]);
+                    }}
+                  >
+                    播放
+                  </Button>
+                  <Button className="btn" type="text" onClick={onSendMusic}>
+                    发送
+                  </Button>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </FloatingPanel>
     </>
   );
 }
