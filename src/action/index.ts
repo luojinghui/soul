@@ -89,6 +89,10 @@ class Action {
     );
   }
 
+  async updateCommentMusicState(id: string, state: string) {
+    return await this.http.post(`/api/song/comment/update`, { id, state });
+  }
+
   async getWrapperList() {
     return await this.http.get(`/api/happy/wrappaper`);
   }

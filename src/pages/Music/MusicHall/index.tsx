@@ -28,7 +28,6 @@ export default function MusicHall() {
 
   const playMusic = async (item: any) => {
     setMusicBarVisible(true);
-
     setMusicInfo(item);
   };
 

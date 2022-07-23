@@ -16,6 +16,7 @@ import {
 import { message } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { useDrag } from '@use-gesture/react';
+import action from '@/action';
 
 import './index.less';
 
@@ -162,9 +163,11 @@ export default function Dashboard() {
     setMiniMode(!miniMode);
   };
 
-  const onError = () => {
+  const onError = (err: any) => {
     if (musicInfo.url) {
       message.info('播放失败，切换别的歌曲吧');
+
+      action.updateCommentMusicState(musicInfo.id, 'failed');
 
       setPause(true);
     }

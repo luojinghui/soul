@@ -14,6 +14,14 @@ const musicCommentSchema = new Schema({
   album: String,
   name: String,
   content: String,
+  state: {
+    type: String,
+    enum: {
+      values: ['success', 'failed'],
+      message: 'music status {VALUE} is not supported',
+      default: 'success',
+    },
+  },
   createTime: { type: Date, default: Date.now },
 });
 

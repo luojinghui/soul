@@ -5,7 +5,7 @@
  * @author jinghui-Luo
  *
  * Created at     : 2022-06-26 00:40:02
- * Last modified  : 2022-07-19 01:17:00
+ * Last modified  : 2022-07-23 23:45:01
  */
 
 const {
@@ -105,7 +105,9 @@ module.exports = {
   comment_list: async (req, res) => {
     try {
       const query = await musicCommentModel
-        .find({})
+        .find({
+          $or: [{ state: null }, { state: 'success' }],
+        })
         .sort({ createTime: -1 })
         .skip(0)
         .limit(30)
@@ -113,6 +115,38 @@ module.exports = {
 
       res.json({
         data: query,
+        msg: 'success',
+        code: 200,
+      });
+    } catch (err) {
+      console.log('err: ', err);
+
+      res.json({
+        data: {},
+        msg: 'failed',
+        code: 400,
+      });
+    }
+  },
+
+  comment_update_state: async (req, res) => {
+    try {
+      const { id, state = 'success' } = req.body;
+
+      const query = await musicCommentModel
+        .findOneAndUpdate(
+          { id: id },
+          {
+            state: state,
+          },
+          {
+            new: true,
+          }
+        )
+        .exec();
+
+      res.json({
+        data: {},
         msg: 'success',
         code: 200,
       });
