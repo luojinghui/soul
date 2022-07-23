@@ -5,7 +5,7 @@
  * @author jinghui-Luo
  *
  * Created at     : 2022-06-26 00:40:02
- * Last modified  : 2022-07-23 23:45:01
+ * Last modified  : 2022-07-24 00:51:39
  */
 
 const {
@@ -13,6 +13,7 @@ const {
   top_playlist,
   recommend_songs,
 } = require('NeteaseCloudMusicApi');
+const { getRandomNum } = require('../utils/index');
 const { musicCommentModel } = require('../model/musicComment');
 
 module.exports = {
@@ -104,12 +105,15 @@ module.exports = {
 
   comment_list: async (req, res) => {
     try {
+      const filter = {
+        $or: [{ state: null }, { state: 'success' }],
+      };
+      const queryCount = await musicCommentModel.count(filter).exec();
+      const randomNum = getRandomNum(0, queryCount - 30);
       const query = await musicCommentModel
-        .find({
-          $or: [{ state: null }, { state: 'success' }],
-        })
+        .find(filter)
         .sort({ createTime: -1 })
-        .skip(0)
+        .skip(randomNum)
         .limit(30)
         .exec();
 
