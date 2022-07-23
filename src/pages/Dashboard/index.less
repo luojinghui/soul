@@ -20,13 +20,28 @@
   }
 }
 
+.soul_player_outer {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  box-sizing: border-box;
+  pointer-events: none;
+}
+
 .soul_player {
   position: fixed;
   height: 48px;
   z-index: 100;
   background-color: #fff;
   overflow: hidden;
+  touch-action: none;
   box-shadow: 0 2px 4px rgb(0 0 0 / 10%), 0 12px 28px rgb(0 0 0 / 20%);
+
+  .soul_player_content {
+    height: 100%;
+  }
 
   .player_operate {
     height: 100%;

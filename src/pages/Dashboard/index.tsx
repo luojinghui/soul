@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, useMemo, useCallback } from 'react';
+import { useEffect, useState, useRef, useMemo } from 'react';
 import { Outlet } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import {
@@ -6,23 +6,24 @@ import {
   MusicBarPosition,
   MusicBarVisible,
   MusicBarMiniMode,
+  MusicBarMagneticLeft,
 } from '@/store';
 import {
   PlayCircleFilled,
   PauseCircleFilled,
   CloseOutlined,
 } from '@ant-design/icons';
-import Draggable from 'react-draggable';
 import { message } from 'antd';
-import logger from '@/utils/log';
 import { useNavigate } from 'react-router-dom';
+import { useDrag } from '@use-gesture/react';
 
 import './index.less';
 
 export default function Dashboard() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const playerRef = useRef(null);
-  const countRef = useRef(0);
+  const playerOuterRef = useRef(null);
+  const playerDragingRef = useRef(false);
 
   const navigate = useNavigate();
 
@@ -32,6 +33,7 @@ export default function Dashboard() {
   const [visible, setMusicBarVisible] = useRecoilState(MusicBarVisible);
   const [musicInfo] = useRecoilState(MusicInfo);
   const [position, setPosition] = useRecoilState(MusicBarPosition);
+  const [magneticLeft, setMagneticLeft] = useRecoilState(MusicBarMagneticLeft);
 
   useEffect(() => {
     if (musicInfo.url) {
@@ -55,15 +57,51 @@ export default function Dashboard() {
 
   const resizePage = () => {
     if (visible && musicInfo.url) {
-      const positionObj = getMusicBarPosition({
-        x: position.x,
-        node: playerRef.current,
-        y: position.y,
+      const { x = 0, y = 0 }: any = getMusicBarPosition({
+        left: magneticLeft,
+        nextX: position.x,
+        nextY: position.y,
       });
 
-      setPosition(positionObj);
+      setPosition({ x, y });
     }
   };
+
+  const bind = useDrag(
+    (state) => {
+      let nextX = state.offset[0];
+      let nextY = state.offset[1];
+      let left = true;
+
+      if (!playerDragingRef.current) {
+        setIsDrag(true);
+      }
+
+      playerDragingRef.current = true;
+
+      if (state.last) {
+        const data: any = getMusicBarPosition({ nextX, nextY });
+        nextX = data.x;
+        nextY = data.y;
+        left = data.left;
+
+        playerDragingRef.current = false;
+        setIsDrag(false);
+        setMagneticLeft(left);
+      }
+
+      setPosition({ x: nextX, y: nextY });
+    },
+    {
+      axis: undefined,
+      pointer: {
+        touch: true,
+      },
+      filterTaps: true,
+      bounds: playerOuterRef,
+      from: () => [position.x, position.y],
+    }
+  );
 
   const onClose = async () => {
     console.log('close music');
@@ -73,99 +111,41 @@ export default function Dashboard() {
     setMusicBarVisible(false);
   };
 
-  const handleStart = (e: any) => {
-    logger.log('drag start');
-  };
-
-  const handleDrag = (e: any) => {
-    setIsDrag(true);
-    countRef.current += 1;
-
-    logger.log('draging');
-  };
-
   const getMusicBarPosition = (data: any) => {
-    const bodyWidth = document.body.clientWidth;
-    const node = data.node;
-    const slefBodyWidth = Math.ceil(bodyWidth / 2);
-    const slftNodeWidth = Math.ceil(node.clientWidth / 2);
-    const offsetX = data.x + slftNodeWidth;
-    let x = 0;
-    let left = true;
+    let { nextX, nextY, left = 'unset' } = data;
 
-    if (slefBodyWidth < offsetX) {
-      x = bodyWidth - node.clientWidth;
-      left = false;
+    const boundary: any = playerOuterRef.current;
+    const button: any = playerRef.current;
+
+    if (!boundary || !button) return;
+
+    const containerWidth = boundary.clientWidth;
+    const selfContainerWidth = Math.ceil(containerWidth / 2);
+    const playerWidth = button.clientWidth;
+    const selfPlayerWidth = Math.ceil(playerWidth / 2);
+    const offsetX = nextX + selfPlayerWidth;
+
+    if (left === 'unset') {
+      if (selfContainerWidth < offsetX) {
+        nextX = containerWidth - playerWidth;
+        left = false;
+      } else {
+        nextX = 0;
+        left = true;
+      }
+    } else {
+      if (left) {
+        nextX = 0;
+      } else {
+        nextX = containerWidth - playerWidth;
+      }
     }
 
     return {
-      x,
-      y: data.y,
+      x: nextX,
+      y: nextY,
       left,
     };
-  };
-
-  const getDataType = (node: any): string => {
-    if (node && !node.getAttribute) {
-      return '';
-    }
-
-    const classNames = node.getAttribute('class') || '';
-
-    if (classNames && classNames.includes('player_operate')) {
-      return '';
-    }
-
-    if (!classNames || !classNames.includes('event')) {
-      return getDataType(node.parentNode);
-    }
-
-    if (classNames.includes('event')) {
-      return node.getAttribute('data-type');
-    }
-
-    return '';
-  };
-
-  const handleStop = (e: any, data: any) => {
-    logger.log('drag stop');
-    setIsDrag(false);
-
-    if (!countRef.current) {
-      const type = getDataType(e.target);
-
-      if (type) {
-        // @ts-ignore
-        const event = eventMap[type];
-
-        logger.log('type: ', type);
-
-        if (event) {
-          event();
-        }
-      }
-    } else {
-      const positionObj = getMusicBarPosition(data);
-
-      setPosition(positionObj);
-
-      setTimeout(() => {
-        if (pauseState) {
-          const titleNode = document.getElementById('soul_music_title');
-
-          if (titleNode) {
-            console.log('12');
-
-            titleNode.style.marginRight = '7px';
-            setTimeout(() => {
-              titleNode.style.marginRight = '6px';
-            }, 2);
-          }
-        }
-      }, 10);
-    }
-
-    countRef.current = 0;
   };
 
   const toggleMode = () => {
@@ -212,101 +192,112 @@ export default function Dashboard() {
     setPause(false);
   };
 
-  const eventMap = {
-    play: play,
-    pause: pause,
-    close: onClose,
-    toggle: toggleMode,
+  const onClickCover = () => {
+    navigate('music');
   };
 
   const playerClassName = useMemo(() => {
     const playStateClass = visible ? 'soul_player_show' : 'soul_player_hidden';
-    const playerBorderClass = position.left ? 'left' : 'right';
+    const playerBorderClass = magneticLeft ? 'left' : 'right';
+    const dragClass = isDrag ? 'soul_player_draging' : '';
 
-    return `${playStateClass} ${playerBorderClass}`;
-  }, [musicInfo, position, visible]);
+    return `${dragClass} ${playStateClass} ${playerBorderClass}`;
+  }, [magneticLeft, visible, isDrag]);
 
   const toggleClassName = useMemo(() => {
     let className = '';
 
-    if (position.left) {
+    if (magneticLeft) {
       className = miniMode ? 'icon-xianghou' : 'icon-xiangqian';
     } else {
       className = miniMode ? 'icon-xiangqian' : 'icon-xianghou';
     }
 
     return className;
-  }, [miniMode, position]);
+  }, [miniMode, magneticLeft]);
 
   return (
     <>
       <div>
         {
-          <Draggable
-            bounds="#root"
-            defaultClassNameDragging={isDrag ? 'soul_player_draging' : ''}
-            defaultClassName={`soul_player ${playerClassName}`}
-            onStart={handleStart}
-            onDrag={handleDrag}
-            onStop={handleStop}
-            position={position}
-          >
-            <div ref={playerRef}>
-              <div className="player_operate">
-                <div className="toggle event" data-type="toggle">
-                  <span
-                    className={`iconfont ${toggleClassName} toggle-icon`}
-                  ></span>
-                </div>
+          <>
+            <div className="soul_player_outer" ref={playerOuterRef}></div>
+            <div
+              {...bind()}
+              style={{
+                transform: `translate3d(${position.x}px, ${position.y}px, 0)`,
+              }}
+              className={`soul_player ${playerClassName}`}
+              ref={playerRef}
+            >
+              <div className="soul_player_content">
+                <div className="player_operate">
+                  <div
+                    className="toggle event"
+                    data-type="toggle"
+                    onClick={toggleMode}
+                  >
+                    <span
+                      className={`iconfont ${toggleClassName} toggle-icon`}
+                    ></span>
+                  </div>
 
-                <div
-                  className={`cover mr ${
-                    miniMode ? 'soul_player_hidden' : 'soul_player_show_flex'
-                  }`}
-                  onClick={() => {
-                    navigate('/music');
-                  }}
-                >
-                  <img
-                    draggable={false}
-                    className={pauseState ? 'rotate-pause' : ''}
-                    src={musicInfo.cover}
-                    alt=""
+                  <div
+                    className={`cover mr ${
+                      miniMode ? 'soul_player_hidden' : 'soul_player_show_flex'
+                    }`}
+                    onClick={onClickCover}
+                  >
+                    <img
+                      draggable={false}
+                      className={pauseState ? 'rotate-pause' : ''}
+                      src={musicInfo.cover}
+                      alt=""
+                    />
+                  </div>
+
+                  <div
+                    id="soul_music_title"
+                    className={`title mr ${
+                      miniMode ? 'soul_player_hidden' : 'soul_player_show_flex'
+                    }`}
+                  >
+                    <span className="song">{musicInfo.song}</span>
+                    <span className="sing">{musicInfo.sing}</span>
+                  </div>
+
+                  {pauseState ? (
+                    <PlayCircleFilled
+                      className="btn event mr"
+                      data-type="play"
+                      onClick={play}
+                    />
+                  ) : (
+                    <PauseCircleFilled
+                      className="btn event mr"
+                      data-type="pause"
+                      onClick={pause}
+                    />
+                  )}
+
+                  <CloseOutlined
+                    className="btn event close"
+                    data-type="close"
+                    onClick={onClose}
                   />
                 </div>
 
-                <div
-                  id="soul_music_title"
-                  className={`title mr ${
-                    miniMode ? 'soul_player_hidden' : 'soul_player_show_flex'
-                  }`}
-                >
-                  <span className="song">{musicInfo.song}</span>
-                  <span className="sing">{musicInfo.sing}</span>
-                </div>
-
-                {pauseState ? (
-                  <PlayCircleFilled className="btn event mr" data-type="play" />
-                ) : (
-                  <PauseCircleFilled
-                    className="btn event mr"
-                    data-type="pause"
-                  />
-                )}
-
-                <CloseOutlined className="btn event close" data-type="close" />
+                <audio
+                  onPause={onPause}
+                  onPlay={onPlay}
+                  onError={onError}
+                  src={musicInfo.url}
+                  controls={false}
+                  ref={audioRef}
+                />
               </div>
-
-              <audio
-                onPause={onPause}
-                onPlay={onPlay}
-                onError={onError}
-                src={musicInfo.url}
-                controls={false}
-                ref={audioRef}
-              />
             </div>
-          </Draggable>
+          </>
         }
       </div>
 

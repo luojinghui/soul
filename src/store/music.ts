@@ -42,5 +42,10 @@ export const MusicBarMiniMode = atom({
 
 export const MusicBarPosition = atom({
   key: 'MusicBarPosition',
-  default: { x: document.body.clientWidth, y: 160, left: false },
+  default: { x: document.body.clientWidth, y: 160 },
+});
+
+export const MusicBarMagneticLeft = atom({
+  key: 'MusicBarMagneticLeft',
+  default: false,
 });
