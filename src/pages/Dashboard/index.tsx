@@ -23,6 +23,7 @@ export default function Dashboard() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const playerRef = useRef(null);
   const playerOuterRef = useRef(null);
+  const musicTitleRef = useRef(null);
   const playerDragingRef = useRef(false);
 
   const navigate = useNavigate();
@@ -88,6 +89,15 @@ export default function Dashboard() {
         playerDragingRef.current = false;
         setIsDrag(false);
         setMagneticLeft(left);
+
+        if (musicTitleRef.current) {
+          // @ts-ignore
+          musicTitleRef.current.style.marginRight = '7px';
+          setTimeout(() => {
+            // @ts-ignore
+            musicTitleRef.current.style.marginRight = '6px';
+          }, 20);
+        }
       }
 
       setPosition({ x: nextX, y: nextY });
@@ -257,6 +267,7 @@ export default function Dashboard() {
                   </div>
 
                   <div
+                    ref={musicTitleRef}
                     id="soul_music_title"
                     className={`title mr ${
                       miniMode ? 'soul_player_hidden' : 'soul_player_show_flex'
