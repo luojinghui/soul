@@ -39,6 +39,8 @@ rule.dayOfWeek = [1, 2, 3, 4, 5, 6, 7];
 // 每小时0，1点
 rule.hour = [1, 2, 3, 5];
 rule.minute = [5, 15, 30, 45, 55];
+// 每隔 30 秒执行一次
+rule.second = [30];
 
 // 启动任务
 let job;
