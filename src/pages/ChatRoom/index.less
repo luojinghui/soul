@@ -288,7 +288,7 @@
 
     .swiper {
       height: calc(100% - var(--emoji-bar-height));
-      overflow: auto;
+      // overflow: auto;
       background-color: var(--chat-app-bg);
       padding-bottom: 20px;
     }
@@ -297,6 +297,12 @@
       margin: 8px 0 4px;
       font-size: 12px;
       padding: 0 var(--common-padding);
+    }
+
+    .emoji-box {
+      height: 212px;
+      overflow-y: auto;
+      overflow-x: hidden;
     }
 
     .emoji-list {

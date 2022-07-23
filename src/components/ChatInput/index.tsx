@@ -202,11 +202,6 @@ function ChatInput(props: IProps) {
         setEmojiVisible(false);
 
         setTimeout(() => {
-          // const content = document.getElementById('appContent');
-
-          // if (content) {
-          //   content.scrollTop = content.clientHeight;
-          // }
           window.scrollTo(0, document.body.scrollHeight);
         }, 300);
       }
@@ -502,11 +497,11 @@ function ChatInput(props: IProps) {
               ref={swiperRef}
               initialSlide={emojiSelectIndex}
             >
-              <div>
+              <div className="emoji-box">
                 <div className="emoji-title">小黄人表情</div>
                 <div className="emoji-list">{renderYelloEmoji()}</div>
               </div>
-              <div>
+              <div className="emoji-box">
                 <div className="emoji-title">发送超级表情</div>
                 <div className="emoji-list">{renderEmojiMax()}</div>
               </div>
