@@ -34,13 +34,10 @@ const setCommentMusic = async () => {
 
 // 定义规则
 const rule = new schedule.RecurrenceRule();
-// 每周1，2，3，4，5
-rule.dayOfWeek = [1, 2, 3, 4, 5, 6, 7];
-// 每小时0，1点
-rule.hour = [1, 2, 3, 5];
-rule.minute = [5, 15, 30, 45, 55];
-// 每隔 30 秒执行一次
-rule.second = [30];
+rule.dayOfWeek = [0, 1, 2, 3, 4, 5, 6];
+rule.hour = [1, 2, 3, 4];
+rule.minute = [5, 18, 25, 43, 52];
+rule.second = [36];
 
 // 启动任务
 let job;
