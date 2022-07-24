@@ -406,6 +406,7 @@ function ChatInput(props: IProps) {
           fileQueue.updateItem(insertIndex + i, Status.Success, res);
         })
         .catch((err) => {
+          message.info('文件/图片发送失败');
           fileQueue.updateItem(insertIndex + i, Status.Fail, err);
         })
         .finally(() => {

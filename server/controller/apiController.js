@@ -5,7 +5,7 @@
  * @author jinghui-Luo
  *
  * Created at     : 2022-06-26 00:40:02
- * Last modified  : 2022-07-16 01:55:43
+ * Last modified  : 2022-07-24 23:54:18
  */
 
 const { userModel } = require('../model/userModel');
@@ -348,6 +348,8 @@ const apiController = {
 
   roomUploadImgs: async (req, res) => {
     let file = req.file || null;
+
+    console.log('room upload img: ', req.query.userId);
 
     if (!file) {
       res.json({
