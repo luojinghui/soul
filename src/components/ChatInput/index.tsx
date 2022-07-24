@@ -575,11 +575,16 @@ function ChatInput(props: IProps) {
           <h3>
             <AutoCenter>随心听</AutoCenter>
           </h3>
-          {musicList.map(({ id, song, sing }: any, index: number) => {
+          {musicList.map(({ id, song, sing, cover }: any, index: number) => {
             return (
               <div key={id} className="panel">
                 <div className="info">
-                  {sing} - {song}
+                  <div className="cover">
+                    <img src={cover} loading="lazy" alt="" />
+                  </div>
+                  <div className="song">
+                    {song} - {sing}
+                  </div>
                 </div>
                 <div className="btns">
                   <Button

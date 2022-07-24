@@ -5,7 +5,7 @@
  * @author jinghui-Luo
  *
  * Created at     : 2022-06-22 11:49:36
- * Last modified  : 2022-07-22 13:10:47
+ * Last modified  : 2022-07-25 00:20:34
  */
 
 import VConsole from 'vconsole';
@@ -18,15 +18,12 @@ enum Level {
 
 class Logger {
   public level: Level;
-  private vConsole: VConsole | null;
 
   constructor() {
     this.level = getParameterByName('log') === 'true' ? Level.info : Level.none;
 
-    this.vConsole = null;
-
     if (this.level === Level.info) {
-      this.vConsole = new VConsole();
+      const vConsole = new VConsole();
     }
   }
 
@@ -34,7 +31,7 @@ class Logger {
     this.level = level;
 
     if (!this.level) {
-      this.vConsole = new VConsole();
+      const vConsole = new VConsole();
     }
   }
 

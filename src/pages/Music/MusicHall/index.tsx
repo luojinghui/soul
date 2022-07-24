@@ -86,7 +86,7 @@ export default function MusicHall() {
           }}
         >
           <div className="avatar">
-            <img src={cover} alt="" />
+            <img src={cover} loading="lazy" alt="" />
           </div>
           <div className="info">
             <div>
