@@ -20,6 +20,7 @@ import action from '@/action';
 import FileQueue, { Status } from './queue';
 import { IUserInfo } from '@/type';
 import { parseMD } from '@/utils/markdown';
+import logger from '@/utils/log';
 
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import {
@@ -379,10 +380,10 @@ function ChatInput(props: IProps) {
 
   const onInputImgs = async (e: any) => {
     const fileList = e.target.files;
-    console.log('on input fileList: ', fileList);
+    logger.log('on input fileList: ', fileList);
 
     fileQueue.onCompleteAll = (list: any[]) => {
-      console.log('上传完成: ', list);
+      logger.log('上传完成: ', list);
     };
 
     const insertIndex = fileQueue.addList(fileList.length);
@@ -403,6 +404,7 @@ function ChatInput(props: IProps) {
       action
         .uploadImg(formData, userId)
         .then((res) => {
+          logger.log('upload success');
           fileQueue.updateItem(insertIndex + i, Status.Success, res);
         })
         .catch((err) => {
@@ -411,7 +413,7 @@ function ChatInput(props: IProps) {
         })
         .finally(() => {
           fileQueue.check((result: any) => {
-            console.log('result: ', result);
+            logger.log('result: ', result);
 
             const { data } = result;
             const { fileUrl, fileName, mimeType, size, originalName } = data;
