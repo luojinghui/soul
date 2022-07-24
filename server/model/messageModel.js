@@ -10,7 +10,7 @@ const messageSchema = new Schema({
   msgType: {
     type: String,
     enum: {
-      values: ['text', 'file', 'super_emoji'],
+      values: ['text', 'file', 'super_emoji', 'music'],
       message: '{VALUE} is not supported',
     },
   },

@@ -7,7 +7,7 @@ import {
 } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { message, Image } from 'antd';
-import { LeftOutlined, SettingOutlined, FileFilled } from '@ant-design/icons';
+import { PlayCircleOutlined, FileFilled } from '@ant-design/icons';
 import { imServer } from '../../enum';
 import { useNavigate, useParams, NavLink } from 'react-router-dom';
 import { AvatarMap, Header } from '@/components';
@@ -21,12 +21,14 @@ import { saveImg } from '@/utils';
 import { platform } from '@/utils/browser';
 import { copyText } from '@/utils/copy';
 
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import {
   userInfoState,
   userAvatarState,
   messageListState,
   messageListStoreFunc,
+  MusicBarVisible,
+  MusicInfo,
 } from '@/store';
 
 import './index.less';
@@ -44,6 +46,9 @@ function ChatRoom() {
   const MessageTimeRef = useRef<any>(MessageTime);
   const chatInputRef = useRef(null);
   const footerRef = useRef<any>(null);
+
+  const setMusicBarVisible = useSetRecoilState(MusicBarVisible);
+  const setMusicInfo = useSetRecoilState(MusicInfo);
 
   const [roomInfo, setRoomInfo] = useState<any>({});
   const [pageInfo, setPageInfo] = useState({
@@ -196,10 +201,6 @@ function ChatRoom() {
     navigate('../', { replace: true });
   };
 
-  // const onBackHall = () => {
-  //   navigate('/chat', { replace: true });
-  // };
-
   const onSendMessage = (value: any) => {
     const data = {
       type: 'chat',
@@ -276,6 +277,11 @@ function ChatRoom() {
     message.info('复制成功');
   }, [menuSet]);
 
+  const onPlayMusic = (item: any) => {
+    setMusicBarVisible(true);
+    setMusicInfo(item);
+  };
+
   const renderContent = () => {
     return (
       <div className="chat-list" ref={chatRef}>
@@ -297,9 +303,10 @@ function ChatRoom() {
           const isSuperEmoji = msgType === 'super_emoji';
           const isImgFile = msgType === 'file' && mimeType.includes('image');
           const isOtherFile = msgType === 'file' && !mimeType.includes('image');
+          const isMusic = msgType === 'music';
           let html = '';
           let htmlContent = content;
-          const isRenderContent = !isImgFile && !isOtherFile;
+          const isRenderContent = !isImgFile && !isOtherFile && !isMusic;
 
           if (isSuperEmoji) {
             // @ts-ignore
@@ -325,6 +332,35 @@ function ChatRoom() {
                   {originalName}
                 </a>
                 <FileFilled className="icon" />
+              </div>
+            );
+
+            htmlContent = html;
+          }
+
+          if (isMusic) {
+            const item = JSON.parse(content);
+            const { cover, song, sing } = item;
+
+            const html = (
+              <div className="soul-music-box">
+                <div className="box">
+                  <div className="cover">
+                    <img src={cover} alt="" />
+                  </div>
+                  <div>
+                    <div className="song">{song}</div>
+                    <div className="sing">{sing}</div>
+                  </div>
+                </div>
+                <div
+                  className="play"
+                  onClick={() => {
+                    onPlayMusic(item);
+                  }}
+                >
+                  <PlayCircleOutlined className="icon" />
+                </div>
               </div>
             );
 
@@ -376,7 +412,7 @@ function ChatRoom() {
                     ) : (
                       <div
                         className={`html ${
-                          isSuperEmoji ? 'html_transparent' : ''
+                          isSuperEmoji || isMusic ? 'html_transparent' : ''
                         }`}
                       >
                         {htmlContent}

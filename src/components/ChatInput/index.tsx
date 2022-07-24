@@ -30,7 +30,7 @@ import {
   MusicInfo,
 } from '@/store';
 
-import { AutoCenter, FloatingPanel, Toast } from 'antd-mobile';
+import { AutoCenter, FloatingPanel } from 'antd-mobile';
 
 let rangeOfInputBox: any;
 const fileQueue = new FileQueue();
@@ -328,9 +328,18 @@ function ChatInput(props: IProps) {
     setEmojiSelectIndex(current);
   };
 
-  const onSendMusic = () => {
-    Toast.show({
-      content: '美好的东西即将到来',
+  const onSendMusic = (item: any) => {
+    console.log('item: ', item);
+
+    props.onSendMessage({
+      content: JSON.stringify({
+        id: item.id,
+        sing: item.sing,
+        song: item.song,
+        url: item.url,
+        cover: item.cover,
+      }),
+      msgType: 'music',
     });
   };
 
@@ -412,6 +421,8 @@ function ChatInput(props: IProps) {
           fileQueue.updateItem(insertIndex + i, Status.Fail, err);
         })
         .finally(() => {
+          logger.log('finally result');
+
           fileQueue.check((result: any) => {
             logger.log('result: ', result);
 
@@ -596,7 +607,13 @@ function ChatInput(props: IProps) {
                   >
                     播放
                   </Button>
-                  <Button className="btn" type="text" onClick={onSendMusic}>
+                  <Button
+                    className="btn"
+                    type="text"
+                    onClick={() => {
+                      onSendMusic(musicList[index]);
+                    }}
+                  >
                     发送
                   </Button>
                 </div>

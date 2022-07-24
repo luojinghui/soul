@@ -4,7 +4,7 @@
  * @author jinghui-Luo
  *
  * Created at     : 2022-07-02 21:36:48
- * Last modified  : 2022-07-02 22:49:01
+ * Last modified  : 2022-07-25 00:34:11
  */
 
 // pending：等待上传、success：上传成功、fail：上传失败、done：已成功
@@ -51,6 +51,7 @@ class FileQueue {
 
   // 检查队列
   async check(callback: (status: Status) => void) {
+    console.log('check isExecuting:', this.isExecuting);
     if (this.isExecuting) {
       return;
     }
