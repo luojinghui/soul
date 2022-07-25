@@ -5,11 +5,11 @@
  * @author jinghui-Luo
  *
  * Created at     : 2021-04-07 16:48:07
- * Last modified  : 2022-07-06 10:50:29
+ * Last modified  : 2022-07-25 11:48:07
  */
 
 const mongoose = require('mongoose');
-const db = require('../../config');
+const { db } = require('../../config');
 
 const DBHOST = db;
 

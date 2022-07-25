@@ -348,7 +348,7 @@ function ChatRoom() {
                   <div className="cover">
                     <img src={cover} alt="" />
                   </div>
-                  <div>
+                  <div className='music-info'>
                     <div className="song">{song}</div>
                     <div className="sing">{sing}</div>
                   </div>

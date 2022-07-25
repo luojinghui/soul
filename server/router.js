@@ -5,7 +5,7 @@
  * @author jinghui-Luo
  *
  * Created at     : 2021-04-09 14:17:34
- * Last modified  : 2022-07-23 23:17:16
+ * Last modified  : 2022-07-25 11:52:47
  */
 
 const express = require('express');
@@ -13,6 +13,7 @@ const path = require('path');
 const apiController = require('./controller/apiController');
 const thirdController = require('./controller/thirdController');
 const songController = require('./controller/songController.js');
+const wechatController = require('./controller/wechatController.js');
 const { upload } = require('./utils/upload');
 
 const router = express.Router();
@@ -66,6 +67,11 @@ router.get('/api/song//recommend/songs', songController.recommend_songs);
 router.get('/api/song/comment/list', songController.comment_list);
 // 更新每日推荐歌曲状态：可用/不可用资源
 router.post('/api/song/comment/update', songController.comment_update_state);
+
+/**
+ * 微信验证/接口
+ */
+router.get('/api/wx/token', wechatController.wxToken);
 
 /**
  * 主页面加载入口
