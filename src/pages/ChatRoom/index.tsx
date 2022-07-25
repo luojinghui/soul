@@ -318,7 +318,7 @@ function ChatRoom() {
           if (isImgFile) {
             const src = `${httpServer}/upload/${userId}/${fileUrl}`;
             // @ts-ignore
-            const html = <Image src={encodeURI(src)} />;
+            const html = <Image loading="lazy" src={encodeURI(src)} />;
 
             htmlContent = html;
           }

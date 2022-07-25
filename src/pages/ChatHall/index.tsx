@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { message, Popover, Tabs } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
+import { PlusOutlined, PushpinFilled } from '@ant-design/icons';
 import { Header, AddRoomMoel } from '@/components';
 import { useNavigate } from 'react-router-dom';
 import action from '@/action';
@@ -47,13 +47,16 @@ export const ChatHall = () => {
 
     if (result && result.code === 200) {
       const list = result.data;
+      const nextList = list.sort((item: any, nextItem: any) => {
+        return nextItem.isFixed - item.isFixed;
+      });
 
       if (filter === 'all') {
-        setAllRoomList(list);
+        setAllRoomList(nextList);
       } else if (filter === 'join') {
-        setJoinedRoomList(list);
+        setJoinedRoomList(nextList);
       } else if (filter === 'mine') {
-        setMineRoomList(list);
+        setMineRoomList(nextList);
       }
     }
   };
@@ -98,6 +101,7 @@ export const ChatHall = () => {
             roomDesc,
             roomAvatarUrl,
             ownerId,
+            isFixed,
           }: any,
           index: number
         ) => {
@@ -114,6 +118,11 @@ export const ChatHall = () => {
                 onJoinRoom(roomId);
               }}
             >
+              {isFixed && (
+                <div className="fixed">
+                  <PushpinFilled className="icon" />
+                </div>
+              )}
               <div className="avatar">
                 <img src={imgUrl} alt="" />
               </div>

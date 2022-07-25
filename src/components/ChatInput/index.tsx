@@ -331,6 +331,8 @@ function ChatInput(props: IProps) {
   const onSendMusic = (item: any) => {
     console.log('item: ', item);
 
+    toggleMusicBox(false);
+
     props.onSendMessage({
       content: JSON.stringify({
         id: item.id,
@@ -348,10 +350,10 @@ function ChatInput(props: IProps) {
     setMusicInfo(item);
   };
 
-  const toggleMusicBox = () => {
+  const toggleMusicBox = (show: boolean) => {
     if (musicBoxRef.current) {
       // @ts-ignore
-      musicBoxRef.current.setHeight(contaierHeight);
+      musicBoxRef.current.setHeight(show ? contaierHeight : 0);
     }
   };
 
@@ -526,7 +528,12 @@ function ChatInput(props: IProps) {
           <a className={`tool ${isMdMode && 'active'}`} onClick={toggleMDMode}>
             <FileMarkdownFilled className="icon" />
           </a>
-          <a className={`tool`} onClick={toggleMusicBox}>
+          <a
+            className={`tool`}
+            onClick={() => {
+              toggleMusicBox(true);
+            }}
+          >
             <span className={`iconfont icon-yinleyule icon`}></span>
           </a>
         </div>
