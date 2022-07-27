@@ -31,6 +31,7 @@ import {
 } from '@/store';
 
 import { AutoCenter, FloatingPanel } from 'antd-mobile';
+// import APng from '@/components/APNG';
 
 let rangeOfInputBox: any;
 const fileQueue = new FileQueue();
@@ -288,6 +289,7 @@ function ChatInput(props: IProps) {
           }}
         >
           <img src={src} alt={alt} data-emoji-type="max" />
+          {/* <APng src={src} data-emoji-type="max" className='super0'></APng> */}
         </a>
       );
     });

@@ -15,8 +15,6 @@ export {
   messageListStoreFunc,
 } from './room';
 
-export { wrapperListState, wrapperSizeState } from './wrapper';
-
+export * from './wrapper';
 export * from './music';
-
 export * from './chat';

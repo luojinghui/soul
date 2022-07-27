@@ -5,6 +5,11 @@ export const wrapperListState = atom({
   default: [],
 });
 
+export const wrapperPageSize = atom({
+  key: 'wrapperPageSize',
+  default: 1,
+});
+
 export const wrapperSizeState = atom({
   key: 'wrapperSizeState',
   default: {

@@ -1,34 +1,28 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { wrapperSizeState } from '@/store';
-import { useNavigate } from 'react-router-dom';
 import action from '@/action';
 import { httpServer } from '@/enum';
-import InfiniteScroll from 'react-infinite-scroll-component';
 import { IImgSize } from '@/type';
-import { Header } from '@/components';
-
-import { Scrollbars } from 'react-custom-scrollbars-2';
+import { Header, Scroll } from '@/components';
 
 import './index.less';
 
-let falg = false;
-
 export default function Wrapper() {
   const contentRef = useRef(null);
-  const scrollRef = useRef(null);
   const firstIn = useRef(true);
 
-  // const [list, setList] = useRecoilState(wrapperListState);
   const [style, setStyle] = useRecoilState(wrapperSizeState);
+  // const [list, setList] = useRecoilState(wrapperListState);
+  // const [pageIndex, setPageIndex] = useRecoilState(wrapperPageSize);
   const [list, setList] = useState([]);
+  const [pageIndex, setPageIndex] = useState(1);
 
   const [loading, setLoading] = useState(true);
   const [model, setVisible] = useState({
     visible: false,
     url: '',
   });
-  const [pageIndex, setPageIndex] = useState(1);
 
   // 初始化计算每个item的size信息
   useEffect(() => {
@@ -63,6 +57,8 @@ export default function Wrapper() {
   }, [pageIndex]);
 
   const getMoreData = useCallback(() => {
+    console.log('next page');
+
     setPageIndex(pageIndex + 1);
   }, [pageIndex]);
 
@@ -144,45 +140,16 @@ export default function Wrapper() {
     <div className="app wrapper-page">
       <Header title="热门壁纸"></Header>
 
-      <div className="content" id="content" ref={contentRef}>
+      <div className="content" style={{}} id="content" ref={contentRef}>
         {loading && <div className="loading">稍等片刻...</div>}
 
-        <Scrollbars
+        <Scroll
+          hasMore={pageIndex < 12}
+          scrollThresholdBottom={50}
           autoHide={true}
           autoHideTimeout={1000}
-          onScroll={(e: any) => {
-            if (
-              e.target.scrollTop >=
-              e.target.scrollHeight - (e.target.clientHeight + 50)
-            ) {
-              if (!falg) {
-                getMoreData();
-              }
-
-              falg = true;
-            }
-          }}
+          onNext={getMoreData}
         >
-          {/* <InfiniteScroll
-            scrollableTarget="content"
-            className="scroll"
-            dataLength={list.length}
-            next={getMoreData}
-            hasMore={pageIndex <= 10}
-            scrollThreshold={0.9}
-            loader={
-              <h4
-                style={{
-                  textAlign: 'center',
-                  width: '100vw',
-                  marginTop: '10px',
-                }}
-              >
-                Loading...
-              </h4>
-            }
-            endMessage={<p style={{ textAlign: 'center' }}>没有数据啦...</p>}
-          > */}
           <div className="scroll">
             {list.map((item: any) => {
               const { id, full_image_url, thumb_url } = item;
@@ -208,9 +175,8 @@ export default function Wrapper() {
                 </div>
               );
             })}
-            {/* </InfiniteScroll> */}
           </div>
-        </Scrollbars>
+        </Scroll>
       </div>
 
       {model.visible && (
