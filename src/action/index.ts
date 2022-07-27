@@ -7,6 +7,7 @@
 
 import HttpClient from './httpClient';
 import { httpServer } from '../enum';
+import { IWrapperSelectKey } from '@/type';
 
 class Action {
   private http: HttpClient;
@@ -97,9 +98,9 @@ class Action {
     return await this.http.get(`/api/happy/wrappaper`);
   }
 
-  async getWrapperV2List(pageIndex: number) {
+  async getWrapperV2List(pageIndex: number, key: IWrapperSelectKey) {
     return await this.http.get(
-      `/api/happy/v2/wrappaper?pageIndex=${pageIndex}`
+      `/api/happy/v2/wrappaper?pageIndex=${pageIndex}&cate=${key}`
     );
   }
 

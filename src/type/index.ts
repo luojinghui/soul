@@ -21,3 +21,4 @@ export type IFile = {
 };
 
 export type IActiveKey = 'all' | 'mine' | 'join';
+export type IWrapperSelectKey = 'hot' | 'landscape' | 'new' | 'search';
