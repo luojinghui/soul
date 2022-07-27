@@ -5,7 +5,7 @@
  * @author jinghui-Luo
  *
  * Created at     : 2022-06-26 00:40:02
- * Last modified  : 2022-07-11 21:19:02
+ * Last modified  : 2022-07-27 15:38:20
  */
 
 const axios = require('axios');
@@ -19,7 +19,6 @@ module.exports = {
       const url = `https://service.picasso.adesk.com/v1/vertical/vertical?limit=${pageSize}&skip=${
         skip || 0
       }&adult=false&first=1&order=hot`;
-      console.log('url: ', url);
 
       const userAgent = getUserAgent();
       const result = await axios.get(url, {
@@ -59,7 +58,6 @@ module.exports = {
     const { pageIndex = 1 } = req.query;
     try {
       const url = `http://images.kindofpure.cn/api/images_api/latest?categoryId=10156108437800210000&page=${pageIndex}`;
-      console.log('url: ', url);
 
       const userAgent = getUserAgent();
       const result = await axios.get(url, {
@@ -128,9 +126,6 @@ module.exports = {
       return;
     }
     const url = `http://img5.adesk.com/${id}?sign=${sign}&t=${t}`;
-
-    console.log('url: ', url);
-    console.log('req.headers: ', req.headers);
 
     try {
       const result = await axios.get(url, {
