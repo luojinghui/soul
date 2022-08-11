@@ -47,6 +47,16 @@ function App() {
             <span className="link">星球</span>
           </NavLink>
         </div>
+
+        <div className="footer">
+          <a
+            href="https://beian.miit.gov.cn/"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            陕ICP备19012299号-1
+          </a>
+        </div>
       </div>
     </div>
   );
