@@ -46,6 +46,10 @@ function App() {
           <NavLink to="/chat" className="circle center swim">
             <span className="link">星球</span>
           </NavLink>
+
+          <NavLink to="/video" className="circle center swim">
+            <span className="link">视频</span>
+          </NavLink>
         </div>
 
         <div className="footer">

@@ -6,7 +6,7 @@
  * @author jinghui-Luo
  *
  * Created at     : 2021-04-09 14:22:59
- * Last modified  : 2022-07-19 00:42:29
+ * Last modified  : 2022-08-18 10:43:45
  */
 
 const express = require('express');
@@ -14,6 +14,7 @@ const path = require('path');
 const router = require('./server/router.js');
 const compression = require('compression');
 const chatController = require('./server/controller/chatController');
+const videoController = require('./server/controller/videoController');
 const { createServer } = require('http');
 const { crossConfig } = require('./server/middleware/cros');
 const { port } = require('./server/config/index');
@@ -24,6 +25,7 @@ const startNodeSchedule = require('./server/utils/schedule');
 const app = express();
 const server = createServer(app);
 const io = new Server(server, { cors: true, path: '/im' });
+const videoIo = new Server(server, { cors: true, path: '/video' });
 
 app
   .use(crossConfig)
@@ -36,6 +38,11 @@ app
 // wss服务
 io.on('connection', (socket) => {
   chatController.onSocket(socket, io);
+});
+
+// wss服务
+videoIo.on('connection', (socket) => {
+  videoController.onSocket(socket, videoIo);
 });
 
 app.use(
