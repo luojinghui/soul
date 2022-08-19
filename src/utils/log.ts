@@ -9,7 +9,7 @@
  */
 
 import VConsole from 'vconsole';
-import { getParameterByName } from './index';
+import { getParameterByName, getMillTime } from './index';
 
 enum Level {
   'info' = 'info',
@@ -35,15 +35,15 @@ class Logger {
     }
   }
 
-  log(title?: any, content?: any, ...rest: any) {
+  log(title: string, content: any = '', ...rest: any[]) {
     if (this.level === Level.info) {
-      console.log(title, content, ...rest);
+      console.log(`[${getMillTime()}]`, title, content, ...rest);
     }
   }
 
   warn(...rest: any) {
     if (this.level === Level.info) {
-      console.warn(...rest);
+      console.warn(`[${getMillTime()}]`, ...rest);
     }
   }
 }

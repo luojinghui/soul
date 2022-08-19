@@ -7,6 +7,7 @@ import Video from './video';
 import { Header } from '@/components';
 import { useRecoilValue } from 'recoil';
 import { userInfoState } from '@/store';
+import logger from '@/utils/log';
 import './index.less';
 
 export const VideoCall = () => {
@@ -47,7 +48,7 @@ export const VideoCall = () => {
     socket.current.on('message', async (msg: any) => {
       const result = JSON.parse(msg);
 
-      console.log('io receive: ', result);
+      logger.log('io receive: ', result);
 
       switch (result.type) {
         case 'call-state':
@@ -55,27 +56,27 @@ export const VideoCall = () => {
 
           break;
         case 'users':
-          console.log('users message: ', result.data);
+          logger.log('users message: ', result.data);
 
           handleUsers(result.data);
           break;
 
         case 'offer':
-          console.log('offer message: ', result.data);
+          logger.log('offer message: ', result.data);
 
           await handleOffer(result.data);
           break;
 
         case 'answer':
-          console.log('answer message: ', result.data);
+          logger.log('answer message: ', result.data);
 
-          handleAnswer(result.data);
+          await handleAnswer(result.data);
           break;
 
         case 'candidate':
-          console.log('candidate message: ', result.data);
+          logger.log('candidate message: ', result.data);
 
-          handleCandidate(result.data);
+          await handleCandidate(result.data);
           break;
       }
     });
@@ -112,16 +113,18 @@ export const VideoCall = () => {
 
     updateUserListRef(userList);
 
+    // 最后一位是自己，则说明是自己入会成功
     if (lastUser.username === username) {
       // 非第一次加入会议
       if (!isInitLocalStream.current) {
         // 当前用户加入会议
         await localJoinMeeting();
       }
-    } else {
-      // 远端新用户加入会议
-      remoteJoinMeeting(lastUser.username);
     }
+    //  else {
+    //   // 远端新用户加入会议
+    //   remoteJoinMeeting(lastUser.username);
+    // }
 
     // 创建LayoutList数据，用来渲染用户信息和画面
     createLayout();
@@ -129,7 +132,7 @@ export const VideoCall = () => {
   };
 
   const updateUserListRef = (userList: any) => {
-    console.log('更新userList cache数据');
+    logger.log('更新userList cache数据');
 
     const userLen = userList.length;
 
@@ -170,14 +173,15 @@ export const VideoCall = () => {
       }
     }
 
-    console.log('userListRef.current: ', userListRef.current);
+    logger.log('userListRef.current: ', userListRef.current);
   };
 
   const remoteJoinMeeting = (username: any) => {
-    console.log('新用户加入会议');
+    logger.log('新用户加入会议2');
     const { peer } = peerMap.current[username] || {};
 
     if (!peer) {
+      logger.log('创建remote peer and track3');
       // 否则，是远端新用户加入会议，创建Peer通道，等待P2P连接
       createPeer(username);
       addTrack(peerMap.current[username]);
@@ -185,7 +189,7 @@ export const VideoCall = () => {
   };
 
   const localJoinMeeting = async () => {
-    console.log('当前用户加入会议');
+    logger.log('当前用户加入会议');
 
     try {
       // 创建本地画面
@@ -199,50 +203,76 @@ export const VideoCall = () => {
 
       isInitLocalStream.current = true;
     } catch (err) {
-      console.log('加入会议失败，无法采集视频流: ', err);
+      logger.log('加入会议失败，无法采集视频流: ', err);
     }
   };
 
-  const handleCandidate = (msg: any) => {
+  const handleCandidate = async (msg: any) => {
     const { candidate, callName } = msg;
     const { peer } = peerMap.current[callName] || {};
 
-    console.log('remote candidate: ', {
+    logger.log('remote candidate: ', {
       msg,
       peer,
     });
 
-    peer?.addIceCandidate(new RTCIceCandidate(candidate));
+    logger.log('candidate: ', candidate);
+
+    try {
+      await peer?.addIceCandidate(new RTCIceCandidate(candidate));
+    } catch (err) {
+      logger.log('peer add ice candidate error: ', err);
+    }
   };
 
-  const handleAnswer = (msg: any) => {
+  const handleAnswer = async (msg: any) => {
     const { answer, callName } = msg;
     const { peer } = peerMap.current[callName] || {};
 
-    console.log('remote answer: ', {
+    logger.log('remote answer: ', {
       msg,
       peer,
     });
 
-    peer?.setRemoteDescription(new RTCSessionDescription(answer));
+    try {
+      await peer?.setRemoteDescription(new RTCSessionDescription(answer));
+    } catch (err) {
+      logger.log('handle answer error: ', err);
+    }
   };
 
-  const handleOffer = (msg: any) => {
-    const { offer, callName } = msg;
-    const { peer } = peerMap.current[callName] || {};
+  const handleOffer = async (msg: any) => {
+    logger.log('handl offer 1');
 
-    console.log('handle offer peer: ', {
-      peer,
-      msg,
-    });
+    const { offer, callName, connectedName } = msg;
+    let peerInstance: any;
+    let { peer } = peerMap.current[callName] || {};
 
-    peer?.setRemoteDescription(new RTCSessionDescription(offer));
+    peerInstance = peer;
+
+    if (!peerInstance) {
+      remoteJoinMeeting(callName);
+
+      peerInstance = peerMap.current[callName].peer;
+    }
+
+    logger.log('handle offer msg: ', msg);
+    logger.log('handle peer: ', peerInstance);
+
+    try {
+      await peerInstance?.setRemoteDescription(
+        new RTCSessionDescription(offer)
+      );
+    } catch (err) {
+      logger.log('handle offer error: ', err);
+    }
+
     // Create an answer to an offer
-    peer?.createAnswer(
+    peerInstance?.createAnswer(
       (answer: any) => {
-        console.log('created answer sdp: ', answer);
+        logger.log('created answer sdp: ', answer);
 
-        peer.setLocalDescription(answer);
+        peerInstance.setLocalDescription(answer);
 
         sendMessage({
           type: 'answer',
@@ -253,7 +283,7 @@ export const VideoCall = () => {
         });
       },
       (error: any) => {
-        console.log('creating an answer error: ', error);
+        logger.log('creating an answer error: ', error);
       }
     );
   };
@@ -275,7 +305,7 @@ export const VideoCall = () => {
     for (let name in userList) {
       if (name !== username) {
         // 新增远端用户，需要初始化PeerConnection
-        console.log('is Remote, send offer...');
+        logger.log('is Remote, send offer...');
 
         sendOffer(name);
       }
@@ -285,7 +315,7 @@ export const VideoCall = () => {
   const sendOffer = (name: any) => {
     const { peer } = peerMap.current[name] || {};
 
-    console.log('send offer: ', {
+    logger.log('send offer: ', {
       peer,
       name,
     });
@@ -302,7 +332,7 @@ export const VideoCall = () => {
     };
 
     const failureCallback = (err: any) => {
-      console.log('create offer error: ', err);
+      logger.log('create offer error: ', err);
     };
 
     peer?.createOffer(successCallback, failureCallback);
@@ -315,14 +345,23 @@ export const VideoCall = () => {
     const { username } = localInfoRef.current;
     const localStream = streamMap.current[username].stream.mediaStream;
 
-    console.log('add tracks to peer: ', peerInstance);
+    logger.log('add tracks to peer: ', peerInstance);
 
     if (localStream) {
-      localStream
-        .getTracks()
-        .forEach((track: any) =>
-          peerInstance.peer.addTrack(track, localStream)
-        );
+      localStream.getTracks().forEach((track: any) => {
+        peerInstance.peer.addTrack(track, localStream);
+
+        // peerInstance.peer.addTransceiver(track, {
+        //   streams: [localStream],
+        //   direction: 'sendrecv',
+        //   sendEncodings: [
+        //     {
+        //       maxFramerate: 30,
+        //       maxBitrate: 2000 * 1e3,
+        //     },
+        //   ],
+        // });
+      });
     }
   };
 
@@ -342,7 +381,7 @@ export const VideoCall = () => {
       // 没有创建Peer通道
       if (name !== username && !peer) {
         // 新增远端用户，需要初始化PeerConnection
-        console.log('is Remote, connection peer...');
+        logger.log('is Remote, connection peer...');
 
         createPeer(name);
       }
@@ -350,40 +389,23 @@ export const VideoCall = () => {
   };
 
   const createPeer = (username: any) => {
-    const peer = new RTCPeerConnection(CONFIGURATION);
+    const peer = new RTCPeerConnection();
     const channal = peer.createDataChannel('sendChannel');
+
+    logger.log('create peerconnection start');
 
     peerMap.current[username] = { peer, channal };
 
     channal.onopen = () => {
-      console.log('datachannel open');
+      logger.log('datachannel open');
     };
 
     channal.onclose = () => {
-      console.log('datachannel closed');
-    };
-
-    peer.onicecandidate = (event) => {
-      console.log('ice event: ', event);
-
-      if (event.candidate) {
-        sendMessage({
-          type: 'candidate',
-          data: {
-            candidate: event.candidate,
-            connectedName: username,
-          },
-        });
-      }
-    };
-
-    peer.onconnectionstatechange = (event) => {
-      console.log('peerConnection connect status: ', peer.connectionState);
-      console.log('conect peer: ', peer);
+      logger.log('datachannel closed');
     };
 
     peer.ontrack = (event) => {
-      console.log('track event: ', event);
+      logger.log('track event: ', event);
 
       const mediaStream = event.streams[0];
       const streamInstance = new Stream();
@@ -398,16 +420,35 @@ export const VideoCall = () => {
       createLayout();
     };
 
+    peer.onicecandidate = (event) => {
+      logger.log('ice event: ', event);
+
+      if (event.candidate) {
+        sendMessage({
+          type: 'candidate',
+          data: {
+            candidate: event.candidate,
+            connectedName: username,
+          },
+        });
+      }
+    };
+
+    peer.onconnectionstatechange = (event) => {
+      logger.log('peerConnection connect status: ', peer.connectionState);
+      logger.log('conect peer: ', peer);
+    };
+
     createIMByDatachannel(peer);
 
-    console.log('创建peer通道成功: ', {
+    logger.log('创建peer通道成功: ', {
       peer,
       username,
     });
   };
 
   const onIMMessage = (event: any) => {
-    console.log('im message event: ', event);
+    logger.log('im message event: ', event);
 
     const data = JSON.parse(event.data);
 
@@ -426,10 +467,10 @@ export const VideoCall = () => {
 
       receiveChannel.onmessage = onIMMessage;
       receiveChannel.onopen = (event: any) => {
-        console.log('im open event: ', event);
+        logger.log('im open event: ', event);
       };
       receiveChannel.onclose = (event: any) => {
-        console.log('im close event: ', event);
+        logger.log('im close event: ', event);
       };
     };
   };
@@ -441,7 +482,7 @@ export const VideoCall = () => {
     if (localStream) {
       return;
     }
-    console.log('init local stream: ', username);
+    logger.log('init local stream: ', username);
 
     const streamInstance = new Stream();
 
@@ -453,7 +494,7 @@ export const VideoCall = () => {
       streamInstance,
     };
 
-    console.log('streamMap.current: ', streamMap.current);
+    logger.log('streamMap.current: ', streamMap.current);
   };
 
   const createLayout = () => {
@@ -475,13 +516,13 @@ export const VideoCall = () => {
       layouts.push(nextUser);
     }
 
-    console.log('layouts: ', layouts);
+    logger.log('layouts: ', layouts);
     setLayoutList(layouts);
   };
 
   // 加入房间
   const onCallMeeting = async (values: any) => {
-    console.log('join room:', values);
+    logger.log('join room:', values);
 
     const val = {
       ...values,
@@ -513,12 +554,12 @@ export const VideoCall = () => {
       callName: username,
     };
 
-    console.log('send message: ', msg);
+    logger.log('send message: ', msg);
     socket.current.send(JSON.stringify(msg));
   };
 
   const onSendMessage = (e: any) => {
-    console.log('finish e: ', e);
+    logger.log('finish e: ', e);
 
     if (e.msg) {
       const { username } = localInfoRef.current;
@@ -549,7 +590,7 @@ export const VideoCall = () => {
     for (let key in streamMap.current) {
       const stream = streamMap.current[key];
 
-      console.log('close stream: ', streamMap.current[key]);
+      logger.log('close stream: ', streamMap.current[key]);
 
       stream.streamInstance.destroyStream();
     }

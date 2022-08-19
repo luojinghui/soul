@@ -3,10 +3,10 @@
  */
 
 const VIDEO_CONSTRAINTS = {
-  aspectRatio: 1.7778,
+  aspectRatio: 1.777,
   resizeMode: 'crop-and-scale',
-  width: 640,
-  height: 360,
+  width: 1280,
+  height: 720,
 };
 
 class Stream {

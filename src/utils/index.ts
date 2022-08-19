@@ -34,6 +34,18 @@ export const getTime = (data: any, type: any) => {
   }
 };
 
+/**
+ * 获取当前时间
+ *
+ * Format：xx:xx:xx xx
+ */
+export const getMillTime = () => {
+  const date2 = new Date();
+  const nowTime = `${date2.getHours()}:${date2.getMinutes()}:${date2.getSeconds()} ${date2.getMilliseconds()}`;
+
+  return nowTime;
+};
+
 export const getDateTimeBefore = (dataTime: any) => {
   const currentTime = new Date().valueOf();
   const nextTime = new Date(dataTime).valueOf();
