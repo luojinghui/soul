@@ -184,7 +184,7 @@ export const VideoCall = () => {
       logger.log('创建remote peer and track3');
       // 否则，是远端新用户加入会议，创建Peer通道，等待P2P连接
       createPeer(username);
-      addTrack(peerMap.current[username]);
+      addTrack(peerMap.current[username], false);
     }
   };
 
@@ -341,7 +341,7 @@ export const VideoCall = () => {
   /**
    * 向peer通道添加stream track数据
    */
-  const addTrack = (peerInstance: any) => {
+  const addTrack = (peerInstance: any, isOffer: boolean) => {
     const { username } = localInfoRef.current;
     const localStream = streamMap.current[username].stream.mediaStream;
 
@@ -349,27 +349,29 @@ export const VideoCall = () => {
 
     if (localStream) {
       localStream.getTracks().forEach((track: any) => {
-        console.log('add track: ', track);
-
-        // peerInstance.peer.addTrack(track, localStream);
-
-        peerInstance.peer.addTransceiver(track, {
-          streams: [localStream],
-          direction: 'sendrecv',
-          sendEncodings: [
-            {
-              maxFramerate: 30,
-              maxBitrate: 2000 * 1e3,
-            },
-          ],
-        });
+        if (isOffer) {
+          logger.log('trans....');
+          peerInstance.peer.addTransceiver(track, {
+            streams: [localStream],
+            direction: 'sendrecv',
+            sendEncodings: [
+              {
+                maxFramerate: 30,
+                maxBitrate: 2000 * 1e3,
+              },
+            ],
+          });
+        } else {
+          logger.log('addtrack....');
+          peerInstance.peer.addTrack(track, localStream);
+        }
       });
     }
   };
 
   const addStreams = () => {
     for (let peer in peerMap.current) {
-      addTrack(peerMap.current[peer]);
+      addTrack(peerMap.current[peer], true);
     }
   };
 
