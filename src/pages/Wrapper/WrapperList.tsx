@@ -110,7 +110,7 @@ export default function WrapperList(props: IProps) {
             const thumbUrl = `${httpServer}${thumb_url}`;
 
             return (
-              <div
+              <a
                 className="item"
                 key={id}
                 style={{
@@ -125,7 +125,7 @@ export default function WrapperList(props: IProps) {
                 }}
               >
                 <img src={thumbUrl} loading="lazy" alt="" />
-              </div>
+              </a>
             );
           })}
         </div>

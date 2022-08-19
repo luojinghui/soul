@@ -1,4 +1,10 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  useLayoutEffect,
+} from 'react';
 import { useRecoilState } from 'recoil';
 import { wrapperSizeState, wrapperSelectKey } from '@/store';
 import { IImgSize, IWrapperSelectKey } from '@/type';
@@ -9,6 +15,13 @@ import WrapperList from './WrapperList';
 import './index.less';
 
 const { TabPane } = Tabs;
+
+const addMeta = (name: string, content: string) => {
+  const meta = document.createElement('meta');
+  meta.content = content;
+  meta.name = name;
+  document.getElementsByTagName('head')[0].appendChild(meta);
+};
 
 export default function Wrapper() {
   const contentRef = useRef(null);
@@ -21,12 +34,17 @@ export default function Wrapper() {
     url: '',
   });
 
+  useLayoutEffect(() => {
+    addMeta('referrer', 'no-referrer');
+  }, []);
+
   // 初始化计算每个item的size信息
   useEffect(() => {
     resizePage();
     window.addEventListener('resize', resizePage);
     return () => {
       window.removeEventListener('resize', resizePage);
+      addMeta('referrer', 'strict-origin-when-cross-origin');
     };
   }, []);
 
