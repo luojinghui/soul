@@ -349,18 +349,20 @@ export const VideoCall = () => {
 
     if (localStream) {
       localStream.getTracks().forEach((track: any) => {
-        peerInstance.peer.addTrack(track, localStream);
+        console.log('add track: ', track);
 
-        // peerInstance.peer.addTransceiver(track, {
-        //   streams: [localStream],
-        //   direction: 'sendrecv',
-        //   sendEncodings: [
-        //     {
-        //       maxFramerate: 30,
-        //       maxBitrate: 2000 * 1e3,
-        //     },
-        //   ],
-        // });
+        // peerInstance.peer.addTrack(track, localStream);
+
+        peerInstance.peer.addTransceiver(track, {
+          streams: [localStream],
+          direction: 'sendrecv',
+          sendEncodings: [
+            {
+              maxFramerate: 30,
+              maxBitrate: 2000 * 1e3,
+            },
+          ],
+        });
       });
     }
   };
@@ -402,6 +404,13 @@ export const VideoCall = () => {
 
     channal.onclose = () => {
       logger.log('datachannel closed');
+    };
+
+    peer.oniceconnectionstatechange = (event) => {
+      // @ts-ignore
+      const state = event?.target?.iceConnectionState;
+
+      logger.log('ice state: ', state);
     };
 
     peer.ontrack = (event) => {
