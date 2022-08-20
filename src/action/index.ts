@@ -22,7 +22,7 @@ class Action {
 
     this.fileUploadHttp = new HttpClient({
       baseURL: httpServer,
-      timeout: 60000 * 5,
+      timeout: 60000 * 60,
     });
 
     this.oriHttp = new HttpClient({
