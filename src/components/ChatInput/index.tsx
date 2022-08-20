@@ -60,6 +60,8 @@ function ChatInput(props: IProps) {
 
   const [emojiVisible, setEmojiVisible] = useState(false);
   const [isMdMode, setIsMdMode] = useState(false);
+  const [fileProcess, setFileProcess] = useState<any>({});
+  const fileProcessRef = useRef<any>({});
 
   useImperativeHandle(props.chatRef, () => ({
     clickChatContent: () => {
@@ -331,7 +333,7 @@ function ChatInput(props: IProps) {
   };
 
   const onSendMusic = (item: any) => {
-    console.log('item: ', item);
+    logger.log('item: ', item);
 
     toggleMusicBox(false);
 
@@ -374,7 +376,7 @@ function ChatInput(props: IProps) {
       const result = await action.getCommentList();
 
       if (result?.code === 200) {
-        console.log('result: ', result);
+        logger.log('result: ', result);
 
         return {
           list: result.data,
@@ -382,13 +384,47 @@ function ChatInput(props: IProps) {
         };
       }
     } catch (err) {
-      console.log('get list error: ', err);
+      logger.log('get list error: ', err);
     }
 
     return {
       list: [],
       code: 300,
     };
+  };
+
+  const updateProcessObj = (name: string) => {
+    const nextprocessObj = JSON.parse(JSON.stringify(fileProcessRef.current));
+
+    nextprocessObj[name] = {
+      ...nextprocessObj[name],
+      state: 'Failed',
+    };
+
+    setFileProcess(nextprocessObj);
+    fileProcessRef.current = nextprocessObj;
+  };
+
+  const uploadCallback = (e: any, file: any) => {
+    logger.log('callback:', e, file);
+
+    const nextprocessObj = JSON.parse(JSON.stringify(fileProcessRef.current));
+    const { lengthComputable, loaded, total } = e;
+
+    const item = nextprocessObj[file.name];
+    const procent = +(loaded / total).toFixed(2) * 100;
+    const completed = loaded === total;
+
+    nextprocessObj[file.name] = {
+      ...item,
+      completed: lengthComputable ? loaded === total : true,
+      precent: `${procent}%`,
+      state: completed && item.state !== 'Failed' ? 'Done' : 'Uploading',
+    };
+
+    logger.log('nextprocessObj: ', nextprocessObj);
+    setFileProcess(nextprocessObj);
+    fileProcessRef.current = nextprocessObj;
   };
 
   const onInputImgs = async (e: any) => {
@@ -407,6 +443,22 @@ function ChatInput(props: IProps) {
       return;
     }
 
+    const fileProcessObj: any = Object.assign({}, fileProcessRef.current);
+
+    for (let i = 0; i < fileLen; i++) {
+      const item = fileList[i];
+
+      fileProcessObj[item.name] = {
+        name: item.name,
+        completed: false,
+        precent: '0%',
+        state: 'Uploading',
+      };
+    }
+
+    setFileProcess(fileProcessObj);
+    fileProcessRef.current = fileProcessObj;
+
     for (let i = 0; i < fileLen; i++) {
       const formData = new FormData();
       const userId = props.user?.id || '';
@@ -415,13 +467,22 @@ function ChatInput(props: IProps) {
       formData.append('userId', userId);
 
       action
-        .uploadImg(formData, userId)
+        .uploadImg(formData, userId, (e: any) => {
+          uploadCallback(e, fileList[i]);
+        })
         .then((res) => {
-          logger.log('upload success');
-          fileQueue.updateItem(insertIndex + i, Status.Success, res);
+          if (res && res.code === 200) {
+            logger.log('upload success');
+            fileQueue.updateItem(insertIndex + i, Status.Success, res);
+          } else {
+            message.warn(`（${fileList[i].name}）发送失败`);
+            fileQueue.updateItem(insertIndex + i, Status.Fail, res);
+
+            updateProcessObj(fileList[i].name);
+          }
         })
         .catch((err) => {
-          message.info('文件/图片发送失败');
+          message.warn(`（${fileList[i].name}）发送失败`);
           fileQueue.updateItem(insertIndex + i, Status.Fail, err);
         })
         .finally(() => {
@@ -430,17 +491,24 @@ function ChatInput(props: IProps) {
           fileQueue.check((result: any) => {
             logger.log('result: ', result);
 
-            const { data } = result;
-            const { fileUrl, fileName, mimeType, size, originalName } = data;
+            if (result && result.data) {
+              const { data } = result;
+              const { fileUrl, fileName, mimeType, size, originalName } = data;
 
-            props.onSendMessage({
-              msgType: 'file',
-              fileUrl,
-              fileName,
-              mimeType,
-              originalName,
-              size,
-            });
+              props.onSendMessage({
+                msgType: 'file',
+                fileUrl,
+                fileName,
+                mimeType,
+                originalName,
+                size,
+              });
+
+              setTimeout(() => {
+                setFileProcess({});
+                fileProcessRef.current = {};
+              }, 2000);
+            }
           });
         });
     }
@@ -465,8 +533,30 @@ function ChatInput(props: IProps) {
     }
   };
 
+  const renderUploadFileProcess = () => {
+    const keys = Object.keys(fileProcess);
+
+    return keys.map((key: string) => {
+      return (
+        <div className="file" key={key}>
+          <span className="name">{key}: </span>
+          <span className="process">
+            <span
+              className="line"
+              style={{
+                transform: `translateX(${fileProcess[key].precent})`,
+              }}
+            ></span>
+          </span>
+          <span className="state">{fileProcess[key].state}</span>
+        </div>
+      );
+    });
+  };
+
   return (
     <>
+      <div className="file-process">{renderUploadFileProcess()}</div>
       <div className="wrap">
         <Form
           ref={formRef}

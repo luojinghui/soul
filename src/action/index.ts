@@ -12,11 +12,17 @@ import { IWrapperSelectKey } from '@/type';
 class Action {
   private http: HttpClient;
   private oriHttp: HttpClient;
+  private fileUploadHttp: HttpClient;
 
   constructor() {
     this.http = new HttpClient({
       baseURL: httpServer,
       timeout: 20000,
+    });
+
+    this.fileUploadHttp = new HttpClient({
+      baseURL: httpServer,
+      timeout: 60000 * 5,
     });
 
     this.oriHttp = new HttpClient({
@@ -60,12 +66,25 @@ class Action {
     );
   }
 
-  async uploadImg(formdata: FormData, userId: string) {
-    return await this.http.post(
+  // async uploadImg(formdata: FormData, userId: string) {
+  //   return await this.fileUploadHttp.post(
+  //     `/api/rest/room/uploadImg?userId=${userId}`,
+  //     formdata,
+  //     {
+  //       headers: { 'Content-Type': 'multipart/form-data' },
+  //     }
+  //   );
+  // }
+
+  async uploadImg(formdata: FormData, userId: string, callback: any) {
+    return await this.fileUploadHttp.post(
       `/api/rest/room/uploadImg?userId=${userId}`,
       formdata,
       {
         headers: { 'Content-Type': 'multipart/form-data' },
+        onUploadProgress: (e: any) => {
+          callback(e);
+        },
       }
     );
   }
