@@ -395,7 +395,7 @@ export const VideoCall = () => {
   };
 
   const createPeer = (username: any) => {
-    const peer = new RTCPeerConnection();
+    const peer = new RTCPeerConnection(CONFIGURATION);
     const channal = peer.createDataChannel('sendChannel');
 
     logger.log('create peerconnection start');
