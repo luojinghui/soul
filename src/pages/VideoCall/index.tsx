@@ -29,6 +29,7 @@ export const VideoCall = () => {
   const isInitLocalStream = useRef<any>(false);
   const msgRef = useRef<any>([]);
   const msgEleRef = useRef<any>(null);
+  const channelRef = useRef(false);
 
   const userInfo = useRecoilValue(userInfoState);
 
@@ -199,7 +200,7 @@ export const VideoCall = () => {
       // 当前用户加入会议，向所有远端用户peer通道上添加local stream数据
       addStreams();
       // 当前用户加入会议，向所有远端用户发送offer数据，进行ice连接
-      sendOffers();
+      await sendOffers();
 
       isInitLocalStream.current = true;
     } catch (err) {
@@ -263,29 +264,29 @@ export const VideoCall = () => {
       await peerInstance?.setRemoteDescription(
         new RTCSessionDescription(offer)
       );
+      logger.log('set remote desc succ');
     } catch (err) {
       logger.log('handle offer error: ', err);
     }
 
-    // Create an answer to an offer
-    peerInstance?.createAnswer(
-      (answer: any) => {
-        logger.log('created answer sdp: ', answer);
+    try {
+      // Create an answer to an offer
+      const answer = await peerInstance?.createAnswer();
 
-        peerInstance.setLocalDescription(answer);
+      logger.log('created answer sdp: ', answer);
 
-        sendMessage({
-          type: 'answer',
-          data: {
-            answer,
-            connectedName: callName,
-          },
-        });
-      },
-      (error: any) => {
-        logger.log('creating an answer error: ', error);
-      }
-    );
+      await peerInstance.setLocalDescription(answer);
+
+      sendMessage({
+        type: 'answer',
+        data: {
+          answer,
+          connectedName: callName,
+        },
+      });
+    } catch (error: any) {
+      logger.log('creating an answer error: ', error);
+    }
   };
 
   // 呼叫会议状态
@@ -298,7 +299,7 @@ export const VideoCall = () => {
     }
   };
 
-  const sendOffers = () => {
+  const sendOffers = async () => {
     const userList = userListRef.current;
     const { username } = roomRef.current;
 
@@ -307,12 +308,12 @@ export const VideoCall = () => {
         // 新增远端用户，需要初始化PeerConnection
         logger.log('is Remote, send offer...');
 
-        sendOffer(name);
+        await sendOffer(name);
       }
     }
   };
 
-  const sendOffer = (name: any) => {
+  const sendOffer = async (name: any) => {
     const { peer } = peerMap.current[name] || {};
 
     logger.log('send offer: ', {
@@ -320,7 +321,12 @@ export const VideoCall = () => {
       name,
     });
 
-    const successCallback = (offer: any) => {
+    try {
+      const offer = await peer?.createOffer();
+
+      logger.log('create offer: ', offer);
+
+      peer.setLocalDescription(offer);
       sendMessage({
         type: 'offer',
         data: {
@@ -328,14 +334,10 @@ export const VideoCall = () => {
           connectedName: name,
         },
       });
-      peer?.setLocalDescription(offer);
-    };
-
-    const failureCallback = (err: any) => {
+      logger.log('send offer success');
+    } catch (err: any) {
       logger.log('create offer error: ', err);
-    };
-
-    peer?.createOffer(successCallback, failureCallback);
+    }
   };
 
   /**
@@ -401,6 +403,7 @@ export const VideoCall = () => {
     peerMap.current[username] = { peer, channal };
 
     channal.onopen = () => {
+      channelRef.current = true;
       logger.log('datachannel open');
     };
 
@@ -584,8 +587,12 @@ export const VideoCall = () => {
       for (let username in peerMap.current) {
         const { channal } = peerMap.current[username];
 
-        updateMsgList(msg);
-        channal.send(JSON.stringify(msg));
+        if (channelRef.current) {
+          updateMsgList(msg);
+          channal.send(JSON.stringify(msg));
+        } else {
+          message.info('Data Channel Not Opened');
+        }
       }
     }
 
@@ -596,6 +603,7 @@ export const VideoCall = () => {
    * 挂断会议
    */
   const endCall = () => {
+    channelRef.current = false;
     socket.current.disconnect();
 
     for (let key in streamMap.current) {
