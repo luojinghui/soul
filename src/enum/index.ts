@@ -25,7 +25,6 @@ export const DEFAULT_ICE_SERVER = {
 export const CONFIGURATION: any = {
   iceServers: [
     'stun:stun.voxgratia.org',
-    DEFAULT_ICE_SERVER,
     {
       urls: 'turn:numb.viagenie.ca',
       credential: 'muazkh',
