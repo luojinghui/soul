@@ -24,7 +24,7 @@ export const DEFAULT_ICE_SERVER = {
 
 export const CONFIGURATION: any = {
   iceServers: [
-    'stun:stun.voxgratia.org',
+    { urls: 'stun:stun.voxgratia.org' },
     {
       urls: 'turn:192.158.29.39:3478?transport=udp',
       credential: 'JZEOEt2V3Qb0y27GRntt2u2PAYA=',
