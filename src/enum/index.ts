@@ -33,7 +33,7 @@ export const CONFIGURATION: any = {
       username: 'webrtc@live.com',
     },
   ],
-  iceTransportPolicy: 'all',
+  iceTransportPolicy: 'relay',
   bundlePolicy: 'max-bundle',
   rtcpMuxPolicy: 'require',
   iceCandidatePoolSize: 0,
