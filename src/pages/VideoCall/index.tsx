@@ -419,6 +419,10 @@ export const VideoCall = () => {
       logger.log('ice state: ', state);
     };
 
+    peer.onicecandidateerror = (event) => {
+      logger.log('ice candidate error: ', event);
+    };
+
     peer.ontrack = (event) => {
       logger.log('track event: ', event);
 
