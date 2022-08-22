@@ -27,6 +27,11 @@ export const CONFIGURATION: any = {
     {
       urls: 'stun:meet-jit-si-turnrelay.jitsi.net:443?transport=tcp',
     },
+    {
+      urls: 'turn:numb.viagenie.ca',
+      credential: 'muazkh',
+      username: 'webrtc@live.com',
+    },
   ],
   iceTransportPolicy: 'all',
   bundlePolicy: 'max-bundle',
