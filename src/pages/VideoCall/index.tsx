@@ -416,7 +416,7 @@ export const VideoCall = () => {
       // @ts-ignore
       const state = event?.target?.iceConnectionState;
 
-      logger.log('ice state: ', state);
+      logger.log('ice state change: ', state);
     };
 
     peer.onicecandidateerror = (event) => {

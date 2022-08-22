@@ -24,14 +24,19 @@ export const DEFAULT_ICE_SERVER = {
 
 export const CONFIGURATION: any = {
   iceServers: [
+    // {
+    //   urls: 'stun:meet-jit-si-turnrelay.jitsi.net:443?transport=tcp',
+    // },
     {
-      urls: 'stun:meet-jit-si-turnrelay.jitsi.net:443?transport=tcp',
+      urls: 'turn:120.48.66.29:3478',
+      credential: '123456',
+      username: 'luojh',
     },
-    {
-      urls: 'turn:numb.viagenie.ca',
-      credential: 'muazkh',
-      username: 'webrtc@live.com',
-    },
+    // {
+    //   urls: 'turn:numb.viagenie.ca',
+    //   credential: 'muazkh',
+    //   username: 'webrtc@live.com',
+    // },
   ],
   iceTransportPolicy: 'relay',
   bundlePolicy: 'max-bundle',
