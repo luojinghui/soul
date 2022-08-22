@@ -27,15 +27,10 @@ export const CONFIGURATION: any = {
     // {
     //   urls: 'stun:meet-jit-si-turnrelay.jitsi.net:443?transport=tcp',
     // },
-    // {
-    //   urls: 'turn:120.48.66.29:3478',
-    //   credential: '123456',
-    //   username: 'luojh',
-    // },
     {
-      urls: 'turn:numb.viagenie.ca',
-      credential: 'muazkh',
-      username: 'webrtc@live.com',
+      urls: 'turn:120.48.66.29:3478',
+      credential: '123456',
+      username: 'luojh',
     },
   ],
   iceTransportPolicy: 'relay',
