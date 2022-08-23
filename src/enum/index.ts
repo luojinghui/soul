@@ -24,18 +24,16 @@ export const DEFAULT_ICE_SERVER = {
 
 export const CONFIGURATION: any = {
   iceServers: [
-    // {
-    //   urls: 'stun:meet-jit-si-turnrelay.jitsi.net:443?transport=tcp',
-    // },
     {
       urls: 'turn:120.48.66.29:3478',
       credential: '123456',
       username: 'luojh',
     },
   ],
-  iceTransportPolicy: 'relay',
+  iceTransportPolicy: 'all',
   bundlePolicy: 'max-bundle',
   rtcpMuxPolicy: 'require',
   iceCandidatePoolSize: 0,
+  IceTransportsType: 'all',
   sdpSemantics: 'unified-plan',
 };
