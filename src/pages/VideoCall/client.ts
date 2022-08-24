@@ -20,6 +20,7 @@ export default class Client extends Emmitter {
   private isInitLocalStream: boolean;
   private isChannelOk: boolean;
   private msgList: any[];
+  private audioStreams: any[];
 
   constructor(config: Config) {
     super();
@@ -40,6 +41,7 @@ export default class Client extends Emmitter {
     this.peerMap = {};
     this.isInitLocalStream = false;
     this.isChannelOk = false;
+    this.audioStreams = [];
     this.init();
   }
 
@@ -307,6 +309,9 @@ export default class Client extends Emmitter {
 
     if (localStream) {
       localStream.getTracks().forEach((track: any) => {
+        console.log('track: ', track);
+        console.log('track kind: ', track.kind);
+
         if (isOffer) {
           logger.log('trans....');
           const transceiver = peerInstance.peer.addTransceiver(track, {
@@ -390,17 +395,27 @@ export default class Client extends Emmitter {
     peer.ontrack = (event) => {
       logger.log('track event: ', event);
 
-      const mediaStream = event.streams[0];
-      const streamInstance = new Stream();
+      if (event.track.kind === 'video') {
+        const mediaStream = event.streams[0];
+        const streamInstance = new Stream();
 
-      streamInstance.setStream(mediaStream);
+        streamInstance.setStream(mediaStream);
 
-      this.streamMap[username] = {
-        stream: streamInstance.getStream(),
-        streamInstance,
-      };
+        this.streamMap[username] = {
+          stream: streamInstance.getStream(),
+          streamInstance,
+        };
 
-      this.createLayout();
+        this.createLayout();
+      } else if (event.track.kind === 'audio') {
+        this.audioStreams.push(event.streams[0]);
+
+        this.emmit('audio-list', {
+          code: 200,
+          msg: 'ok',
+          data: this.audioStreams,
+        });
+      }
     };
 
     peer.onicecandidate = (event) => {
@@ -650,6 +665,24 @@ export default class Client extends Emmitter {
           console.log('set params err: ', err);
         }
       });
+    }
+  }
+
+  public switchMic(mic: boolean) {
+    console.log('mic: ', mic);
+
+    try {
+      const { username } = this.callConfig;
+      const localStream = this.streamMap[username];
+
+      const mediastream = localStream.stream.mediaStream;
+      const track = mediastream.getAudioTracks();
+
+      console.log('track: ', track);
+
+      track[0].enabled = mic;
+    } catch (err: any) {
+      console.log('apply audio erro: ', err);
     }
   }
 

@@ -64,6 +64,7 @@ const Video = (props: any) => {
         style={localStyle}
         ref={videoRef}
         autoPlay
+        muted={true}
         playsInline
         controls={false}
         className="video"

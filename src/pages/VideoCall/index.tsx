@@ -3,6 +3,7 @@ import { Button, Input, Form, message, Radio } from 'antd';
 import { RightOutlined, LeftOutlined } from '@ant-design/icons';
 import { MS, imServer } from '@/enum';
 import Video from './video';
+import Audio from './audio';
 import { Header } from '@/components';
 import { useRecoilValue } from 'recoil';
 import { userInfoState } from '@/store';
@@ -22,11 +23,13 @@ export const VideoCall = () => {
 
   // 当前用户信息
   const [layoutList, setLayoutList] = useState<any>([]);
+  const [audioList, setAudioList] = useState<any>([]);
   const [msgList, setMsgList] = useState([]);
   // 当前呼叫状态,login/meeting
   const [meetingStatus, setMeetingStatus] = useState(MS[301].code);
   const [showIM, setShowIM] = useState(false);
   const [debug, setDebug] = useState(false);
+  const [mic, setMic] = useState(true);
 
   useEffect(() => {
     return () => {
@@ -62,6 +65,10 @@ export const VideoCall = () => {
       setLayoutList(e.data);
     });
 
+    client.current.on('audio-list', (e: ClientEvent) => {
+      setAudioList(e.data);
+    });
+
     client.current.join(roomRef.current);
   };
 
@@ -73,7 +80,7 @@ export const VideoCall = () => {
 
   // 加入房间
   const onCallMeeting = async (values: callConfig) => {
-    const val = { ...values, video: true, audio: false };
+    const val = { ...values, video: true, audio: true };
     // 缓存入会信息
     roomRef.current = val;
 
@@ -198,6 +205,14 @@ export const VideoCall = () => {
     }
   };
 
+  const toggleMic = () => {
+    setMic(!mic);
+
+    if (client.current) {
+      client.current.switchMic(!mic);
+    }
+  };
+
   const renderMeeting = () => {
     if (!(meetingStatus === MS[200].code)) {
       return null;
@@ -207,13 +222,22 @@ export const VideoCall = () => {
       return <Video item={val} debug={debug} key={val.username} />;
     });
 
+    const audios = audioList.map((val: any) => {
+      return <Audio key={val.id} item={val} streamId={val.id} />;
+    });
+
     return (
       <div className="layout">
         <div className="video-box">{layout}</div>
 
+        <div className="audio-box">{audios}</div>
+
         <div className="operate">
           <Button type="primary" className="btn" onClick={toggleDebug}>
             Debug
+          </Button>
+          <Button type="primary" className="btn" onClick={toggleMic}>
+            {mic ? '关闭麦克风' : '开启麦克风'}
           </Button>
           <Button type="primary" className="btn" onClick={endCall}>
             挂断
