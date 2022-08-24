@@ -2,12 +2,9 @@
  * Stream lib
  */
 
-const VIDEO_CONSTRAINTS = {
-  aspectRatio: 1.777,
-  resizeMode: 'crop-and-scale',
-  width: 1280,
-  height: 720,
-};
+import { VIDEO_CONSTRAINTS, ResolutionMap } from '@/enum';
+import logger from '@/utils/log';
+import { callConfig, Resolution } from './type';
 
 class Stream {
   public mediaStream: any;
@@ -47,13 +44,41 @@ class Stream {
     }
   }
 
-  async initStream(config: any) {
-    const { video = true, audio = true } = config || {};
+  getCons(resolution: Resolution) {
+    const videoSetting = Object.assign(
+      {},
+      VIDEO_CONSTRAINTS,
+      ResolutionMap[resolution]
+    );
+
+    return videoSetting;
+  }
+
+  async initStream(config: callConfig) {
+    const { video = false, audio = false, resolution } = config || {};
     const constraints: any = {};
     constraints.audio = audio;
+    let videoSetting: any = false;
 
-    const videoCons = video ? VIDEO_CONSTRAINTS : false;
-    constraints.video = videoCons;
+    if (video) {
+      if (typeof video === 'boolean') {
+        videoSetting = Object.assign(
+          {},
+          VIDEO_CONSTRAINTS,
+          ResolutionMap[resolution]
+        );
+      } else if (typeof video === 'object') {
+        videoSetting = Object.assign(
+          {},
+          VIDEO_CONSTRAINTS,
+          ResolutionMap[resolution],
+          video
+        );
+      }
+    }
+    constraints.video = videoSetting;
+
+    logger.log('initStream constraints: ', constraints);
 
     if (!constraints.video && !constraints.audio) {
       this.mediaStream = null;

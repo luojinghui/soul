@@ -5,7 +5,7 @@
  * @author jinghui-Luo
  *
  * Created at     : 2022-06-22 11:49:36
- * Last modified  : 2022-07-25 00:20:34
+ * Last modified  : 2022-08-23 21:16:54
  */
 
 import VConsole from 'vconsole';
@@ -39,6 +39,10 @@ class Logger {
     if (this.level === Level.info) {
       console.log(`[${getMillTime()}]`, title, content, ...rest);
     }
+  }
+
+  importantLog(content: string) {
+    console.info(`[${getMillTime()}]`, content);
   }
 
   warn(...rest: any) {
