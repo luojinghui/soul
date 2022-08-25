@@ -1,6 +1,7 @@
 import { ManagerOptions, SocketOptions } from 'socket.io-client';
 
 export type Resolution = '180' | '360' | '720';
+export type Codec = 'all' | 'h264';
 
 export interface callConfig {
   audio: boolean;
@@ -9,6 +10,7 @@ export interface callConfig {
   video: boolean;
   policy: 'all' | 'relay';
   resolution: Resolution;
+  codec: Codec;
 }
 
 export interface ClientEvent {

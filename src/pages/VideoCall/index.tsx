@@ -165,6 +165,13 @@ export const VideoCall = () => {
               </Radio.Group>
             </Form.Item>
 
+            <Form.Item name="codec" label="编解码器" initialValue="all">
+              <Radio.Group>
+                <Radio value="all">智能</Radio>
+                <Radio value="h264">H264</Radio>
+              </Radio.Group>
+            </Form.Item>
+
             <Form.Item
               className="join-btn"
               wrapperCol={{ offset: 8, span: 16 }}

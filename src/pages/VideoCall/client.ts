@@ -34,6 +34,7 @@ export default class Client extends Emmitter {
       meetingId: '',
       policy: 'all',
       resolution: '720',
+      codec: 'all',
     };
     this.msgList = [];
     this.userMap = new Map();
@@ -293,9 +294,56 @@ export default class Client extends Emmitter {
   }
 
   private addStreams() {
-    for (let peer in this.peerMap) {
-      this.addTrack(this.peerMap[peer], true);
+    for (let key in this.peerMap) {
+      this.addTrack(this.peerMap[key], true);
+
+      if (this.callConfig.codec === 'h264') {
+        this.setCodec(this.peerMap[key]);
+      }
     }
+  }
+
+  private setCodec(peerInstance: any) {
+    const { peer } = peerInstance;
+    const h264Codecs = this.getH264CodecList();
+
+    logger.log('h264Codecs: ', h264Codecs);
+
+    const transciver = peer.getTransceivers() || [];
+    logger.log('transciver: ', transciver);
+
+    try {
+      transciver.forEach((item: RTCRtpTransceiver) => {
+        if (item?.sender?.track?.kind === 'video') {
+          logger.log('set h264 codec: ', h264Codecs);
+
+          item.setCodecPreferences(h264Codecs);
+        }
+      });
+    } catch (err: any) {
+      logger.log('set codec error: ', err);
+    }
+  }
+
+  private getH264CodecList() {
+    const supportsSetCodecPreferences =
+      window.RTCRtpTransceiver &&
+      'setCodecPreferences' in window.RTCRtpTransceiver.prototype;
+
+    if (supportsSetCodecPreferences) {
+      const { codecs } = RTCRtpSender.getCapabilities('video') || {
+        codecs: [],
+      };
+      const h264Codecs = codecs.filter((item) =>
+        ['video/red', 'video/ulpfec', 'video/rtx', 'video/H264'].includes(
+          item.mimeType
+        )
+      );
+
+      return h264Codecs;
+    }
+
+    return [];
   }
 
   /**
@@ -707,6 +755,7 @@ export default class Client extends Emmitter {
       meetingId: '',
       policy: 'all',
       resolution: '720',
+      codec: 'all',
     };
     this.msgList = [];
     this.userMap = new Map();
