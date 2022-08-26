@@ -199,7 +199,7 @@ export const VideoCall = () => {
   const onSwitchResolution = async (e: any) => {
     const value = e.target.value;
 
-    if (value !== roomRef.current.resolution) {
+    if (value) {
       await client.current?.setResolution(value);
     }
   };
