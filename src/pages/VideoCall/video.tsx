@@ -15,6 +15,15 @@ const Video = (props: any) => {
       !videoRef.current.srcObject
     ) {
       videoRef.current.srcObject = stream.mediaStream;
+
+      videoRef.current
+        .play()
+        .then(() => {
+          console.log('play video success');
+        })
+        .catch((err: any) => {
+          console.log('play video failed: ', err);
+        });
     }
 
     return () => {
@@ -52,7 +61,7 @@ const Video = (props: any) => {
         timerRef.current = null;
       }
     };
-  }, [debug]);
+  }, [debug, stream]);
 
   const localStyle = React.useMemo(() => {
     return isLocal ? { transform: 'scaleX(-1)' } : {};
@@ -68,6 +77,7 @@ const Video = (props: any) => {
         playsInline
         controls={false}
         className="video"
+        id={id}
       ></video>
 
       {!item.video && <div className="video video-status">视频暂停中</div>}
@@ -75,9 +85,10 @@ const Video = (props: any) => {
       <span className="name">{username}</span>
 
       {debug && (
-        <span className="name">{`${setting.width || 0} * ${
-          setting.height || 0
-        }`}</span>
+        <span className="name">
+          {`${setting.width || 0} * ${setting.height || 0}`} |
+          {setting.frameRate}帧/s
+        </span>
       )}
     </div>
   );

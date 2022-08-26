@@ -488,7 +488,7 @@ export default class Client extends Emmitter {
     peer.ondatachannel = (event: any) => {
       const receiveChannel = event.channel;
 
-      receiveChannel.onmessage = this.onIMMessage;
+      receiveChannel.onmessage = this.onIMMessage.bind(this);
 
       receiveChannel.onopen = (event: any) => {
         logger.log('im open event: ', event);

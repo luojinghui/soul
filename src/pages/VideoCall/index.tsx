@@ -8,10 +8,14 @@ import { Header } from '@/components';
 import { useRecoilValue } from 'recoil';
 import { userInfoState } from '@/store';
 import logger from '@/utils/log';
+import { platform } from '@/utils/browser';
+
 import './index.less';
 
 import Client from './client';
 import { ClientEvent, callConfig } from './type';
+
+const browser = platform();
 
 export const VideoCall = () => {
   const client = useRef<Client>();
@@ -108,6 +112,7 @@ export const VideoCall = () => {
     setMeetingStatus(MS[301].code);
     setLayoutList([]);
     setMsgList([]);
+    setDebug(false);
   };
 
   const renderCall = () => {
@@ -220,6 +225,25 @@ export const VideoCall = () => {
     }
   };
 
+  const playVideos = () => {
+    console.log('layoutList: ', layoutList);
+
+    layoutList.forEach((item: any) => {
+      const videoEle = document.getElementById(item.id) as HTMLVideoElement;
+
+      if (videoEle) {
+        videoEle
+          .play()
+          .then(() => {
+            console.log('video play success');
+          })
+          .catch((err) => {
+            console.log('video play failed: ', err);
+          });
+      }
+    });
+  };
+
   const renderMeeting = () => {
     if (!(meetingStatus === MS[200].code)) {
       return null;
@@ -243,6 +267,11 @@ export const VideoCall = () => {
           <Button type="primary" className="btn" onClick={toggleDebug}>
             Debug
           </Button>
+          {browser.isSafari && (
+            <Button type="primary" className="btn" onClick={playVideos}>
+              播放
+            </Button>
+          )}
           <Button type="primary" className="btn" onClick={toggleMic}>
             {mic ? '关闭麦克风' : '开启麦克风'}
           </Button>
