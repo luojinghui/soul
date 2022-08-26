@@ -23,6 +23,15 @@ const Audio = (props: IProps) => {
     const audioEle = audioRef.current;
     if (audioEle && !audioEle.srcObject && streamId) {
       audioEle.srcObject = item;
+
+      audioEle
+        .play()
+        .then(() => {
+          console.log('play audio success');
+        })
+        .catch((err: any) => {
+          console.log('play audio failed: ', err);
+        });
     }
 
     // react hook 组件销毁时的回调函数
