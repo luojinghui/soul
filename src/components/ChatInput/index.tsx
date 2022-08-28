@@ -71,6 +71,10 @@ function ChatInput(props: IProps) {
     },
   }));
 
+  useEffect(() => {
+    props.onStateChange();
+  }, [fileProcess]);
+
   const getKeyWords = (str: string, type: string = 'src') => {
     let reg = /src="(.*?)\"/g;
 
