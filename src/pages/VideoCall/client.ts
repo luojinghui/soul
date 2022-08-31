@@ -465,6 +465,8 @@ export default class Client extends Emmitter {
         const stream7 = stream.clone();
         const stream8 = stream.clone();
         const stream9 = stream.clone();
+        const stream10 = stream.clone();
+        const stream11 = stream.clone();
 
         this.audioStreams.push(stream);
         this.audioStreams.push(stream2);
@@ -475,6 +477,8 @@ export default class Client extends Emmitter {
         this.audioStreams.push(stream7);
         this.audioStreams.push(stream8);
         this.audioStreams.push(stream9);
+        this.audioStreams.push(stream10);
+        this.audioStreams.push(stream11);
 
         console.log('audio stream:', this.audioStreams);
 
