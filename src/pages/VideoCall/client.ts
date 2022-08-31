@@ -456,7 +456,27 @@ export default class Client extends Emmitter {
 
         this.createLayout();
       } else if (event.track.kind === 'audio') {
-        this.audioStreams.push(event.streams[0]);
+        const stream = event.streams[0];
+        const stream2 = stream.clone();
+        const stream3 = stream.clone();
+        const stream4 = stream.clone();
+        const stream5 = stream.clone();
+        const stream6 = stream.clone();
+        const stream7 = stream.clone();
+        const stream8 = stream.clone();
+        const stream9 = stream.clone();
+
+        this.audioStreams.push(stream);
+        this.audioStreams.push(stream2);
+        this.audioStreams.push(stream3);
+        this.audioStreams.push(stream4);
+        this.audioStreams.push(stream5);
+        this.audioStreams.push(stream6);
+        this.audioStreams.push(stream7);
+        this.audioStreams.push(stream8);
+        this.audioStreams.push(stream9);
+
+        console.log('audio stream:', this.audioStreams);
 
         this.emmit('audio-list', {
           code: 200,
