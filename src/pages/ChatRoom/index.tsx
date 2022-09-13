@@ -394,11 +394,11 @@ function ChatRoom() {
                     <div className="name">{name}</div>
                   )}
                   <div
-                    onContextMenu={(e: any) => {
-                      e.preventDefault();
+                    // onContextMenu={(e: any) => {
+                    //   e.preventDefault();
 
-                      onContextmenu(item, e);
-                    }}
+                    //   onContextmenu(item, e);
+                    // }}
                   >
                     {isRenderContent ? (
                       <div
