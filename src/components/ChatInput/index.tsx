@@ -89,7 +89,8 @@ function ChatInput(props: IProps) {
     for (let i = 0; i < len; i++) {
       let val = matchList[i];
       const data = val.match(reg) || [];
-      val = val.replace(data[0], '');
+
+      val = val.replace(data[0] as any, '');
 
       list.push(RegExp.$1);
     }
@@ -693,9 +694,9 @@ function ChatInput(props: IProps) {
             return (
               <div key={id} className="panel">
                 <div className="info">
-                  <div className="cover">
+                  {/* <div className="cover">
                     <img src={cover} loading="lazy" alt="" />
-                  </div>
+                  </div> */}
                   <div className="song">
                     {song} - {sing}
                   </div>

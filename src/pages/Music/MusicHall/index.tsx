@@ -85,9 +85,9 @@ export default function MusicHall() {
             playMusic(list[index]);
           }}
         >
-          <div className="avatar">
+          {/* <div className="avatar">
             <img src={cover} loading="lazy" alt="" />
-          </div>
+          </div> */}
           <div className="info">
             <div>
               <span className="title">{song}</span>
