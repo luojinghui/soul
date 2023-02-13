@@ -3,23 +3,29 @@ import Router from './route';
 import { BrowserRouter } from 'react-router-dom';
 import reportWebVitals from './reportWebVitals';
 import { RecoilRoot } from 'recoil';
+import { Button, ConfigProvider } from 'antd';
 import '@/assets/style/index.less';
 
 // import VConsole from 'vconsole';
 // const vConsole = new VConsole();
 
-const root = ReactDOM.createRoot(
-  document.getElementById('root') as HTMLElement
-);
+const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 
 root.render(
-  // <React.StrictMode>
   <RecoilRoot>
     <BrowserRouter>
-      <Router />
+      <ConfigProvider
+        theme={{
+          token: {
+            // colorPrimary: '#1f1f1f',
+            borderRadius: 4
+          },
+        }}
+      >
+        <Router />
+      </ConfigProvider>
     </BrowserRouter>
   </RecoilRoot>
-  // </React.StrictMode>
 );
 
 // If you want to start measuring performance in your app, pass a function

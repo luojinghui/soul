@@ -1,23 +1,23 @@
-import { useCallback, useEffect, useState } from 'react';
-import { message, Popover, Tabs } from 'antd';
-import { PlusOutlined, PushpinFilled } from '@ant-design/icons';
-import { Header, AddRoomMoel } from '@/components';
-import { useNavigate } from 'react-router-dom';
-import action from '@/action';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useCallback, useEffect, useState } from "react";
+import { message, Popover, Tabs } from "antd";
+import { PlusOutlined, PushpinFilled } from "@ant-design/icons";
+import { Header, AddRoomMoel } from "@/components";
+import { useNavigate } from "react-router-dom";
+import action from "@/action";
+import { useRecoilState, useRecoilValue } from "recoil";
 import {
   userInfoState,
   allRoomListState,
   joinedRoomListState,
   mineRoomListState,
   activeKeyState,
-} from '@/store';
-import { httpServer } from '@/enum';
-import { IActiveKey } from '@/type';
-import { platform } from '@/utils/browser';
+} from "@/store";
+import { httpServer } from "@/enum";
+import { IActiveKey } from "@/type";
+import { platform } from "@/utils/browser";
 
-import logo from '@/assets/images/logo.svg';
-import './index.less';
+import logo from "@/assets/images/logo.svg";
+import "./index.less";
 
 const { TabPane } = Tabs;
 const browser = platform();
@@ -37,7 +37,7 @@ export const ChatHall = () => {
       if (userInfo) {
         await getRoomList(activeKey);
       } else {
-        message.info('无用户信息，请先创建');
+        message.info("无用户信息，请先创建");
       }
     })();
   }, [userInfo, activeKey]);
@@ -51,11 +51,11 @@ export const ChatHall = () => {
         return nextItem.isFixed - item.isFixed;
       });
 
-      if (filter === 'all') {
+      if (filter === "all") {
         setAllRoomList(nextList);
-      } else if (filter === 'join') {
+      } else if (filter === "join") {
         setJoinedRoomList(nextList);
-      } else if (filter === 'mine') {
+      } else if (filter === "mine") {
         setMineRoomList(nextList);
       }
     }
@@ -66,10 +66,10 @@ export const ChatHall = () => {
   };
 
   const onCreateOK = async () => {
-    setActiveKey('mine');
+    setActiveKey("mine");
 
-    if (activeKey === 'mine') {
-      await getRoomList('mine');
+    if (activeKey === "mine") {
+      await getRoomList("mine");
     }
   };
 
@@ -85,9 +85,9 @@ export const ChatHall = () => {
     (filter: IActiveKey) => {
       let list = allRoomList;
 
-      if (filter === 'join') {
+      if (filter === "join") {
         list = joinedRoomList;
-      } else if (filter === 'mine') {
+      } else if (filter === "mine") {
         list = mineRoomList;
       }
 
@@ -154,11 +154,12 @@ export const ChatHall = () => {
             className="sour_header_tabs"
             activeKey={activeKey}
             onChange={onChange}
-          >
-            <TabPane tab="大厅" key="all"></TabPane>
-            <TabPane tab="参与" key="join"></TabPane>
-            <TabPane tab="我的" key="mine"></TabPane>
-          </Tabs>
+            items={[
+              { label: "大厅", key: "all" },
+              { label: "参与", key: "join" },
+              { label: "参与", key: "mine" },
+            ]}
+          ></Tabs>
         }
         rightContent=""
       ></Header>
@@ -166,19 +167,19 @@ export const ChatHall = () => {
       {/* 聊天内容 */}
       <div className="im-content">
         <div
-          className={`room-list ${activeKey === 'all' ? 'active' : 'hidden'}`}
+          className={`room-list ${activeKey === "all" ? "active" : "hidden"}`}
         >
-          {renderRoomList('all')}
+          {renderRoomList("all")}
         </div>
         <div
-          className={`room-list ${activeKey === 'join' ? 'active' : 'hidden'}`}
+          className={`room-list ${activeKey === "join" ? "active" : "hidden"}`}
         >
-          {renderRoomList('join')}
+          {renderRoomList("join")}
         </div>
         <div
-          className={`room-list ${activeKey === 'mine' ? 'active' : 'hidden'}`}
+          className={`room-list ${activeKey === "mine" ? "active" : "hidden"}`}
         >
-          {renderRoomList('mine')}
+          {renderRoomList("mine")}
         </div>
       </div>
 
@@ -192,7 +193,7 @@ export const ChatHall = () => {
       <Popover
         placement="left"
         title={false}
-        content={browser.isPc ? '创建星球' : ''}
+        content={browser.isPc ? "创建星球" : ""}
       >
         <div className="fixed-btn" onClick={onShowAddRoom}>
           <PlusOutlined className="icon setting" />

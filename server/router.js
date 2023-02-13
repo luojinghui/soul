@@ -5,7 +5,7 @@
  * @author jinghui-Luo
  *
  * Created at     : 2021-04-09 14:17:34
- * Last modified  : 2022-07-25 11:52:47
+ * Last modified  : 2023-02-13 19:52:44
  */
 
 const express = require('express');
@@ -26,6 +26,8 @@ router.get('/api/rest/test', apiController.test);
  */
 // 用户注册
 router.post('/api/rest/user/register', apiController.registerUser);
+// 检查用户有效性
+router.get('/api/rest/user/checkId', apiController.checkUserInfo);
 // 获取用户信息
 router.get('/api/rest/user/info', apiController.getUserInfo);
 // 更新用户信息
@@ -55,10 +57,7 @@ router.get('/api/happy/v2/wrappaper', thirdController.happyWrapperV2);
 /**
  * 三方音乐API
  */
-router.get(
-  '/api/song/playlist/highquality',
-  songController.playlistHighquality
-);
+router.get('/api/song/playlist/highquality', songController.playlistHighquality);
 // 获取网友精选碟歌单
 router.get('/api/song/top/playlist', songController.top_playlist);
 // 获取获得每日推荐歌曲 ( 需要登录 )

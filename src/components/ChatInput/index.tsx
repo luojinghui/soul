@@ -480,14 +480,14 @@ function ChatInput(props: IProps) {
             logger.log('upload success');
             fileQueue.updateItem(insertIndex + i, Status.Success, res);
           } else {
-            message.warn(`（${fileList[i].name}）发送失败`);
+            message.warning(`（${fileList[i].name}）发送失败`);
             fileQueue.updateItem(insertIndex + i, Status.Fail, res);
 
             updateProcessObj(fileList[i].name);
           }
         })
         .catch((err) => {
-          message.warn(`（${fileList[i].name}）发送失败`);
+          message.warning(`（${fileList[i].name}）发送失败`);
           fileQueue.updateItem(insertIndex + i, Status.Fail, err);
         })
         .finally(() => {

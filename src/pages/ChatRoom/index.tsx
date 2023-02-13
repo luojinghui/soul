@@ -1,10 +1,4 @@
-import {
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-  useLayoutEffect,
-} from 'react';
+import { useCallback, useEffect, useRef, useState, useLayoutEffect } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { message, Image } from 'antd';
 import { PlayCircleOutlined, FileFilled } from '@ant-design/icons';
@@ -91,31 +85,14 @@ function ChatRoom() {
     (async () => {
       const { roomId } = params;
       const { id: userId } = userRef.current;
-      const result = await action.getRoomInfo(roomId, userId);
+      const res = await action.getRoomInfo(roomId, userId);
 
-      // 房间号不存在
-      if (result?.code === 204 && roomId !== '888') {
+      if (res?.code === 200) {
+        setRoomInfo(res.data);
+        connectWss();
+      } else {
         message.info('房间不存在，请先创建房间！');
         onBack();
-        return;
-      }
-
-      if (result?.code === 204 && roomId === '888') {
-        const createResult = await action.createRootRoom({ roomId, userId });
-
-        if (createResult?.code === 200) {
-          setRoomInfo(createResult.data);
-          connectWss();
-          return;
-        } else {
-          message.info('创建房间失败，请稍后重试');
-          return;
-        }
-      }
-
-      if (result?.code === 200) {
-        setRoomInfo(result.data);
-        connectWss();
       }
     })();
   }, []);
@@ -286,19 +263,8 @@ function ChatRoom() {
     return (
       <div className="chat-list" ref={chatRef}>
         {messageList.map((item: any) => {
-          const {
-            avatarType,
-            userId,
-            name,
-            _id,
-            content,
-            avatar,
-            msgType,
-            fileUrl,
-            fileName,
-            originalName,
-            mimeType,
-          } = item;
+          const { avatarType, userId, name, _id, content, avatar, msgType, fileUrl, fileName, originalName, mimeType } =
+            item;
           const isSelf = userId === userRef.current.id;
           const isSuperEmoji = msgType === 'super_emoji';
           const isImgFile = msgType === 'file' && mimeType.includes('image');
@@ -348,7 +314,7 @@ function ChatRoom() {
                   <div className="cover">
                     <img src={cover} alt="" />
                   </div>
-                  <div className='music-info'>
+                  <div className="music-info">
                     <div className="song">{song}</div>
                     <div className="sing">{sing}</div>
                   </div>
@@ -377,46 +343,29 @@ function ChatRoom() {
               {/* 内容 */}
               <div className={`chat ${isSelf ? 'chat-right' : ''}`}>
                 {/* 头像 */}
-                <NavLink
-                  to={isSelf ? '/user' : `/user/${userId}`}
-                  className="avatar"
-                >
-                  <img
-                    src={avatarType === 'Local' ? AvatarMap[avatar] : avatarSrc}
-                    alt="avatar"
-                    className="img"
-                  />
+                <NavLink to={isSelf ? '/user' : `/user/${userId}`} className="avatar">
+                  <img src={avatarType === 'Local' ? AvatarMap[avatar] : avatarSrc} alt="avatar" className="img" />
                 </NavLink>
 
                 {/* 聊天文本 */}
                 <div className="content">
-                  {userId !== userRef.current.id && (
-                    <div className="name">{name}</div>
-                  )}
+                  {userId !== userRef.current.id && <div className="name">{name}</div>}
                   <div
-                    // onContextMenu={(e: any) => {
-                    //   e.preventDefault();
+                  // onContextMenu={(e: any) => {
+                  //   e.preventDefault();
 
-                    //   onContextmenu(item, e);
-                    // }}
+                  //   onContextmenu(item, e);
+                  // }}
                   >
                     {isRenderContent ? (
                       <div
-                        className={`html ${
-                          isSuperEmoji ? 'html_transparent' : ''
-                        }`}
+                        className={`html ${isSuperEmoji ? 'html_transparent' : ''}`}
                         dangerouslySetInnerHTML={{
                           __html: htmlContent,
                         }}
                       />
                     ) : (
-                      <div
-                        className={`html ${
-                          isSuperEmoji || isMusic ? 'html_transparent' : ''
-                        }`}
-                      >
-                        {htmlContent}
-                      </div>
+                      <div className={`html ${isSuperEmoji || isMusic ? 'html_transparent' : ''}`}>{htmlContent}</div>
                     )}
                   </div>
                 </div>
@@ -456,10 +405,7 @@ function ChatRoom() {
             setMenuSet({ visible: false, x: 0, y: 0, item: null });
           }}
         >
-          <div
-            className="menu-content"
-            style={{ left: `${menuSet.x - 60}px`, top: `${menuSet.y}px` }}
-          >
+          <div className="menu-content" style={{ left: `${menuSet.x - 60}px`, top: `${menuSet.y}px` }}>
             <a className="btn" onClick={onCopyText}>
               复制
             </a>

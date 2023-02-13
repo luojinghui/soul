@@ -5,14 +5,10 @@
  * @author jinghui-Luo
  *
  * Created at     : 2022-06-26 00:40:02
- * Last modified  : 2022-07-24 00:51:39
+ * Last modified  : 2023-02-13 15:47:41
  */
 
-const {
-  playlist_highquality_tags,
-  top_playlist,
-  recommend_songs,
-} = require('NeteaseCloudMusicApi');
+const { playlist_highquality_tags, top_playlist, recommend_songs } = require('NeteaseCloudMusicApi');
 const { getRandomNum } = require('../utils/index');
 const { musicCommentModel } = require('../model/musicComment');
 
@@ -110,12 +106,7 @@ module.exports = {
       };
       const queryCount = await musicCommentModel.count(filter).exec();
       const randomNum = getRandomNum(0, queryCount - 30);
-      const query = await musicCommentModel
-        .find(filter)
-        .sort({ createTime: -1 })
-        .skip(randomNum)
-        .limit(30)
-        .exec();
+      const query = await musicCommentModel.find(filter).sort({ createTime: -1 }).skip(randomNum).limit(30).exec();
 
       res.json({
         data: query,
@@ -126,9 +117,9 @@ module.exports = {
       console.log('err: ', err);
 
       res.json({
-        data: {},
+        data: [],
         msg: 'failed',
-        code: 400,
+        code: 200,
       });
     }
   },

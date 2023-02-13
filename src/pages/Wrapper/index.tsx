@@ -4,23 +4,23 @@ import {
   useRef,
   useState,
   useLayoutEffect,
-} from 'react';
-import { useRecoilState } from 'recoil';
-import { wrapperSizeState, wrapperSelectKey } from '@/store';
-import { IImgSize, IWrapperSelectKey } from '@/type';
-import { Header } from '@/components';
-import { Tabs } from 'antd';
-import WrapperList from './WrapperList';
+} from "react";
+import { useRecoilState } from "recoil";
+import { wrapperSizeState, wrapperSelectKey } from "@/store";
+import { IImgSize, IWrapperSelectKey } from "@/type";
+import { Header } from "@/components";
+import { Tabs } from "antd";
+import WrapperList from "./WrapperList";
 
-import './index.less';
+import "./index.less";
 
 const { TabPane } = Tabs;
 
 const addMeta = (name: string, content: string) => {
-  const meta = document.createElement('meta');
+  const meta = document.createElement("meta");
   meta.content = content;
   meta.name = name;
-  document.getElementsByTagName('head')[0].appendChild(meta);
+  document.getElementsByTagName("head")[0].appendChild(meta);
 };
 
 export default function Wrapper() {
@@ -31,20 +31,20 @@ export default function Wrapper() {
 
   const [model, setVisible] = useState({
     visible: false,
-    url: '',
+    url: "",
   });
 
   useLayoutEffect(() => {
-    addMeta('referrer', 'no-referrer');
+    addMeta("referrer", "no-referrer");
   }, []);
 
   // 初始化计算每个item的size信息
   useEffect(() => {
     resizePage();
-    window.addEventListener('resize', resizePage);
+    window.addEventListener("resize", resizePage);
     return () => {
-      window.removeEventListener('resize', resizePage);
-      addMeta('referrer', 'strict-origin-when-cross-origin');
+      window.removeEventListener("resize", resizePage);
+      addMeta("referrer", "strict-origin-when-cross-origin");
     };
   }, []);
 
@@ -101,7 +101,7 @@ export default function Wrapper() {
   const onToggleModel = () => {
     setVisible({
       visible: false,
-      url: '',
+      url: "",
     });
   };
 
@@ -114,24 +114,24 @@ export default function Wrapper() {
   };
 
   const renderList = () => {
-    console.log('activeKey: ', activeKey);
+    console.log("activeKey: ", activeKey);
 
     return (
       <>
         <WrapperList
-          visible={activeKey === 'hot'}
+          visible={activeKey === "hot"}
           activeKey="hot"
           style={style}
           onSelectImg={onSelectImg}
         ></WrapperList>
         <WrapperList
-          visible={activeKey === 'new'}
+          visible={activeKey === "new"}
           activeKey="new"
           style={style}
           onSelectImg={onSelectImg}
         ></WrapperList>
         <WrapperList
-          visible={activeKey === 'landscape'}
+          visible={activeKey === "landscape"}
           activeKey="landscape"
           style={style}
           onSelectImg={onSelectImg}
@@ -148,11 +148,12 @@ export default function Wrapper() {
             className="sour_header_tabs"
             activeKey={activeKey}
             onChange={onChange}
-          >
-            <TabPane tab="热门" key="hot"></TabPane>
-            <TabPane tab="最新" key="new"></TabPane>
-            <TabPane tab="风景" key="landscape"></TabPane>
-          </Tabs>
+            items={[
+              { label: "热门", key: "hot" },
+              { label: "最新", key: "new" },
+              { label: "风景", key: "landscape" },
+            ]}
+          ></Tabs>
         }
       ></Header>
 

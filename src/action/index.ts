@@ -30,13 +30,20 @@ class Action {
     });
   }
 
-  async registerUser() {
+  async registerUser(name: string) {
     const sendUrl = `/api/rest/user/register`;
 
     return await this.http.post(sendUrl, {
       agent: navigator.userAgent,
       platform: navigator.platform,
+      name: name,
     });
+  }
+
+  async checkUserInfo(id: string, name: string) {
+    const sendUrl = `/api/rest/user/checkId?id=${id}&name=${name}`;
+
+    return await this.http.get(sendUrl);
   }
 
   async getUserInfo(userId: string) {
@@ -44,9 +51,7 @@ class Action {
   }
 
   async getRoomInfo(roomId: string, userId: string) {
-    return await this.http.get(
-      `/api/rest/room/info?roomId=${roomId}&userId=${userId}`
-    );
+    return await this.http.get(`/api/rest/room/info?roomId=${roomId}&userId=${userId}`);
   }
 
   async createRootRoom({ roomId, userId }: any) {
@@ -61,9 +66,7 @@ class Action {
   }
 
   async getRoomList(userId: string, type: 'all' | 'mine' | 'join') {
-    return await this.http.get(
-      `/api/rest/room/list?userId=${userId}&filter=${type}`
-    );
+    return await this.http.get(`/api/rest/room/list?userId=${userId}&filter=${type}`);
   }
 
   // async uploadImg(formdata: FormData, userId: string) {
@@ -77,36 +80,24 @@ class Action {
   // }
 
   async uploadImg(formdata: FormData, userId: string, callback: any) {
-    return await this.fileUploadHttp.post(
-      `/api/rest/room/uploadImg?userId=${userId}`,
-      formdata,
-      {
-        headers: { 'Content-Type': 'multipart/form-data' },
-        onUploadProgress: (e: any) => {
-          callback(e);
-        },
-      }
-    );
+    return await this.fileUploadHttp.post(`/api/rest/room/uploadImg?userId=${userId}`, formdata, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+      onUploadProgress: (e: any) => {
+        callback(e);
+      },
+    });
   }
 
   async updateUserInfo(formdata: any, userId: string) {
-    return await this.http.post(
-      `/api/rest/user/update?userId=${userId}`,
-      formdata,
-      {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      }
-    );
+    return await this.http.post(`/api/rest/user/update?userId=${userId}`, formdata, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
   }
 
   async updateUserInfoV2(formdata: any, userId: string) {
-    return await this.http.post(
-      `/api/rest/user/updatev2?userId=${userId}`,
-      formdata,
-      {
-        headers: { 'Content-Type': 'application/json' },
-      }
-    );
+    return await this.http.post(`/api/rest/user/updatev2?userId=${userId}`, formdata, {
+      headers: { 'Content-Type': 'application/json' },
+    });
   }
 
   async updateCommentMusicState(id: string, state: string) {
@@ -118,15 +109,11 @@ class Action {
   }
 
   async getWrapperV2List(pageIndex: number, key: IWrapperSelectKey) {
-    return await this.http.get(
-      `/api/happy/v2/wrappaper?pageIndex=${pageIndex}&cate=${key}`
-    );
+    return await this.http.get(`/api/happy/v2/wrappaper?pageIndex=${pageIndex}&cate=${key}`);
   }
 
   async getMusicTopList(limit: number, cat: string, offset: number) {
-    return await this.http.get(
-      `/api/song/top/playlist?limit=${limit}&cat=${cat}&offset=${offset}&order=hot`
-    );
+    return await this.http.get(`/api/song/top/playlist?limit=${limit}&cat=${cat}&offset=${offset}&order=hot`);
   }
 
   async getCommentList() {

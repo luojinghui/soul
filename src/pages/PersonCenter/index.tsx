@@ -118,7 +118,7 @@ export default function PersonCenter() {
       {isModalVisible && (
         <Modal
           title="修改个人信息"
-          visible={isModalVisible}
+          open={isModalVisible}
           onOk={handleOk}
           onCancel={handleCancel}
           okText="保存"

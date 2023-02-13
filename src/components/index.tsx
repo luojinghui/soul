@@ -14,6 +14,8 @@ import UploadImg from './UploadImg';
 import Header from './Header';
 import AddRoomMoel from './AddRoomModel';
 import Scroll from './Scroll';
+import MusicBar from './MusicBar';
+import Login from './Login';
 
 export const AvatarMap: any = {
   '1': boy_huzi,
@@ -29,4 +31,4 @@ export const AvatarMap: any = {
   '11': girl_wanzi,
 };
 
-export { ChatInput, UploadImg, Header, AddRoomMoel, Scroll };
+export { ChatInput, UploadImg, Header, AddRoomMoel, Scroll, MusicBar, Login };

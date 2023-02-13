@@ -1,16 +1,8 @@
 import React, { useRef } from 'react';
-import {
-  message,
-  Button,
-  Modal,
-  Form,
-  Input,
-  Switch,
-  Select,
-  Tabs,
-} from 'antd';
+import { message, Button, Modal, Form, Input, Switch, Select, Tabs } from 'antd';
 import { UploadImg } from '@/components';
 import action from '@/action';
+import './index.less';
 
 const { Option } = Select;
 const tags = [
@@ -124,7 +116,7 @@ const AddRoomMoel = (props: IPorps) => {
   return (
     <Modal
       title="创建兴趣星球"
-      visible={visible}
+      open={visible}
       onOk={handleOk}
       onCancel={handleCancel}
       okText="创建"
@@ -133,65 +125,41 @@ const AddRoomMoel = (props: IPorps) => {
       wrapClassName="room-model"
       width={350}
     >
-      <Form
-        form={form}
-        name="roomInfo"
-        initialValues={{ remember: true }}
-        onFinish={onFinish}
-        autoComplete="off"
-      >
-        <Form.Item
-          className="item room-name-item"
-          label="名称"
-          name="roomName"
-          initialValue={''}
-        >
+      <Form form={form} name="roomInfo" initialValues={{ remember: true }} onFinish={onFinish} autoComplete="off">
+        <Form.Item colon={false} className="item room-name-item" label="名称" name="roomName" initialValue={''}>
           <div>
             <Input />
             <span>星球</span>
           </div>
         </Form.Item>
 
-        <Form.Item
-          initialValue={''}
-          className="item"
-          label="头像"
-          name="roomImg"
-        >
+        <Form.Item colon={false} initialValue={''} className="item" label="头像" name="roomImg">
           <UploadImg fileList={[]} onChange={onUploadChange} userId={userId} />
         </Form.Item>
 
-        <Form.Item
-          className="item"
-          initialValue={[]}
-          label="标签"
-          name="roomTag"
-        >
+        <Form.Item colon={false} className="item" initialValue={[]} label="标签" name="roomTag">
           <Select
-            dropdownClassName="ins-item"
+            popupClassName="ins-item"
             mode="tags"
             size="middle"
             placeholder=""
+            className="select-tag"
             showArrow={true}
           >
             {children}
           </Select>
         </Form.Item>
 
-        <Form.Item
-          className="item"
-          label="介绍"
-          name="roomDesc"
-          initialValue={''}
-        >
+        <Form.Item colon={false} className="item" label="介绍" name="roomDesc" initialValue={''}>
           <Input />
         </Form.Item>
 
-        <Form.Item className="item" initialValue={''} label="密码" name="pwd">
+        <Form.Item colon={false} className="item" initialValue={''} label="密码" name="pwd">
           <Input />
         </Form.Item>
 
         <Form.Item
+          colon={false}
           initialValue={false}
           className="item item-bottom"
           label="私有"

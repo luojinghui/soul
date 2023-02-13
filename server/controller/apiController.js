@@ -5,7 +5,7 @@
  * @author jinghui-Luo
  *
  * Created at     : 2022-06-26 00:40:02
- * Last modified  : 2022-07-24 23:54:18
+ * Last modified  : 2023-02-13 19:56:39
  */
 
 const { userModel } = require('../model/userModel');
@@ -22,11 +22,11 @@ const apiController = {
   },
 
   registerUser: async (req, res) => {
-    const { agent, platform } = req.body;
+    const { agent, platform, name } = req.body;
 
     try {
       const initData = {
-        name: `星球用户_${getRandomString(4)}`,
+        name,
         avatar: getRandomNum(0, 11),
         age: '',
         address: '',
@@ -62,11 +62,29 @@ const apiController = {
     }
   },
 
+  checkUserInfo: async (req, res) => {
+    const { id, name } = req.query;
+    try {
+      const query = await userModel.findById(id);
+
+      if (!query || query.name !== name) {
+        console.log('not found user: ', id);
+
+        res.json({ data: {}, msg: 'failed, not found', code: 302 });
+        return;
+      }
+
+      res.json({ data: {}, msg: 'success', code: 200 });
+    } catch (err) {
+      res.json({ data: {}, msg: 'server failed', code: 400 });
+    }
+  },
+
   getUserInfo: async (req, res) => {
     const userId = req.query.userId;
 
     try {
-      const query = await await userModel.findById(userId);
+      const query = await userModel.findById(userId);
 
       if (!query) {
         console.log('not found user: ', userId);
@@ -109,9 +127,7 @@ const apiController = {
       updateObj.avatar = uploadFile.filename;
     }
 
-    const query = await userModel
-      .findByIdAndUpdate(userId, updateObj, { new: true })
-      .exec();
+    const query = await userModel.findByIdAndUpdate(userId, updateObj, { new: true }).exec();
 
     res.json({
       data: {
@@ -133,9 +149,7 @@ const apiController = {
     updateObj.avatarType = 'Remote';
     updateObj.avatar = avatar;
 
-    const query = await userModel
-      .findByIdAndUpdate(userId, updateObj, { new: true })
-      .exec();
+    const query = await userModel.findByIdAndUpdate(userId, updateObj, { new: true }).exec();
 
     res.json({
       data: {
@@ -317,10 +331,7 @@ const apiController = {
         };
       }
 
-      const query = await roomModel
-        .find(_filter)
-        .sort({ updateTime: -1 })
-        .exec();
+      const query = await roomModel.find(_filter).sort({ updateTime: -1 }).exec();
 
       if (!query) {
         res.json({

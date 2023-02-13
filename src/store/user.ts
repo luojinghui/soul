@@ -5,38 +5,35 @@ import { httpServer } from '@/enum';
 import { storage } from '@/utils/storage';
 
 /** 用户信息key */
-export const UserInfoKey = 'SOUL_USER_INFO_v1';
+export const UserInfoKey = 'SOUL_USER_INFO_v2';
 
 const userStoreMap: any = {};
-let isFirstIn = true;
 
 const getUserInfo = async () => {
-  let userInfo = storage.get(UserInfoKey) || {
-    name: '',
-  };
+  let userInfo = storage.get(UserInfoKey) || {};
   console.log('get cache userinfo: ', userInfo);
 
-  if (!userInfo.id) {
-    const res = await action.registerUser();
+  // if (!userInfo.id) {
+  //   const res = await action.registerUser();
 
-    if (res && res.code === 200) {
-      storage.set(UserInfoKey, res.data);
+  //   if (res && res.code === 200) {
+  //     storage.set(UserInfoKey, res.data);
 
-      return res.data;
-    }
-  }
+  //     return res.data;
+  //   }
+  // }
 
-  if (isFirstIn) {
-    const res = await action.getUserInfo(userInfo.id);
+  // if (isFirstIn) {
+  //   const res = await action.getUserInfo(userInfo.id);
 
-    if (res && res.code === 200) {
-      userInfo = res.data;
+  //   if (res && res.code === 200) {
+  //     userInfo = res.data;
 
-      storage.set(UserInfoKey, userInfo);
-    }
+  //     storage.set(UserInfoKey, userInfo);
+  //   }
 
-    isFirstIn = false;
-  }
+  //   isFirstIn = false;
+  // }
 
   return userInfo;
 };
