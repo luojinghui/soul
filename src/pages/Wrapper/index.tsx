@@ -60,7 +60,7 @@ export default function Wrapper() {
     // @ts-ignore
     const height = document.body.clientHeight;
 
-    const realWidth = Math.floor((width - 10) / size);
+    const realWidth = Math.floor((width - 15) / size);
     const realHeight = Math.floor(realWidth * 1.6);
 
     let realH = height;
