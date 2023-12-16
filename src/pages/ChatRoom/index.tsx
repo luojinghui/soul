@@ -76,7 +76,7 @@ function ChatRoom() {
   }, []);
 
   useEffect(() => {
-    const { roomName = '流浪星球' } = roomInfo;
+    const { roomName = '学习笔记' } = roomInfo;
 
     document.title = roomName;
   }, [roomInfo]);

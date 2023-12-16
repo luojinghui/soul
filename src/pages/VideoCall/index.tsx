@@ -341,7 +341,7 @@ export const VideoCall = () => {
   return (
     <div className="app video-call content">
       {/* 头部内容 */}
-      <Header title={'视频聊天'}></Header>
+      <Header title={'消息传输'}></Header>
 
       {/* 聊天内容 */}
       <div className="im-content">

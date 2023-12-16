@@ -15,7 +15,7 @@ function App() {
 
   useEffect(() => {
     if (location.pathname === '/') {
-      document.title = '流浪星球-JingHui';
+      document.title = '学习笔记-JingHui';
     }
   }, [location]);
 
@@ -48,7 +48,7 @@ function App() {
           </NavLink>
 
           <NavLink to="/video" className="circle center swim">
-            <span className="link">视频</span>
+            <span className="link">消息</span>
           </NavLink>
         </div>
 
