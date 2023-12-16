@@ -9,17 +9,15 @@ import { useRecoilValue } from 'recoil';
 import { userInfoState } from '@/store';
 import logger from '@/utils/log';
 import { platform } from '@/utils/browser';
-
-import './index.less';
-
 import Client from './client';
-import { ClientEvent, callConfig } from './type';
+import { ClientEvent } from './type';
+import { useMeetingStore } from '@/store/videoCall';
+import './index.less';
 
 const browser = platform();
 
 export const VideoCall = () => {
   const client = useRef<Client>();
-  const roomRef = useRef<any>({ username: '', meetingId: 0 });
   const msgEleRef = useRef<any>(null);
 
   const userInfo = useRecoilValue(userInfoState);
@@ -35,7 +33,11 @@ export const VideoCall = () => {
   const [debug, setDebug] = useState(false);
   const [mic, setMic] = useState(true);
 
+  const { meeting, setMeeting } = useMeetingStore();
+
   useEffect(() => {
+    setMeeting({ username: userInfo.name });
+
     return () => {
       endCall();
     };
@@ -73,7 +75,7 @@ export const VideoCall = () => {
       setAudioList(e.data);
     });
 
-    client.current.join(roomRef.current);
+    client.current.join(meeting);
   };
 
   useEffect(() => {
@@ -81,17 +83,6 @@ export const VideoCall = () => {
       msgEleRef.current.scrollTop = msgEleRef.current.scrollHeight;
     }
   }, [msgList]);
-
-  // 加入房间
-  const onCallMeeting = async (values: callConfig) => {
-    const val = { ...values, video: true, audio: true };
-    // 缓存入会信息
-    roomRef.current = val;
-
-    logger.log('roomRef.current: ', roomRef.current);
-
-    initWSS();
-  };
 
   const onSendMessage = (e: any) => {
     logger.log('finish e: ', e);
@@ -115,6 +106,14 @@ export const VideoCall = () => {
     setDebug(false);
   };
 
+  const onMeeting = (key: string, event: any) => {
+    setMeeting({ [key]: event.target.value });
+  };
+
+  const onFinish = async () => {
+    initWSS();
+  };
+
   const renderCall = () => {
     if (meetingStatus === MS[200].code) {
       return null;
@@ -123,71 +122,80 @@ export const VideoCall = () => {
     return (
       <div className="call">
         <div className="form">
-          <Form
-            labelCol={{ span: 8 }}
-            wrapperCol={{ span: 16 }}
-            onFinish={onCallMeeting}
-          >
-            <Form.Item
-              label="用户名"
-              name="username"
-              initialValue={userInfo.name}
-              rules={[
-                {
-                  required: true,
-                  message: 'Please input your username!',
-                },
-              ]}
-            >
-              <Input />
-            </Form.Item>
-
-            <Form.Item
-              label="房间号"
-              name="meetingId"
-              rules={[
-                {
-                  required: true,
-                  message: 'Please input your meetingId!',
-                },
-              ]}
-            >
-              <Input />
-            </Form.Item>
-
-            <Form.Item name="resolution" label="分辨率" initialValue="360">
-              <Radio.Group>
+          <div className="item">
+            <div className="left">用户名</div>
+            <div className="right">
+              <Input
+                placeholder="输入你的昵称"
+                value={meeting.username}
+                onChange={(e) => {
+                  onMeeting('username', e);
+                }}
+              />
+            </div>
+          </div>
+          <div className="item">
+            <div className="left">房间号</div>
+            <div className="right">
+              <Input
+                placeholder="输入房间号"
+                value={meeting.meetingId}
+                onChange={(e) => {
+                  onMeeting('meetingId', e);
+                }}
+              />
+            </div>
+          </div>
+          <div className="item">
+            <div className="left">分辨率</div>
+            <div className="right">
+              <Radio.Group
+                value={meeting.resolution}
+                onChange={(e) => {
+                  onMeeting('resolution', e);
+                }}
+              >
                 <Radio value="720">720</Radio>
                 <Radio value="360">360</Radio>
                 <Radio value="180">180</Radio>
               </Radio.Group>
-            </Form.Item>
-
-            <Form.Item name="policy" label="协商" initialValue="all">
-              <Radio.Group>
+            </div>
+          </div>
+          <div className="item">
+            <div className="left">协商机制</div>
+            <div className="right">
+              <Radio.Group
+                value={meeting.policy}
+                onChange={(e) => {
+                  onMeeting('policy', e);
+                }}
+              >
                 <Radio value="all">智能</Radio>
                 <Radio value="relay">中继</Radio>
               </Radio.Group>
-            </Form.Item>
-
-            <Form.Item name="codec" label="编解码器" initialValue="all">
-              <Radio.Group>
-                <Radio value="all">智能</Radio>
-                <Radio value="h264">H264</Radio>
-              </Radio.Group>
-            </Form.Item>
-
-            <Form.Item
-              className="join-btn"
-              wrapperCol={{ offset: 8, span: 16 }}
+            </div>
+          </div>
+          <div className="item">
+            <div className="left">编解码器</div>
+            <Radio.Group
+              value={meeting.codec}
+              onChange={(e) => {
+                onMeeting('codec', e);
+              }}
             >
-              <Button type="primary" htmlType="submit">
+              <Radio value="all">智能</Radio>
+              <Radio value="h264">H264</Radio>
+            </Radio.Group>
+          </div>
+
+          <div className="item join-btn">
+            <div className="left"></div>
+            <div className="right">
+              <Button type="primary" onClick={onFinish}>
                 加入房间
               </Button>
-            </Form.Item>
-          </Form>
-
-          <div className="join-tips">提示：请允许授权浏览器摄像头权限</div>
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -203,6 +211,8 @@ export const VideoCall = () => {
 
   const onSwitchResolution = async (e: any) => {
     const value = e.target.value;
+
+    setMeeting({ resolution: value });
 
     if (value) {
       await client.current?.setResolution(value);
@@ -281,10 +291,7 @@ export const VideoCall = () => {
         </div>
         <div className="operate">
           <span>分辨率: </span>
-          <Radio.Group
-            defaultValue={roomRef.current.resolution}
-            onChange={onSwitchResolution}
-          >
+          <Radio.Group value={meeting.resolution} onChange={onSwitchResolution}>
             <Radio value="720">720</Radio>
             <Radio value="360">360</Radio>
             <Radio value="180">180</Radio>
@@ -309,7 +316,7 @@ export const VideoCall = () => {
           <div className="message" ref={msgEleRef}>
             <ul>
               {msgList.map((item: any) => {
-                const isSelf = roomRef.current.username === item.sender;
+                const isSelf = meeting.username === item.sender;
 
                 return (
                   <li key={item.id} className={isSelf ? 'msg reverse' : 'msg'}>
@@ -341,7 +348,7 @@ export const VideoCall = () => {
   return (
     <div className="app video-call content">
       {/* 头部内容 */}
-      <Header title={'消息传输'}></Header>
+      <Header title={'面对面聊天'}></Header>
 
       {/* 聊天内容 */}
       <div className="im-content">

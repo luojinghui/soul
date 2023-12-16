@@ -48,16 +48,12 @@ function App() {
           </NavLink>
 
           <NavLink to="/video" className="circle center swim">
-            <span className="link">消息</span>
+            <span className="link">面对面</span>
           </NavLink>
         </div>
 
         <div className="footer">
-          <a
-            href="https://beian.miit.gov.cn/"
-            rel="noopener noreferrer"
-            target="_blank"
-          >
+          <a href="https://beian.miit.gov.cn/" rel="noopener noreferrer" target="_blank">
             陕ICP备19012299号-1
           </a>
         </div>
