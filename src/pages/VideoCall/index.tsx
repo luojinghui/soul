@@ -111,6 +111,11 @@ export const VideoCall = () => {
   };
 
   const onFinish = async () => {
+    if (!meeting.username || !meeting.meetingId) {
+      message.info('填写昵称和房间号');
+      return;
+    }
+
     initWSS();
   };
 
