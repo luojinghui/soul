@@ -2,9 +2,8 @@ import { useEffect, useRef, useState, useMemo } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { userInfoState, userAvatarState } from '@/store';
 import { message, Input, Form, Modal, Button } from 'antd';
-import { useNavigate } from 'react-router-dom';
 import action from '@/action';
-import { Header, UploadImg } from '@/components';
+import { Header, UploadImg, Login } from '@/components';
 import { EditFilled } from '@ant-design/icons';
 import { IFile } from '@/type';
 import { httpServer } from '@/enum';
@@ -100,6 +99,8 @@ export default function PersonCenter() {
 
   return (
     <div className="app user-page">
+      <Login />
+
       <Header title="个人中心"></Header>
 
       {/* 聊天内容 */}

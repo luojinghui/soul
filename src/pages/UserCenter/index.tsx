@@ -11,9 +11,7 @@ export default function UserCenter() {
   const params: any = useParams();
   const navigate = useNavigate();
 
-  const [userInfo, setUserInfo] = useRecoilState<any>(
-    remoteUserStoreFunc(`remote_user_${params.userId}`)
-  );
+  const [userInfo, setUserInfo] = useRecoilState<any>(remoteUserStoreFunc(`remote_user_${params.userId}`));
 
   console.log('params: ', params);
   console.log('userInfo: ', userInfo);
